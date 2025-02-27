@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 
 interface LoginFormProps {
@@ -57,6 +58,7 @@ function Login() {
         <div>
             <h1>Log In</h1>
             <LoginForm handler={handleLogin}/>
+            <NavLink to="/create-account">Create an account</NavLink>
         </div>
     )
 }
