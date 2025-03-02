@@ -8,7 +8,7 @@ const locationValues = [
     {id: 0, name: "Maryland"}, {id: 1, name: "Virginia"},
     {id: 2, name: "Pennsylvania"}, {id: 3, name: "West Virginia"},
     {id: 4, name: "Delaware"}
-]
+].sort((x, y) => {return x.name.charCodeAt(0) - y.name.charCodeAt(0)})
 const educationValues = [
     {id: 0, level: "Less than high school"},
     {id: 1, level: "High school diploma"},
@@ -78,7 +78,7 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
     return (
         <form onSubmit={handleSubmit}>
             <label>
-                <p>Location</p>
+                <p>Location:</p>
                 <select 
                     required
                     value={location}
@@ -94,7 +94,7 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
             </label>
 
             <label>
-                <p>Education level</p>
+                <p>Education level:</p>
                 <select
                     required
                     value={education}
@@ -110,25 +110,28 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
             </label>
 
             <label>
-                <p>Years of experience</p>
+                <p>Years of experience:</p>
                 <input 
                     required
                     type="number"
                     defaultValue={0}
                     min={0}
                     onChange={e => {
+                        // Update experience with validated input
                         e.preventDefault();
                         console.log(Math.max(Number(e.currentTarget.value), 0));
                         setExperience(Math.max(Number(e.currentTarget.value), 0))
                     }}
                     onBlur={e => {
+                        // When user clicks off of input, update field with
+                        // validated input
                         e.preventDefault();
                         e.currentTarget.value = String(experience);
                     }} />
             </label>
             
             <label>
-                <p>Skills</p>
+                <p>Skills:</p>
                 <DropdownList 
                     values={skillValues}
                     selections={skills}
@@ -149,6 +152,8 @@ function JobSearch() {
             console.log("Location: " + location 
                 + "\nEducation: " + education + "\nExperience: "
                 + experience + "\nSkills: " + skills);
+
+            // Redirect to job search results
         }
 
     return (

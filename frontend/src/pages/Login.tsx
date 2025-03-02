@@ -20,7 +20,7 @@ function LoginForm({ handler }: LoginFormProps) {
     return(
         <form onSubmit={handleSubmit}>
             <label>
-                <p>Username</p>
+                <p>Username:</p>
                 <input 
                     value={username}
                     required
@@ -29,7 +29,7 @@ function LoginForm({ handler }: LoginFormProps) {
                 />
             </label>
             <label>
-                <p>Password</p>
+                <p>Password:</p>
                 <input 
                     value={password}
                     required

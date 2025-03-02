@@ -51,7 +51,7 @@ function CreateAccountForm({ onSubmit }: CreateAccountFormProps) {
     return (
         <form onSubmit={handleSubmit}>
             <label>
-                <p>Username</p>
+                <p>Username:</p>
                 <input
                     value={username}
                     required
@@ -59,8 +59,9 @@ function CreateAccountForm({ onSubmit }: CreateAccountFormProps) {
                     type="text"
                 />
             </label>
+
             <label>
-                <p>Password</p>
+                <p>Password:</p>
                 <input
                     value={password}
                     required
@@ -68,8 +69,9 @@ function CreateAccountForm({ onSubmit }: CreateAccountFormProps) {
                     type="password"
                 />
             </label>
+            
             <label>
-                <p>Skills</p>
+                <p>Skills:</p>
                 <DropdownList
                     values={values}
                     selections={skills}
