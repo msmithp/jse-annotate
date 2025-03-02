@@ -1,20 +1,8 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route
-} from "react-router-dom"
-import {
-  Home,
-  JobSearch,
-  SkillSearch,
-  Login,
-  Profile,
-  CreateAccount
-} from "./pages";
-import {
-  Navbar
-} from "./components";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { Home, JobSearch, SkillSearch, Login, 
+  Profile, CreateAccount } from "./pages";
+import { Navbar } from "./components";
 import './App.css';
 
 function App() {

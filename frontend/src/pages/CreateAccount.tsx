@@ -3,6 +3,7 @@ import { useState } from "react";
 import DropdownList from "../components/DropdownList";
 
 
+// Placeholder data
 const values = {
     "Programming Languages": [
         {id: 0, name: "Python"}, {id: 1, name: "Java"},
@@ -18,10 +19,10 @@ const values = {
 };
 
 interface CreateAccountFormProps {
-    handler: (username: string, password: string, skills: number[]) => void
+    onSubmit: (username: string, password: string, skills: number[]) => void
 }
 
-function CreateAccountForm({ handler }: CreateAccountFormProps) {
+function CreateAccountForm({ onSubmit }: CreateAccountFormProps) {
     // State variables
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -30,7 +31,7 @@ function CreateAccountForm({ handler }: CreateAccountFormProps) {
     // Event handlers
     function handleSubmit(event: React.FormEvent): void {
         event.preventDefault();  // Prevent default form submission
-        handler(username, password, skills);
+        onSubmit(username, password, skills);
     }
 
     function handleDropdownChange(index: number, id: number): void {
@@ -43,6 +44,7 @@ function CreateAccountForm({ handler }: CreateAccountFormProps) {
     }
 
     function handleRemoveDropdown(index: number): void {
+        // Remove the skill at the selected index
         setSkills(skills.filter((_, i) => i !== index));
     }
 
@@ -85,17 +87,20 @@ function CreateAccountForm({ handler }: CreateAccountFormProps) {
 function CreateAccount() {
     function handleCreateAccount(username: string, 
         password: string, skills: number[]): void {
-        console.log("Username: " + username + " Password: " + password + " Skills: " + skills);
+        console.log("Username: " + username 
+            + " Password: " + password + " Skills: " + skills);
         
-        // Send username and password to back-end to create account
+        // TODO: Send username and password to back-end to create account
 
-        // Redirect user to home page after account creation
+        // TODO: Redirect user to login page after account creation
     }
+
+    // TODO: pull skills from back-end
 
     return (
         <div>
             <h1>Create Account</h1>
-            <CreateAccountForm handler={handleCreateAccount}/>
+            <CreateAccountForm onSubmit={handleCreateAccount}/>
         </div>
     )
 }
