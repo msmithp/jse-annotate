@@ -1,11 +1,14 @@
 import jobspy
 import csv
+from datetime import datetime
 
 """ Parameters """
-verbose = 0                 # 0 for only errors, 1 for errors and warnings, 2 for all logs
-append = False              # True to append to a file, False to create or overwrite a file
-num_jobs = 30               # Number of job listings to scrape
-file_name = "jobs.csv"      # CSV file for jobs to be saved to
+verbose = 0      # 0 for only errors, 1 for errors and warnings, 2 for all logs
+append = False   # True to append to a file, False to create or overwrite a file
+num_jobs = 1000  # Number of job listings to scrape
+
+# CSV file for jobs to be saved to
+file_name = f"./jobs/jobs_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv"
 
 # List of job titles and keywords to search for
 titles = ["software developer", "software engineer", "data scientist", "cybersecurity", "web developer",
@@ -54,8 +57,8 @@ def intercalate(lst: list, delim: str) -> str:
 
 def scrape() -> None:
     """
-    Scrape jobs from Indeed. Creates or overwrites the file `file_name` if `append` is False. Appends to `file_name`
-    if `append` is True.
+    Scrape jobs from Indeed. Creates or overwrites the file `file_name` if
+    `append` is False. Appends to `file_name` if `append` is True.
     """
     jobs = jobspy.scrape_jobs(
         site_name="indeed",
