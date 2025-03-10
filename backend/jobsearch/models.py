@@ -12,13 +12,13 @@ class User(models.Model):
     state = models.CharField(max_length=2, blank=True)
     education = models.CharField(max_length=20, blank=True)
     years_exp = models.IntegerField(null=True)
-    skill_name = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    skill_name = models.ManyToManyField(Skill)
 
 class Job(models.Model):
     site = models.CharField(max_length=10)
     job_name = models.CharField(max_length=50)
     job_type = models.CharField(max_length=10, blank=True)
-    job_desc = models.CharField(max_length=200)
+    job_desc = models.TextField()
     company = models.CharField(max_length=50)
     city = models.CharField(max_length=20)
     state = models.CharField(max_length=2)
@@ -26,6 +26,14 @@ class Job(models.Model):
     is_remote = models.BooleanField()
     post_date = models.DateField()
     years_exp = models.IntegerField(null=True)
+    skill_name = models.ManyToManyField(Skill)
+
+class Has(models.Model):
+    user_name = models.ForeignKey(User, on_delete=models.CASCADE)
+    skill_name = models.ForeignKey(Skill, on_delete=models.CASCADE)
+
+class Requires(models.Model):
+    job_name = models.ForeignKey(Job, on_delete=models.CASCADE)
     skill_name = models.ForeignKey(Skill, on_delete=models.CASCADE)
 
 
