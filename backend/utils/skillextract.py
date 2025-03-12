@@ -15,7 +15,7 @@ skills = {
         ],
         "Frameworks": [
                 {"name": "Node.js",       "id": 9,  "aliases": []},
-                {"name": "Angular",       "id": 10, "aliases": []},
+                {"name": "Angular",       "id": 10, "aliases": ["AngularJS", "Angular.JS"]},
                 {"name": "Express.js",    "id": 11, "aliases": []},
         ],
         "Database Management": [
@@ -28,6 +28,7 @@ skills = {
                 {"name": "JavaScript",    "id": 16, "aliases": []},
                 {"name": "HTML",          "id": 17, "aliases": []},
                 {"name": "CSS",           "id": 18, "aliases": []},
+                {"name": "React",         "id": 18, "aliases": ["ReactJS", "React.JS"]},
         ],
         "Tools": [
                 {"name": "Git",           "id": 19, "aliases": []},
@@ -38,9 +39,15 @@ skills = {
         ]
 }
 
+# String versions of numbers (for years of experience parsing)
+numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven",
+            "eight", "nine", "ten", "eleven", "twelve", "thirteen",
+            "fourteen", "fifteen", "sixteen", "seventeen", "eighteen"]
+
+# Education levels and their common associated terms/phrases
 education = {
         "high_school": ["high school diploma", "high school grad", "GED",
-                        "high school equiv"],
+                        "high school equiv", "HS diploma"],
         "associate": ["associate degree", "associates degree", 
                       "associate's degree", "A.S.", "A.A.", "A.A.S."],
         "bachelor": ["bachelor", "B.S.", "B.A.", "BS", "BA", 
@@ -53,9 +60,10 @@ education = {
 }
 
 #test description
-desc = ("Prospective applicants will need at least 3 years experience with C++, Python, C, C#, PostGreSQL,"
+desc = ("Prospective applicants will need - at least 3 years experience with C++, Python, C, C#, PostGreSQL,"
         " and Google Cloud/GCP. Python is important. Applicants should also have experience with Node.js."
-        " Visual\nBasic too. Minimum 3 years of experience. Applicants should have a bachelor's in science.")
+        " Visual\nBasic too. 5 - 10 years of experience required. Applicants should have" 
+        " a bachelor's in computer science.")
 
 # When searching for skills, we check if they are surrounded by
 # any two characters from this expression
@@ -103,8 +111,9 @@ def extract(job_desc: str) -> None:
         job_desc = preprocess(job_desc)
         skills = skill_extract(job_desc)
         education = education_extract(job_desc)
+        experience = experience_extract(job_desc)
 
-        print(f"Extracted info:\nSkills: {skills}\nEducation: {education}")
+        print(f"Extracted info:\nSkills: {skills}\nEducation: {education}\nExperience: {experience} years")
 
 
 #function needs to eventually take job description, iterate through, extract the required skills, and assign them to the job entry in the database
@@ -148,6 +157,130 @@ def education_extract(job_desc: str) -> str:
 
         # No education level found - return blank string
         return ""
+
+
+def experience_extract(job_desc: str) -> int:
+        """
+        Extract required years of experience from a job description.
+        If different years of experience are listed in different places in the
+        description, the highest will be chosen. If at any point a range of
+        years is given, the lowest of the range will be chosen.
+        :param job_desc: Preprocessed job description
+        :return: Required years of experience listed in job description
+        """
+        # Normalize any range (e.g., `5-10` or `5 - 10`) to a single number
+        for i, ch in enumerate(job_desc):
+                if ch == '-':
+                        # Read in characters preceding the hyphen as long as
+                        # they are numeric or whitespace characters
+                        prev = ""
+                        prev_index = i
+                        for j in range(i-1, 0, -1):
+                                if job_desc[j].isnumeric() or job_desc[j].isspace():
+                                        prev = job_desc[j] + prev
+                                        prev_index -= 1
+                                else:
+                                        break
+
+                        # Read in characters succeeding the hyphen as long as
+                        # they are numeric or whitespace characters
+                        next = ""
+                        next_index = i
+                        for j in range(i+1, len(job_desc)):
+                                if job_desc[j].isnumeric() or job_desc[j].isspace():
+                                        next += job_desc[j]
+                                        next_index += 1
+                                else:
+                                        break   
+
+                        if ((prev.isspace() or prev == "") 
+                            or (next.isspace() or next == "")):
+                                # No numbers before or after hyphen. This is
+                                # not a range, so move on
+                                continue
+
+                        # We know that both tokens before and after the hyphen
+                        # are numbers, so convert them to integers
+                        first_num = int(prev)
+                        second_num = int(next)
+
+                        # Replace the original range with the minimum value of
+                        # the range
+                        job_desc = job_desc.replace(
+                                job_desc[prev_index + 1:next_index], 
+                                str(min(first_num, second_num))
+                        )
+
+        # Replace characters by taking the "ignore" characters from `ignore`,
+        # removing the whitespace character from `ignore`, adding mappings for
+        # some other special characters, and then making replacement
+        char_map = {ch: "" for ch in ignore.replace(" ", "")}
+        char_map = char_map | {"+": "", "#": "", "*": ""}
+        job_desc = job_desc.translate(str.maketrans(char_map))
+
+        # Split string on spaces to get list of words
+        desc_list = re.split(r"\s+", job_desc)
+
+        # Perform preprocessing to turn words (e.g., "three") into numbers (3)
+        for i, word in enumerate(desc_list):
+                try:
+                        num = numbers.index(word.lower())
+                        desc_list[i] = str(num)
+                except:
+                        continue
+
+        # Search for years of experience by finding mentions of the word
+        # "year", then find if the word "experience" is also mentioned
+        # within a certain range (search_range). If it is, check the words
+        # before the word "year" up to a certain limit (number_threshold) to
+        # see if there is a number
+        years_of_exp = -1
+        search_range = 7
+        number_threshold = 5
+        for i, word in enumerate(desc_list):
+                if "year" in word:
+                        low = max(0, i-search_range)
+                        high = min(len(desc_list), i+search_range)
+                        experience_found = False
+
+                        # Look backwards for "experience"
+                        for j in range(i, low, -1):
+                                if desc_list[j] == "experience":
+                                        experience_found = True
+                                        break
+
+                        # Look forwards for "experience"
+                        if not experience_found:
+                                for j in range(i, high, 1):
+                                        if desc_list[j] == "experience":
+                                                experience_found = True
+                                                break
+                        
+                        if not experience_found:
+                                # Couldn't find the word experience around
+                                # the word "year" in this case - move on
+                                continue
+
+                        # Look before the word "year" to find if there is a number
+                        number_limit = low = max(0, i-number_threshold)
+                        for j in range(i, number_limit, -1):
+                                if desc_list[j].isnumeric():
+                                        num = int(desc_list[j])
+                                        if num > years_of_exp:
+                                                years_of_exp = num
+                
+                if "yoe" in word:
+                        # Look before the word "YoE" to find if there is a number
+                        number_limit = low = max(0, i-number_threshold)
+                        for j in range(i, number_limit, -1):
+                                if desc_list[j].isnumeric():
+                                        num = int(desc_list[j])
+                                        if num > years_of_exp:
+                                                years_of_exp = num
+
+        # If no experience requirement was found, return 0.
+        # Otherwise, return the number of years found.
+        return years_of_exp if years_of_exp >= 1 else 0
 
 
 if __name__ == "__main__":
