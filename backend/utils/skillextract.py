@@ -16,7 +16,7 @@ skills = {
         "Frameworks": [
                 {"name": "Node.js",       "id": 9,  "aliases": []},
                 {"name": "Angular",       "id": 10, "aliases": ["AngularJS", "Angular.JS"]},
-                {"name": "Express.js",    "id": 11, "aliases": []},
+                {"name": "Express.js",    "id": 11, "aliases": ["ExpressJS"]},
         ],
         "Database Management": [
                 {"name": "SQL",           "id": 12, "aliases": []},
@@ -46,16 +46,16 @@ numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven",
 
 # Education levels and their common associated terms/phrases
 education = {
-        "high_school": ["high school diploma", "high school grad", "GED",
-                        "high school equiv", "HS diploma"],
+        "high_school": ["high school diploma", "high school grad", "ged",
+                        "high school equiv", "hs diploma"],
         "associate": ["associate degree", "associates degree", 
-                      "associate's degree", "A.S.", "A.A.", "A.A.S."],
-        "bachelor": ["bachelor", "B.S.", "B.A.", "BS", "BA", 
+                      "associate's degree", "a.s.", "a.a.", "a.a.s."],
+        "bachelor": ["bachelor", "b.s.", "b.a.", "bs", "ba", 
                      "undergraduate degree", "undergraduate's degree",
-                     "four year degree"],
-        "master": ["master's degree", "master degree", "M.S.", "M.A.", 
+                     "four year degree", "4 year degree"],
+        "master": ["master's degree", "master degree", "m.s.", "m.a.", 
                    "master's of"],
-        "doctorate": ["doctorate", "doctoral", "PhD", "Ph.D.", "D.Sc.",
+        "doctorate": ["doctorate", "doctoral", "phd", "ph.d.", "d.sc.",
                       "postgraduate degree"]
 }
 
@@ -116,7 +116,6 @@ def extract(job_desc: str) -> None:
         print(f"Extracted info:\nSkills: {skills}\nEducation: {education}\nExperience: {experience} years")
 
 
-#function needs to eventually take job description, iterate through, extract the required skills, and assign them to the job entry in the database
 def skill_extract(job_desc: str) -> list:
         """
         Extract all skills from a job description as a list.
