@@ -1,28 +1,34 @@
 from django.contrib import admin
-from .models import Skill, User, Job, AltSkill, Has, Requires
+from .models import Skill, User, Job, AltSkill, City, County, State
 
 # Register your models here.
 class SkillAdmin(admin.ModelAdmin):
     list_display = ('id', 'skill_name', 'category')
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user_name', 'password', 'city', 'state', 'education', 'years_exp')
+    list_display = ('id', 'user_name', 'password', 'state', 'education', 'years_exp')
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('id', 'site', 'job_name', 'job_type', 'job_desc', 'company', 'city', 'state', 'min_sal', 'is_remote', 'post_date', 'years_exp')
+    list_display = ('id', 'job_name', 'job_type', 'job_desc', 'company', 'city',
+                    'min_sal', 'max_sal', 'url', 'is_remote', 'post_date', 'years_exp')
 
 class AltSkillAdmin(admin.ModelAdmin):
-    list_display = ('id', 'skill_name', 'alt_name')
-    
-class HasAdmin(admin.ModelAdmin):
-    list_display = ('user_name', 'skill_name')
+    list_display = ('id', 'skill', 'alt_name')
 
-class RequiresAdmin(admin.ModelAdmin):
-    list_display = ('job_name', 'skill_name')
+class CityAdmin(admin.ModelAdmin):
+    list_display = ('id', 'city_name', 'latitude', 'longitude', 'population', 'county')
+
+class CountyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'county_name', 'state')
+
+class StateAdmin(admin.ModelAdmin):
+    list_display = ('id', 'state_name', 'state_code')
+
 
 admin.site.register(Skill, SkillAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Job, JobAdmin)
 admin.site.register(AltSkill, AltSkillAdmin)
-admin.site.register(Has, HasAdmin)
-admin.site.register(Requires, RequiresAdmin)
+admin.site.register(City, CityAdmin)
+admin.site.register(County, CountyAdmin)
+admin.site.register(State, StateAdmin)
