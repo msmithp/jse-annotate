@@ -45,17 +45,18 @@ class User(models.Model):
         return self.user_name
 
 class Job(models.Model):
-    job_name = models.CharField(max_length=50)
-    job_type = models.CharField(max_length=10, blank=True)
+    job_name = models.CharField(max_length=200)
+    job_type = models.CharField(max_length=50, blank=True)
     job_desc = models.TextField()
-    company = models.CharField(max_length=50)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    company = models.CharField(max_length=200)
+    city = models.ForeignKey(City, null=True, on_delete=models.CASCADE)
     min_sal = models.FloatField(null=True)
     max_sal = models.FloatField(null=True)
     is_remote = models.BooleanField()
     post_date = models.DateField()
     years_exp = models.IntegerField(null=True)
-    url = models.URLField(max_length=250)
+    education = models.CharField(max_length=20)
+    url = models.URLField(max_length=600)
     skills = models.ManyToManyField(Skill)
 
     def __str__(self):
@@ -63,4 +64,4 @@ class Job(models.Model):
 
 class AltSkill(models.Model):
     skill = models.ForeignKey(Skill, related_name='alt_names', on_delete=models.CASCADE)
-    alt_name = models.CharField(max_length=20)
+    alt_name = models.CharField(max_length=50)

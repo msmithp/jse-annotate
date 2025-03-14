@@ -10,7 +10,6 @@ class Command(BaseCommand):
 
         Skill.objects.all().delete()
         AltSkill.objects.all().delete()
-        Skill.objects.create(skill_name="Python", category="Languages")
 
         Skill.objects.create(skill_name='Python', category='Languages')
         Skill.objects.create(skill_name='Java', category='Languages')

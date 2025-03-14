@@ -1,43 +1,5 @@
 import re
-
-# Temporary - this will be pulled from the database eventually
-skills = {
-        "Languages": [
-                {"name": "Python",        "id": 0,  "aliases": []},
-                {"name": "Java",          "id": 1,  "aliases": []},
-                {"name": "C++",           "id": 2,  "aliases": []},
-                {"name": "R",             "id": 3,  "aliases": []},
-                {"name": "C#",            "id": 4,  "aliases": []},
-                {"name": "C",             "id": 5,  "aliases": []},
-                {"name": "ANSI C",        "id": 6,  "aliases": []},
-                {"name": "Objective-C",   "id": 7,  "aliases": []},
-                {"name": "Visual Basic",  "id": 8,  "aliases": []},
-        ],
-        "Frameworks": [
-                {"name": "Node.js",       "id": 9,  "aliases": []},
-                {"name": "Angular",       "id": 10, "aliases": ["AngularJS", "Angular.JS"]},
-                {"name": "Express.js",    "id": 11, "aliases": ["ExpressJS"]},
-        ],
-        "Database Management": [
-                {"name": "SQL",           "id": 12, "aliases": []},
-                {"name": "PostgreSQL",    "id": 13, "aliases": []},
-                {"name": "NoSQL",         "id": 14, "aliases": []},
-                {"name": "MongoDB",       "id": 15, "aliases": []},
-        ],
-        "Web Development": [
-                {"name": "JavaScript",    "id": 16, "aliases": []},
-                {"name": "HTML",          "id": 17, "aliases": []},
-                {"name": "CSS",           "id": 18, "aliases": []},
-                {"name": "React",         "id": 18, "aliases": ["ReactJS", "React.JS"]},
-        ],
-        "Tools": [
-                {"name": "Git",           "id": 19, "aliases": []},
-                {"name": "Docker",        "id": 20, "aliases": []},
-                {"name": "Google Cloud",  "id": 21, "aliases": ["GCP"]},
-                {"name": "Azure",         "id": 22, "aliases": []},
-                {"name": "AWS",           "id": 23, "aliases": ["Amazon Web Services"]},
-        ]
-}
+from jobsearch.models import Skill
 
 # String versions of numbers (for years of experience parsing)
 numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -59,21 +21,40 @@ education = {
                       "postgraduate degree"]
 }
 
-#test description
-desc = ("Prospective applicants will need - at least 3 years experience with C++, Python, C, C#, PostGreSQL,"
-        " and Google Cloud/GCP. Python is important. Applicants should also have experience with Node.js."
-        " Visual\nBasic too. 5 - 10 years of experience required. Applicants should have" 
-        " a bachelor's in computer science.")
-
 # When searching for skills, we check if they are surrounded by
 # any two characters from this expression
 ignore = " !\"\'\\`()\n\t,:;=<>?./"
+
+# Create a skill cache so the database is hit only once when extracting
+# skills from jobs in bulk
+skills_cache = None
+def get_skills() -> list:
+        """
+        Get skill data from the database as a list. Uses a global variable
+        to reduce number of database hits when processing jobs in bulk.
+
+        :return: A list of skills as dictionaries containing their name, ID,
+                 and a (potentially empty) list of their alternate names 
+        """
+        global skills_cache
+
+        if skills_cache is None:
+                skills = []
+                for skill in Skill.objects.prefetch_related("alt_names"):
+                        skills.append({
+                                "id": skill.pk,
+                                "name": skill.skill_name,
+                                "alt_names": list(skill.alt_names.values_list("alt_name", flat=True))
+                        })
+                skills_cache = skills
+        return skills_cache
 
 
 def preprocess(job_desc: str) -> str:
         """
         Preprocess a job description by making it lowercase, removing newlines,
         and removing special characters.
+
         :param job_desc: Original job description to be processed
         :return: Processed job description
         """
@@ -90,6 +71,7 @@ def preprocess(job_desc: str) -> str:
 def search(search_term: str, job_desc: str) -> bool:
         """
         Search a job description for a specified search term.
+
         :param search_term: A string value to be found in the job description
         :param job_desc: Job description to be searched
         :return: `True` if the term was found, `False` otherwise
@@ -101,41 +83,45 @@ def search(search_term: str, job_desc: str) -> bool:
                 return False
         
 
-def extract(job_desc: str) -> None:
+def extract(job_desc: str) -> tuple[list, str, int]:
         """
         Extract skill, education, and experience information from a scraped
         job description.
+
         :param job_desc: Original job description, as scraped by JobSpy, from
                          which information will be extracted
+        :return: Tuple containing: list of skill IDs, education level, and
+                 required years of experience
         """
         job_desc = preprocess(job_desc)
         skills = skill_extract(job_desc)
         education = education_extract(job_desc)
         experience = experience_extract(job_desc)
 
-        print(f"Extracted info:\nSkills: {skills}\nEducation: {education}\nExperience: {experience} years")
+        return skills, education, experience
 
 
-def skill_extract(job_desc: str) -> list:
+def skill_extract(job_desc: str) -> list[dict]:
         """
         Extract all skills from a job description as a list.
+
         :param job_desc: Preprocessed job description
         :return: A list of database IDs for each skill found
         """
         #initialize skillset list
         skillset = []
+        skills = get_skills()
 
         # Search job description for each skill, one at a time
-        for skill_list in skills.values():
-                for skill in skill_list:
-                        if search(skill["name"], job_desc):
-                                skillset.append(skill["id"])
-                        else:
-                                # If skill not found, search for its alternate names
-                                for alias in skill["aliases"]:
-                                        if search(alias, job_desc):
-                                                skillset.append(skill["id"])
-                                                break
+        for skill in skills:
+                if search(skill["name"], job_desc):
+                        skillset.append(skill["id"])
+                else:
+                        # If skill not found, search for its alternate names
+                        for alias in skill["alt_names"]:
+                                if search(alias, job_desc):
+                                        skillset.append(skill["id"])
+                                        break
 
         return skillset
 
@@ -144,6 +130,7 @@ def education_extract(job_desc: str) -> str:
         """
         Extract an education level from a job description. If multiple
         education levels are listed, the lowest one found will be returned.
+
         :param job_desc: Preprocessed job description
         :return: Lowest education level mentioned in description, as a string
         """
@@ -164,33 +151,39 @@ def experience_extract(job_desc: str) -> int:
         If different years of experience are listed in different places in the
         description, the highest will be chosen. If at any point a range of
         years is given, the lowest of the range will be chosen.
+
         :param job_desc: Preprocessed job description
         :return: Required years of experience listed in job description
         """
         # Normalize any range (e.g., `5-10` or `5 - 10`) to a single number
+        to_replace  = {}
+
+        # Find all ranges in description and get their minimum value
         for i, ch in enumerate(job_desc):
                 if ch == '-':
                         # Read in characters preceding the hyphen as long as
                         # they are numeric or whitespace characters
                         prev = ""
                         prev_index = i
-                        for j in range(i-1, 0, -1):
-                                if job_desc[j].isnumeric() or job_desc[j].isspace():
-                                        prev = job_desc[j] + prev
-                                        prev_index -= 1
-                                else:
-                                        break
+                        if i > 0:
+                                for j in range(i-1, 0, -1):
+                                        if job_desc[j].isnumeric() or job_desc[j].isspace():
+                                                prev = job_desc[j] + prev
+                                                prev_index -= 1
+                                        else:
+                                                break
 
                         # Read in characters succeeding the hyphen as long as
                         # they are numeric or whitespace characters
                         next = ""
                         next_index = i
-                        for j in range(i+1, len(job_desc)):
-                                if job_desc[j].isnumeric() or job_desc[j].isspace():
-                                        next += job_desc[j]
-                                        next_index += 1
-                                else:
-                                        break   
+                        if i < len(job_desc) - 1:
+                                for j in range(i+1, len(job_desc)):
+                                        if job_desc[j].isnumeric() or job_desc[j].isspace():
+                                                next += job_desc[j]
+                                                next_index += 1
+                                        else:
+                                                break   
 
                         if ((prev.isspace() or prev == "") 
                             or (next.isspace() or next == "")):
@@ -202,13 +195,14 @@ def experience_extract(job_desc: str) -> int:
                         # are numbers, so convert them to integers
                         first_num = int(prev)
                         second_num = int(next)
+                        replacement = str(min(first_num, second_num))
 
-                        # Replace the original range with the minimum value of
-                        # the range
-                        job_desc = job_desc.replace(
-                                job_desc[prev_index + 1:next_index], 
-                                str(min(first_num, second_num))
-                        )
+                        range_to_replace = job_desc[prev_index + 1:next_index]
+                        to_replace[range_to_replace] = replacement
+
+        # Make range replacements
+        for range_to_replace, replacement in to_replace.items():
+                job_desc = job_desc.replace(range_to_replace, replacement)
 
         # Replace characters by taking the "ignore" characters from `ignore`,
         # removing the whitespace character from `ignore`, adding mappings for
@@ -280,7 +274,3 @@ def experience_extract(job_desc: str) -> int:
         # If no experience requirement was found, return 0.
         # Otherwise, return the number of years found.
         return years_of_exp if years_of_exp >= 1 else 0
-
-
-if __name__ == "__main__":
-        extract(desc)
