@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from jobsearch.models import Skill, AltSkill
 
 class Command(BaseCommand):
-    help = "Imports geographical data on U.S. cities into the Location model"
+    help = "Imports skill data into the database"
 
     def handle(self, *args, **options):
 
@@ -20,7 +20,7 @@ class Command(BaseCommand):
         Skill.objects.create(skill_name='C', category='Languages')
         Skill.objects.create(skill_name='ANSI C', category='Languages')
         Skill.objects.create(skill_name='Objective-C', category='Languages')
-        Skill.objects.create(skill_name='Virtual Basic', category='Languages')
+        Skill.objects.create(skill_name='Visual Basic', category='Languages')
         Skill.objects.create(skill_name='Ruby', category='Languages')
         Skill.objects.create(skill_name='Swift', category='Languages')
         Skill.objects.create(skill_name='Go', category='Languages')
