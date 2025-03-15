@@ -161,29 +161,40 @@ def experience_extract(job_desc: str) -> int:
         # Find all ranges in description and get their minimum value
         for i, ch in enumerate(job_desc):
                 if ch == '-':
-                        # Read in characters preceding the hyphen as long as
-                        # they are numeric or whitespace characters
+                        # Read in characters preceding the hyphen
                         prev = ""
-                        prev_index = i
+                        prev_index = 0
                         if i > 0:
-                                for j in range(i-1, 0, -1):
-                                        if job_desc[j].isnumeric() or job_desc[j].isspace():
-                                                prev = job_desc[j] + prev
-                                                prev_index -= 1
-                                        else:
-                                                break
+                                j = i-1
 
-                        # Read in characters succeeding the hyphen as long as
-                        # they are numeric or whitespace characters
+                                # Flush out whitespace
+                                while j >= 0 and job_desc[j].isspace():
+                                        j -= 1
+
+                                # Read in numbers, if any
+                                while j >= 0 and job_desc[j].isnumeric():
+                                        prev = job_desc[j] + prev
+                                        # prev_index -= 1
+                                        j -= 1
+
+                                prev_index = j
+
+                        # Read in characters succeeding the hyphen
                         next = ""
-                        next_index = i
+                        next_index = 0
                         if i < len(job_desc) - 1:
-                                for j in range(i+1, len(job_desc)):
-                                        if job_desc[j].isnumeric() or job_desc[j].isspace():
-                                                next += job_desc[j]
-                                                next_index += 1
-                                        else:
-                                                break   
+                                j = i + 1
+                                
+                                # Flush out whitespace
+                                while j < len(job_desc) and job_desc[j].isspace():
+                                        j += 1
+                                
+                                # Read in numbers, if any
+                                while j < len(job_desc) and job_desc[j].isnumeric():
+                                        next += job_desc[j]
+                                        j += 1
+
+                                next_index = j
 
                         if ((prev.isspace() or prev == "") 
                             or (next.isspace() or next == "")):
@@ -197,7 +208,8 @@ def experience_extract(job_desc: str) -> int:
                         second_num = int(next)
                         replacement = str(min(first_num, second_num))
 
-                        range_to_replace = job_desc[prev_index + 1:next_index]
+                        # Add range to be replaced and its replacement to dict
+                        range_to_replace = job_desc[prev_index+1:next_index]
                         to_replace[range_to_replace] = replacement
 
         # Make range replacements
@@ -229,7 +241,7 @@ def experience_extract(job_desc: str) -> int:
         # see if there is a number
         years_of_exp = -1
         search_range = 7
-        number_threshold = 5
+        number_threshold = 3
         for i, word in enumerate(desc_list):
                 if "year" in word:
                         low = max(0, i-search_range)
@@ -255,16 +267,16 @@ def experience_extract(job_desc: str) -> int:
                                 continue
 
                         # Look before the word "year" to find if there is a number
-                        number_limit = low = max(0, i-number_threshold)
+                        number_limit = max(0, i-number_threshold)
                         for j in range(i, number_limit, -1):
                                 if desc_list[j].isnumeric():
+                                        # Found a number
                                         num = int(desc_list[j])
                                         if num > years_of_exp:
                                                 years_of_exp = num
-                
-                if "yoe" in word:
+                elif word == "yoe":
                         # Look before the word "YoE" to find if there is a number
-                        number_limit = low = max(0, i-number_threshold)
+                        number_limit = max(0, i-number_threshold)
                         for j in range(i, number_limit, -1):
                                 if desc_list[j].isnumeric():
                                         num = int(desc_list[j])
