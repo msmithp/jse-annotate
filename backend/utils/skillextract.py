@@ -174,7 +174,6 @@ def experience_extract(job_desc: str) -> int:
                                 # Read in numbers, if any
                                 while j >= 0 and job_desc[j].isnumeric():
                                         prev = job_desc[j] + prev
-                                        # prev_index -= 1
                                         j -= 1
 
                                 prev_index = j

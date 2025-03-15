@@ -1,48 +1,26 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import DropdownList from "../components/DropdownList";
-
-
-// Placeholder data
-const locationValues = [
-    {id: 0, name: "Maryland"}, {id: 1, name: "Virginia"},
-    {id: 2, name: "Pennsylvania"}, {id: 3, name: "West Virginia"},
-    {id: 4, name: "Delaware"}
-].sort((x, y) => {return x.name.charCodeAt(0) - y.name.charCodeAt(0)})
-const educationValues = [
-    {id: 0, level: "Less than high school"},
-    {id: 1, level: "High school diploma"},
-    {id: 2, level: "Associate's degree"},
-    {id: 3, level: "Bachelor's degree"},
-    {id: 4, level: "Master's degree"},
-    {id: 5, level: "Doctorate degree or higher"}
-]
-const skillValues = {
-    "Programming Languages": [
-        {id: 0, name: "Python"}, {id: 1, name: "Java"},
-        {id: 2, name: "C"}, {id: 3, name: "C++"}, {id: 4, name: "JavaScript"}
-    ], "Web Frameworks": [
-        {id: 5, name: "Django"}, {id: 6, name: "React"}, {id: 7, name: "Node.js"},
-        {id: 8, name: "Angular.js"}, {id: 9, name: "Express.js"}
-    ], "Cloud Computing Platforms": [
-        {id: 10, name: "Amazon Web Services (AWS)"},
-        {id: 11, name: "Google Cloud Platform (GCP)"},
-        {id: 12, name: "Microsoft Azure"}
-    ]
-};
+import { useStaticData } from "../context/StaticDataProvider";
 
 
 interface JobSearchFormProps {
     onSubmit: (
-        location: number, education: number,
+        location: number, education: string,
         experience: number, skills: number[]
     ) => void
 }
 
 function JobSearchForm({ onSubmit }: JobSearchFormProps) {
+    // Get static data (states, education levels, and skills)
+    const staticData = useStaticData();
+    const locationValues = staticData.states;
+    const educationValues = staticData.eduLevels;
+    const skillValues = staticData.skills;
+
     // State variables
     const [location, setLocation] = useState(-1);
-    const [education, setEducation] = useState(-1);
+    const [education, setEducation] = useState("none");
     const [experience, setExperience] = useState(0);
     const [skills, setSkills] = useState([-1]);
 
@@ -72,7 +50,7 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
     );
 
     const educationOptions = educationValues.map(edu =>
-        <option key={edu.id} value={edu.id}>{edu.level}</option>
+        <option key={edu.value} value={edu.value}>{edu.level}</option>
     );
 
     return (
@@ -100,9 +78,9 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
                     value={education}
                     onChange={e => {
                         e.preventDefault();
-                        setEducation(Number(e.currentTarget.value));
+                        setEducation(e.currentTarget.value);
                     }}>
-                    <option disabled key={-1} value={-1}>
+                    <option disabled key={-1} value={"none"}>
                         Select an education level
                     </option>
                     {educationOptions}
@@ -147,7 +125,7 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
 
 
 function JobSearch() {
-    function handleJobSearch(location: number, education: number,
+    function handleJobSearch(location: number, education: string,
         experience: number, skills: number[]): void {
             console.log("Location: " + location 
                 + "\nEducation: " + education + "\nExperience: "

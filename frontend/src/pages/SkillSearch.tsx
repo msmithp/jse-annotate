@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { SkillSearchMap } from "../components";
 
 
 // Placeholder data
@@ -33,7 +34,7 @@ function SkillSearchForm({ onUpdate }: SkillSearchFormProps) {
                     setLocation(Number(e.currentTarget.value));
                     onUpdate(Number(e.currentTarget.value))
                 }}>
-                <option>Select a state:</option>
+                <option disabled key={-1} value={-1}>Select a state:</option>
                 {locationOptions}
             </select>
         </div>
@@ -50,6 +51,7 @@ function SkillSearch() {
         <div>
             <h1>Skill search page</h1>
             <SkillSearchForm onUpdate={handleSkillSearch} />
+            {/* <SkillSearchMap /> */}
         </div>
     )
 }

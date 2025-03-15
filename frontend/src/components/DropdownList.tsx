@@ -2,11 +2,13 @@ import Dropdown from "./Dropdown"
 
 
 interface DropdownListProps {
-    // Format of `values`: {category, [list_of_skill_dictionaries]}
-    values: {[category: string]: {
-        id: number,
-        name: string
-    }[]},
+    values: {
+        category: string,
+        skills: {
+            id: number,
+            name: string
+        }[]
+    }[],
     selections: number[],
     onChange: (index: number, value: number) => void,
     onRemove: (index: number) => void

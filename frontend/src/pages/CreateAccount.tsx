@@ -4,19 +4,30 @@ import DropdownList from "../components/DropdownList";
 
 
 // Placeholder data
-const values = {
-    "Programming Languages": [
-        {id: 0, name: "Python"}, {id: 1, name: "Java"},
-        {id: 2, name: "C"}, {id: 3, name: "C++"}, {id: 4, name: "JavaScript"}
-    ], "Web Frameworks": [
-        {id: 5, name: "Django"}, {id: 6, name: "React"}, {id: 7, name: "Node.js"},
-        {id: 8, name: "Angular.js"}, {id: 9, name: "Express.js"}
-    ], "Cloud Computing Platforms": [
-        {id: 10, name: "Amazon Web Services (AWS)"},
-        {id: 11, name: "Google Cloud Platform (GCP)"},
-        {id: 12, name: "Microsoft Azure"}
-    ]
-};
+const skillValues = [
+    {
+        category: "Programming Languages",
+        skills: [
+            {id: 0, name: "Python"}, {id: 1, name: "Java"},
+            {id: 2, name: "C"}, {id: 3, name: "C++"}, {id: 4, name: "JavaScript"}
+        ]
+    },
+    {
+        category: "Web Frameworks",
+        skills: [
+            {id: 5, name: "Django"}, {id: 6, name: "React"}, {id: 7, name: "Node.js"},
+            {id: 8, name: "Angular.js"}, {id: 9, name: "Express.js"}
+        ]
+    },
+    {
+        category: "Cloud Computing Platforms",
+        skills: [
+            {id: 10, name: "Amazon Web Services (AWS)"},
+            {id: 11, name: "Google Cloud Platform (GCP)"},
+            {id: 12, name: "Microsoft Azure"}
+        ]
+    }
+]
 
 interface CreateAccountFormProps {
     onSubmit: (username: string, password: string, skills: number[]) => void
@@ -73,7 +84,7 @@ function CreateAccountForm({ onSubmit }: CreateAccountFormProps) {
             <label>
                 <p>Skills:</p>
                 <DropdownList
-                    values={values}
+                    values={skillValues}
                     selections={skills}
                     onChange={handleDropdownChange}
                     onRemove={handleRemoveDropdown} />

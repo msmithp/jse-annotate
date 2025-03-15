@@ -4,10 +4,13 @@ import { useState } from "react";
 
 export interface DropdownProps {
     // Format of `values`: {category, [list_of_skill_dictionaries]}
-    values: {[category: string]: {
-        id: number,
-        name: string
-    }[]},
+    values: {
+        category: string,
+        skills: {
+            id: number,
+            name: string
+        }[]
+    }[],
     selected: number,
     onChange: (id: number) => void
 }
@@ -25,10 +28,10 @@ function Dropdown({ values, selected, onChange }: DropdownProps) {
 
     // Create dropdown options
     // Iterate through each skill category:
-    const options = Object.keys(values).map(category => 
-        <optgroup label={category} key={"category-" + category}>
+    const options = values.map(category => 
+        <optgroup label={category.category} key={"category-" + category.category}>
             {/* Iterate through each skill in this category: */}
-            {values[category].map(skill =>
+            {category.skills.map(skill =>
                 <option key={skill.id} value={skill.id}>{skill.name}</option>
             )}
         </optgroup>

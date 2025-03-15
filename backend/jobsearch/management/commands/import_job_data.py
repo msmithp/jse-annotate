@@ -1,6 +1,6 @@
 import csv
 from django.core.management.base import BaseCommand
-from jobsearch.models import Job, Skill
+from jobsearch.models import Job
 from utils.process_job import process_job
 
 class Command(BaseCommand):
@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
             for row in reader:
                 job_and_skill = process_job(row)
-                
+
                 jobs_and_skills.append(job_and_skill)
                 jobs.append(job_and_skill[0])
 
