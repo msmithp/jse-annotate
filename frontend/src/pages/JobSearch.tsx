@@ -1,6 +1,6 @@
 import React from "react";
-import { useState, useContext } from "react";
-import DropdownList from "../components/DropdownList";
+import { useState } from "react";
+import { DropdownList, JobList } from "../components";
 import { useStaticData } from "../context/StaticDataProvider";
 
 
@@ -9,7 +9,7 @@ interface JobSearchFormProps {
         location: number, education: string,
         experience: number, skills: number[]
     ) => void
-}
+};
 
 function JobSearchForm({ onSubmit }: JobSearchFormProps) {
     // Get static data (states, education levels, and skills)
@@ -123,21 +123,75 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
     )
 }
 
+interface Job {
+    id: number,
+    title: string,
+    company: string,
+    cityName: string,
+    stateCode: string,
+    description: string,
+    minSalary: number,
+    maxSalary: number,
+    link: string,
+    score: number,
+    skills: string[],
+    education: string,
+    yearsExperience: number
+}
 
 function JobSearch() {
+    const [jobs, setJobs] = useState<Job[]>([]);
+
     function handleJobSearch(location: number, education: string,
         experience: number, skills: number[]): void {
             console.log("Location: " + location 
                 + "\nEducation: " + education + "\nExperience: "
                 + experience + "\nSkills: " + skills);
 
-            // Redirect to job search results
-        }
+        // Set resulting jobs by retrieving job data from the back-end
+        setJobs([
+            {
+                id: 0,
+                title: "Job title",
+                company: "The Company",
+                cityName: "The City",
+                stateCode: "MD",
+                description: "Do stuff at The Company",
+                minSalary: 12345,
+                maxSalary: 23456,
+                link: "www.google.com",
+                score: 89,
+                skills: ["Python", "Java", "Google Cloud Platform"],
+                education: "bachelor",
+                yearsExperience: 3
+            },
+            {
+                id: 1,
+                title: "Job title 2",
+                company: "The Other Company",
+                cityName: "The Other City",
+                stateCode: "VA",
+                description: "Do stuff at The Other Company",
+                minSalary: 120000,
+                maxSalary: 150000,
+                link: "www.google.com",
+                score: 93,
+                skills: ["C++", "Java", "Google Cloud Platform"],
+                education: "",
+                yearsExperience: 0
+            }
+        ])
+    }
 
     return (
         <div>
             <h1>Search Jobs</h1>
             <JobSearchForm onSubmit={handleJobSearch} />
+            { jobs.length == 0 ?
+                <></>
+            :
+                <JobList jobs={jobs} />
+            }
         </div>
     )
 }
