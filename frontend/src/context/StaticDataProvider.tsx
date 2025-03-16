@@ -1,5 +1,6 @@
 import React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 // Placeholder data
 const locationValues = [
@@ -75,11 +76,22 @@ export default function StaticDataProvider({ children }: StaticDataProviderProps
     const [states, setStates] = useState<State[]>([]);
 
     useEffect(() => {
-        // Fetch skill and state data from back-end... eventually
-        setSkills(skillValues);
-        setStates(locationValues.sort((x, y) => {
-            return x.name.charCodeAt(0) - y.name.charCodeAt(0)}
-        ));
+        // Fetch skill and state data from back-end on app load
+        let ignore = false;
+        setSkills([]);
+        setStates([]);
+
+        axios.get("http://127.0.0.1:8000/api/get-static-data/")
+        .then(res => {
+            if (!ignore) {
+                setSkills(res.data.skills);
+                setStates(res.data.states);
+            }
+        });
+
+        return () => {
+            ignore = true;
+        }
     }, []);
 
     const data = {
