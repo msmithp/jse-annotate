@@ -77,7 +77,9 @@ export default function StaticDataProvider({ children }: StaticDataProviderProps
     useEffect(() => {
         // Fetch skill and state data from back-end... eventually
         setSkills(skillValues);
-        setStates(locationValues);
+        setStates(locationValues.sort((x, y) => {
+            return x.name.charCodeAt(0) - y.name.charCodeAt(0)}
+        ));
     }, []);
 
     const data = {
