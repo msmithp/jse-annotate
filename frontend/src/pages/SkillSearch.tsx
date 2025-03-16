@@ -1,25 +1,32 @@
 import React from "react";
 import { useState } from "react";
-import { SkillSearchMap } from "../components";
+import { SkillSearchMap, SkillChart } from "../components";
+import { useStaticData } from "../context/StaticDataProvider";
 
+// Temporary data
+let tempData = [
+    {id: 0, skillName: "Python", occurrences: 280},
+    {id: 1, skillName: "Java", occurrences: 20},
+    {id: 2, skillName: "JavaScript", occurrences: 300},
+    {id: 3, skillName: "C++", occurrences: 135},
+    {id: 4, skillName: "C", occurrences: 1}
+];
 
-// Placeholder data
-const locationValues = [
-    {id: 0, name: "Maryland"}, {id: 1, name: "Virginia"},
-    {id: 2, name: "Pennsylvania"}, {id: 3, name: "West Virginia"},
-    {id: 4, name: "Delaware"}
-].sort((x, y) => {return x.name.charCodeAt(0) - y.name.charCodeAt(0)});
 
 interface SkillSearchFormProps {
-    onUpdate: (location: number) => void
+    onUpdate: (stateID: number) => void
 }
 
 function SkillSearchForm({ onUpdate }: SkillSearchFormProps) {
+    // Get static data (states)
+    const staticData = useStaticData();
+    const stateValues = staticData.states;
+
     // State variables
-    const [location, setLocation] = useState(-1);
+    const [state, setState] = useState(-1);
 
     // Create dropdown options
-    const locationOptions = locationValues.map(loc =>
+    const locationOptions = stateValues.map(loc =>
         <option key={loc.id} value={loc.id}>{loc.name}</option>
     );
 
@@ -28,10 +35,10 @@ function SkillSearchForm({ onUpdate }: SkillSearchFormProps) {
             <p>Select a state</p>
             <select
                 required
-                value={location}
+                value={state}
                 onChange={e => {
                     e.preventDefault();
-                    setLocation(Number(e.currentTarget.value));
+                    setState(Number(e.currentTarget.value));
                     onUpdate(Number(e.currentTarget.value))
                 }}>
                 <option disabled key={-1} value={-1}>Select a state:</option>
@@ -41,16 +48,30 @@ function SkillSearchForm({ onUpdate }: SkillSearchFormProps) {
     )
 }
 
+interface SkillData {
+    id: number;
+    skillName: string;
+    occurrences: number;
+}
 
 function SkillSearch() {
-    function handleSkillSearch(location: number) {
-        console.log("Location: " + location)
+    const [skillData, setSkillData] = useState<SkillData[]>(tempData);
+
+    function handleSkillSearch(stateID: number) {
+        console.log("State: " + stateID);
+        setSkillData(
+            skillData.map((skill) => {
+                return {id: skill.id, skillName: skill.skillName, occurrences: Math.floor(Math.random() * 300)}
+            })
+        );
+        
     }
 
     return (
         <div>
             <h1>Skill search page</h1>
             <SkillSearchForm onUpdate={handleSkillSearch} />
+            <SkillChart skillData={skillData} />
             {/* <SkillSearchMap /> */}
         </div>
     )
