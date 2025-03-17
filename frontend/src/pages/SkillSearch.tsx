@@ -70,8 +70,10 @@ function SkillSearch() {
             { skillData.length === 0 ?
                 <></>
             :
-                <SkillChart skillData={skillData} />
-                //<SkillSearchMap />
+                <div>
+                    <SkillChart skillData={skillData} />
+                    {/* <SkillSearchMap /> */}
+                </div>
             }
         </div>
     )
