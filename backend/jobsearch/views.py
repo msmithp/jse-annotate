@@ -11,13 +11,11 @@ def skill_search(request, userState): #assume userState is the state's id
     #Output: JSON dictionary containing the following: List of skills, each with an associated integer representing the number of descriptions that mention that skill
     #for each skill in db
         #find all jobs requiring that skill within specified state
-    skillSet = Skill.objects.values_list('skill_name', flat=True)
-    counts = []
-    for skill in skillSet:
-        jobList = [Job.objects.filter(Job.skills==skill, Job.city==City, City.county==County, County.state==State, State.pk==userState).values(Job.pk)]
-        counts.append(len(jobList))
-        
-    skill_counts = dict(zip(skillSet, counts))
+    skillSet = Skill.objects.all()
+    skill_counts = []
+    for item in skillSet:
+        jobList = [Job.objects.filter(Job.skills==item, Job.city==City, City.county==County, County.state==State, State.pk==userState).values(Job.pk)]
+        skill_counts.append({'id': item.pk, 'name': item.skill_name, 'occurrences': len(jobList)})
 
     return JsonResponse({'skill counts': skill_counts})
 
@@ -28,11 +26,14 @@ def job_search(request, skillSet, edu, yearsExp, userState): #assume userState i
     jobList = []
     jobs = Job.objects.filter(Job.city==City, City.county==County, County.state==State, State==userState)
     for job in jobs:
+        state = Job.objects.filter(job.city==City, City.county==County, County.state==State, State==userState).values(State.state_name)
         reqSkills = list(job.skills)
         reqEdu = string(job.education)
         reqYears = int(job.years_exp)
         score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
-        jobList.append({job.job_name, job.city, job.job_desc, job.min_sal, job.url, job.company, score})
+        jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city, 'stateName': state, 'description': job.job_desc,
+                        'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': job.skills,
+                        'education': job.education, 'yearsExperience': job.years_exp })
 
     return JsonResponse({'jobs': jobList})
 
