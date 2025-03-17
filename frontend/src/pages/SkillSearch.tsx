@@ -65,7 +65,7 @@ function SkillSearch() {
 
     return (
         <div>
-            <h1>Skill search page</h1>
+            <h1>Find in-demand skills</h1>
             <SkillSearchForm onUpdate={handleSkillSearch} />
             { skillData.length === 0 ?
                 <></>

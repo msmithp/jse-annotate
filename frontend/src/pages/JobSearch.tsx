@@ -171,7 +171,7 @@ function JobSearch() {
 
     return (
         <div>
-            <h1>Search Jobs</h1>
+            <h1>Search jobs</h1>
             <JobSearchForm onSubmit={handleJobSearch} />
             { jobs.length === 0 ?
                 <></>

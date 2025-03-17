@@ -1,39 +1,20 @@
 import React from "react";
 import { useState } from "react";
 import DropdownList from "../components/DropdownList";
+import { useStaticData } from "../context/StaticDataProvider";
 
-
-// Placeholder data
-const skillValues = [
-    {
-        category: "Programming Languages",
-        skills: [
-            {id: 0, name: "Python"}, {id: 1, name: "Java"},
-            {id: 2, name: "C"}, {id: 3, name: "C++"}, {id: 4, name: "JavaScript"}
-        ]
-    },
-    {
-        category: "Web Frameworks",
-        skills: [
-            {id: 5, name: "Django"}, {id: 6, name: "React"}, {id: 7, name: "Node.js"},
-            {id: 8, name: "Angular.js"}, {id: 9, name: "Express.js"}
-        ]
-    },
-    {
-        category: "Cloud Computing Platforms",
-        skills: [
-            {id: 10, name: "Amazon Web Services (AWS)"},
-            {id: 11, name: "Google Cloud Platform (GCP)"},
-            {id: 12, name: "Microsoft Azure"}
-        ]
-    }
-]
 
 interface CreateAccountFormProps {
     onSubmit: (username: string, password: string, skills: number[]) => void
 }
 
 function CreateAccountForm({ onSubmit }: CreateAccountFormProps) {
+    // Get static data (states, education levels, and skills)
+    const staticData = useStaticData();
+    const locationValues = staticData.states;
+    const educationValues = staticData.eduLevels;
+    const skillValues = staticData.skills;
+
     // State variables
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -107,8 +88,6 @@ function CreateAccount() {
 
         // TODO: Redirect user to login page after account creation
     }
-
-    // TODO: pull skills from back-end
 
     return (
         <div>
