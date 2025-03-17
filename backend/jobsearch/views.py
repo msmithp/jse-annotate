@@ -8,17 +8,19 @@ import string
 
 # Create your views here.
 
-def skill_search(request, userState): #assume userState is the state's id
+def skill_search(request): #assume userState is the state's id
     #Output: JSON dictionary containing the following: List of skills, each with an associated integer representing the number of descriptions that mention that skill
     #for each skill in db
         #find all jobs requiring that skill within specified state
+    userState = request.GET.get("stateID")
+
     skillSet = Skill.objects.all()
     skill_counts = []
     for item in skillSet:
         jobList = [Job.objects.filter(Job.skills==item, Job.city==City, City.county==County, County.state==State, State.pk==userState).values(Job.pk)]
         skill_counts.append({'id': item.pk, 'name': item.skill_name, 'occurrences': len(jobList)})
 
-    return JsonResponse({'skill counts': skill_counts})
+    return JsonResponse({'skills': skill_counts, 'counties': []})
 
     #After midterm: Dictionary of U.S. states, where each state is a dictionary of (county, most_common_skill) pairs
 

@@ -2,15 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { SkillSearchMap, SkillChart } from "../components";
 import { useStaticData } from "../context/StaticDataProvider";
-
-// Temporary data
-let tempData = [
-    {id: 0, skillName: "Python", occurrences: 280},
-    {id: 1, skillName: "Java", occurrences: 20},
-    {id: 2, skillName: "JavaScript", occurrences: 300},
-    {id: 3, skillName: "C++", occurrences: 135},
-    {id: 4, skillName: "C", occurrences: 1}
-];
+import axios from "axios";
 
 
 interface SkillSearchFormProps {
@@ -55,24 +47,27 @@ interface SkillData {
 }
 
 function SkillSearch() {
-    const [skillData, setSkillData] = useState<SkillData[]>(tempData);
+    const [skillData, setSkillData] = useState<SkillData[]>([]);
 
     function handleSkillSearch(stateID: number) {
-        // Eventually: call back-end to retrieve skill data for this state
+        // Call back-end to retrieve skill data for this state
         // and assign it to skillData using setSkillData()
-        console.log("State: " + stateID);
-        setSkillData(
-            skillData.map((skill) => {
-                return {id: skill.id, skillName: skill.skillName, occurrences: Math.floor(Math.random() * 300)}
-            })
-        );
+        const params = {
+            stateID: stateID
+        }
+
+        axios.get("http://127.0.0.1:8000/api/skill-search/", {params: params})
+        .then((res) => {
+            setSkillData(res.data.skills);
+        })
+        .catch((err) => console.log(err));
     }
 
     return (
         <div>
             <h1>Skill search page</h1>
             <SkillSearchForm onUpdate={handleSkillSearch} />
-            { skillData.length == 0 ?
+            { skillData.length === 0 ?
                 <></>
             :
                 <SkillChart skillData={skillData} />

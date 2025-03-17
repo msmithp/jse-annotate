@@ -36,7 +36,7 @@ function JobCard({ title, cityName, stateCode, description, minSalary,
         let skillString = ""
         for (let i = 0; i < skills.length; i++) {
             skillString += skills[i];
-            if (i != skills.length - 1) {
+            if (i !== skills.length - 1) {
                 skillString += ", ";
             }
         }

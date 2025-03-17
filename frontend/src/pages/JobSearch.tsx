@@ -150,38 +150,6 @@ function JobSearch() {
                 + experience + "\nSkills: " + skills);
 
         // Set resulting jobs by retrieving job data from the back-end
-        // setJobs([
-        //     {
-        //         id: 0,
-        //         title: "Job title",
-        //         company: "The Company",
-        //         cityName: "The City",
-        //         stateCode: "MD",
-        //         description: "Do stuff at The Company",
-        //         minSalary: 12345,
-        //         maxSalary: 23456,
-        //         link: "www.google.com",
-        //         score: 89,
-        //         skills: ["Python", "Java", "Google Cloud Platform"],
-        //         education: "bachelor",
-        //         yearsExperience: 3
-        //     },
-        //     {
-        //         id: 1,
-        //         title: "Job title 2",
-        //         company: "The Other Company",
-        //         cityName: "The Other City",
-        //         stateCode: "VA",
-        //         description: "Do stuff at The Other Company",
-        //         minSalary: 120000,
-        //         maxSalary: 150000,
-        //         link: "www.google.com",
-        //         score: 93,
-        //         skills: ["C++", "Java", "Google Cloud Platform"],
-        //         education: "",
-        //         yearsExperience: 0
-        //     }
-        // ])
         setJobs([]);
 
         const params = {
@@ -193,6 +161,9 @@ function JobSearch() {
 
         axios.post("http://127.0.0.1:8000/api/job-search/", {params: params})
         .then((res) => {
+            const jobData: Job[] = res.data.jobs;
+            // Sort job data in decreasing order by compatibility score
+            jobData.sort((x, y) => {return y.score - x.score});
             setJobs(res.data.jobs);
         })
         .catch((err) => console.log(err));
@@ -202,7 +173,7 @@ function JobSearch() {
         <div>
             <h1>Search Jobs</h1>
             <JobSearchForm onSubmit={handleJobSearch} />
-            { jobs.length == 0 ?
+            { jobs.length === 0 ?
                 <></>
             :
                 <JobList jobs={jobs} />

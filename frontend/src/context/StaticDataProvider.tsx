@@ -2,12 +2,6 @@ import React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
-// Placeholder data
-const locationValues = [
-    {id: 0, name: "Maryland"}, {id: 1, name: "Virginia"},
-    {id: 2, name: "Pennsylvania"}, {id: 3, name: "West Virginia"},
-    {id: 4, name: "Delaware"}
-].sort((x, y) => {return x.name.charCodeAt(0) - y.name.charCodeAt(0)})
 const educationValues = [
     {value: "", level: "Less than high school"},
     {value: "high_school", level: "High school diploma"},
@@ -15,30 +9,6 @@ const educationValues = [
     {value: "bachelor", level: "Bachelor's degree"},
     {value: "master", level: "Master's degree"},
     {value: "doctorate", level: "Doctorate degree or higher"}
-]
-const skillValues = [
-    {
-        category: "Programming Languages",
-        skills: [
-            {id: 0, name: "Python"}, {id: 1, name: "Java"},
-            {id: 2, name: "C"}, {id: 3, name: "C++"}, {id: 4, name: "JavaScript"}
-        ]
-    },
-    {
-        category: "Web Frameworks",
-        skills: [
-            {id: 5, name: "Django"}, {id: 6, name: "React"}, {id: 7, name: "Node.js"},
-            {id: 8, name: "Angular.js"}, {id: 9, name: "Express.js"}
-        ]
-    },
-    {
-        category: "Cloud Computing Platforms",
-        skills: [
-            {id: 10, name: "Amazon Web Services (AWS)"},
-            {id: 11, name: "Google Cloud Platform (GCP)"},
-            {id: 12, name: "Microsoft Azure"}
-        ]
-    }
 ]
 
 interface Skill {
@@ -109,7 +79,7 @@ export default function StaticDataProvider({ children }: StaticDataProviderProps
 
 export function useStaticData() {
     const context = useContext(StaticDataContext);
-    if (context == undefined) {
+    if (context === undefined) {
         throw new Error("useStaticData must be used within a StaticDataProvider")
     }
 
