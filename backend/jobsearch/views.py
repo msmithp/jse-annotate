@@ -3,6 +3,7 @@ from django.http import JsonResponse
 import json
 from .models import Skill, Job, City, County, State
 from utils.calc_compatibility import calculate_compatibility
+from django.views.decorators.csrf import csrf_exempt
 import string
 
 # Create your views here.
@@ -21,8 +22,14 @@ def skill_search(request, userState): #assume userState is the state's id
 
     #After midterm: Dictionary of U.S. states, where each state is a dictionary of (county, most_common_skill) pairs
 
-def job_search(request, skillSet, edu, yearsExp, userState): #assume userState is the state's id
+@csrf_exempt
+def job_search(request): #assume userState is the state's id
     #Output: JSON dictionary consisting of a list of jobs. Each job should itself be a Python dictionary consisting of the title, location, description, salary, link to apply, and compatibility score.
+    skillSet = request.POST.get("skills")
+    edu = request.POST.get("education")
+    yearsExp = request.POST.get("yearsExperience")
+    userState = request.POST.get("stateID")
+
     jobList = []
     jobs = Job.objects.filter(Job.city==City, City.county==County, County.state==State, State==userState)
     for job in jobs:
