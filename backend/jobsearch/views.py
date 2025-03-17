@@ -59,4 +59,4 @@ def get_static_data(request):
 
 
     #output:
-    return JsonResponse({'skill values': skillValues, 'location values': locationValues})
+    return JsonResponse({'skills': skillValues, 'states': locationValues})
