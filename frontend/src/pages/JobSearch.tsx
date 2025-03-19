@@ -159,7 +159,7 @@ function JobSearch() {
             skills: skills
         }
 
-        axios.post("http://127.0.0.1:8000/api/job-search/", {params: params})
+        axios.get("http://127.0.0.1:8000/api/job-search/", {params: params})
         .then((res) => {
             const jobData: Job[] = res.data.jobs;
             // Sort job data in decreasing order by compatibility score
