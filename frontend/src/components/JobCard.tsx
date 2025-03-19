@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 interface Job {
     title: string,
     company: string,
@@ -15,6 +17,10 @@ interface Job {
 
 function JobCard({ title, company, cityName, stateCode, description, minSalary,
     maxSalary, link, score, skills, education, yearsExperience }: Job) {
+    // State variables
+    const [showMore, setShowMore] = useState(false);
+
+    /** Convert an education level to a display-ready string */
     function mapEducation(education: string): string {
         switch(education) {
             case "high_school":
@@ -63,7 +69,7 @@ function JobCard({ title, company, cityName, stateCode, description, minSalary,
      *  comma-formatted numbers */
     function mapSalary(minSalary: number, maxSalary: number): string {
         if (minSalary < 1 && maxSalary < 1) {
-            return "Not specified";
+            return "None specified";
         } else {
             return "$" + Math.floor(minSalary).toLocaleString() 
                        + " - $" + Math.floor(maxSalary).toLocaleString();
@@ -80,7 +86,26 @@ function JobCard({ title, company, cityName, stateCode, description, minSalary,
             <p>{mapYearsExperience(yearsExperience)}</p>
             <p>Education requirement: {mapEducation(education)}</p>
             <p>Prerequisite skills: {mapSkills(skills)}</p>
-            <span style={{whiteSpace: "pre-line"}}>{description}</span>
+            {description === "" ? 
+                <></>
+            :
+            <span style={{whiteSpace: "pre-line"}}>
+                Description:{"\n"}
+
+                {showMore ? description : `${description.substring(0, 500)}...`}
+                <button 
+                    className="show-more-button"
+                    onClick={() => setShowMore(!showMore)}
+                    style={{backgroundColor: "transparent", 
+                            borderColor: "transparent", 
+                            color: "blue", 
+                            cursor: "pointer"
+                    }}>
+                    {showMore ? "Show less" : "Show more"}
+                </button>
+            </span>
+            }
+            
         </div>
     )
 }

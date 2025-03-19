@@ -23,7 +23,7 @@ function DropdownList({ values, selections, onChange, onRemove }: DropdownListPr
     }
 
     const dropdownElements = selections.map((selection, i) =>
-        <div key={i}>
+        <div key={i} style={{display: "flex"}}>
             <Dropdown
                 key={selection}
                 values={values}
@@ -34,7 +34,8 @@ function DropdownList({ values, selections, onChange, onRemove }: DropdownListPr
                 onClick={e => {
                     e.preventDefault();
                     onRemove(i);
-                }}>Delete</button>
+                }}
+                >Delete</button>
         </div>
     )
 
