@@ -6,14 +6,21 @@ import axios from "axios";
 
 
 function orderJobs(job1: Job, job2: Job): number {
-    // Higher scores first
+    // Higher compatibility scores first
     if (job1.score > job2.score) {
         return -1;
     } else if (job1.score < job2.score) {
         return 1;
     }
 
-    // Lower names first (e.g., "a" comes before "z")
+    // Then higher salaries first
+    if (job1.minSalary > job2.minSalary) {
+        return -1;
+    } else if (job1.minSalary < job2.minSalary) {
+        return 1;
+    }
+
+    // Then alphabetical
     if (job1.title > job2.title) {
         return 1;
     } else if (job1.title < job2.title) {

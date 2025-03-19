@@ -19,7 +19,10 @@ def calculate_compatibility(userSkills, userEdu, userYears, reqSkills, reqEdu, r
 
 def calc_skills(userSkills, reqSkills):
     #calculate score for skills
-    jobSkillPoints = len(reqSkills) + 2
+    if len(reqSkills) == 0:
+        return 1
+
+    jobSkillPoints = len(reqSkills)
     userSkillPoints = 0
     for skill in reqSkills:
         if skill in userSkills:
