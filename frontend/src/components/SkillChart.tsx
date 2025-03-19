@@ -17,8 +17,12 @@ interface SkillChartProps {
 }
 
 function SkillChart({ skillData } : SkillChartProps) {
-    // Sort skill data by number of occurrences
-    skillData.sort((x, y) => {return x.occurrences - y.occurrences});
+    // Sort skill data in decreasing order by number of occurrences
+    skillData.sort((x, y) => {return y.occurrences - x.occurrences});
+
+    // Take the top 10, then reverse it so it is sorted from least to greatest
+    const numSkills = skillData.length;
+    skillData = skillData.slice(0, Math.min(numSkills, 10)).reverse();
 
     const values = skillData.map(skill => {
         return skill.occurrences;

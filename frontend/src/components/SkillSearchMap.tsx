@@ -1,9 +1,11 @@
 import React from "react";
-import { MapContainer, TileLayer, useMap, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import Leaflet from "leaflet";
+import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
 
-
+// Placeholder data
 const countySkills = {
     state: {
         stateID: 0,
@@ -49,7 +51,10 @@ function SkillSearchMap() {
             return {};
         }
 
+        // Default values for counties outside of the current state
         let fill = "gray";
+        let stroke = "";
+        let weight = 0.5;
 
         // Check if this county is in the current state
         if (feature.properties.STATECODE == countySkills.state.stateCode) {
@@ -66,20 +71,55 @@ function SkillSearchMap() {
                 // If this skill is not in the color dictionary, assign it a
                 // new color from the colors list and add it to the dictionary
                 colorDict[skillID] = colors[colorIdx];
+
+                // Increment index so next new skill will take a different color
                 colorIdx = (colorIdx + 1) % colors.length;
             }
 
+            // Update properties for county in this state
             fill = colorDict[skillID];
+            stroke = "white";
+            weight = 2;
         }
         
         return {
             fillColor: fill,
-            weight: 1,
+            weight: weight,
             opacity: 1,
-            color: 'white',
-            dashArray: '3',
+            color: stroke,
+            dashArray: "5",
             fillOpacity: 0.7,
           };
+    }
+
+    function onEachFeature(feature: GeoJSON.Feature, layer: Leaflet.Layer) {
+        function highlightFeature(e: Leaflet.LayerEvent) {
+            let currentLayer = e.target;
+
+            currentLayer.setStyle({
+                color: "white",
+                dashArray: "",
+                weight: 3,
+            })
+            
+            currentLayer.bringToFront();
+        }
+
+        function resetHighlight(e: Leaflet.LayerEvent) {
+            let currentLayer = e.target;
+
+            // Reset layer's style back to the default
+            // TODO: This is too computationally expensive, change it to just
+            // check if county is in state and set color/dashArray/weight accordingly
+            currentLayer.setStyle(style(feature))
+
+            currentLayer.bringToFront();
+        }
+
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight
+        })
     }
 
     return (
@@ -92,7 +132,7 @@ function SkillSearchMap() {
                             OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                <GeoJSON data={geoData} style={style} />
+                <GeoJSON data={geoData} style={style} onEachFeature={onEachFeature} />
             </MapContainer>
         </div>
     )

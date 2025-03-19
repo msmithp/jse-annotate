@@ -43,7 +43,7 @@ def job_search(request): #assume userState is the state's id
         reqYears = int(job.years_exp)
         score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
         reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
-        jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateName': state.state_name, 'description': job.job_desc,
+        jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateCode': state.state_code, 'description': job.job_desc,
                         'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
                         'education': job.education, 'yearsExperience': job.years_exp })
         

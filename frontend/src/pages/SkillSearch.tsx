@@ -75,6 +75,7 @@ function SkillSearch() {
                     {/* <SkillSearchMap /> */}
                 </div>
             }
+            {/* <SkillSearchMap /> */}
         </div>
     )
 }

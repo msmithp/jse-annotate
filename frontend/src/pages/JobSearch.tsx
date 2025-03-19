@@ -5,6 +5,25 @@ import { useStaticData } from "../context/StaticDataProvider";
 import axios from "axios";
 
 
+function orderJobs(job1: Job, job2: Job): number {
+    // Higher scores first
+    if (job1.score > job2.score) {
+        return -1;
+    } else if (job1.score < job2.score) {
+        return 1;
+    }
+
+    // Lower names first (e.g., "a" comes before "z")
+    if (job1.title > job2.title) {
+        return 1;
+    } else if (job1.title < job2.title) {
+        return -1;
+    } else {
+        return 0;
+    }
+}
+
+
 interface JobSearchFormProps {
     onSubmit: (
         location: number, education: string,
@@ -159,12 +178,16 @@ function JobSearch() {
             skills: skills
         }
 
-        axios.get("http://127.0.0.1:8000/api/job-search/", {params: params})
+        const headers = {
+            "Content-Type": "application/json"
+        }
+
+        axios.get("http://127.0.0.1:8000/api/job-search/", {params: params, headers: headers})
         .then((res) => {
             const jobData: Job[] = res.data.jobs;
             // Sort job data in decreasing order by compatibility score
-            jobData.sort((x, y) => {return y.score - x.score});
-            setJobs(res.data.jobs);
+            jobData.sort(orderJobs);
+            setJobs(jobData);
         })
         .catch((err) => console.log(err));
     }

@@ -13,7 +13,7 @@ interface Job {
     yearsExperience: number
 };
 
-function JobCard({ title, cityName, stateCode, description, minSalary,
+function JobCard({ title, company, cityName, stateCode, description, minSalary,
     maxSalary, link, score, skills, education, yearsExperience }: Job) {
     function mapEducation(education: string): string {
         switch(education) {
@@ -32,7 +32,12 @@ function JobCard({ title, cityName, stateCode, description, minSalary,
         }
     }
 
+    /** Convert an array of skill names to a string delimited by commas */
     function mapSkills(skills: string[]): string {
+        if (skills.length === 0) {
+            return "None specified";
+        }
+
         let skillString = ""
         for (let i = 0; i < skills.length; i++) {
             skillString += skills[i];
@@ -43,6 +48,7 @@ function JobCard({ title, cityName, stateCode, description, minSalary,
         return skillString;
     }
 
+    /** Convert a number of years of experience to a string */
     function mapYearsExperience(years: number): string {
         if (years < 1) {
             return "No prior experience requirements"
@@ -53,16 +59,28 @@ function JobCard({ title, cityName, stateCode, description, minSalary,
         }
     }
 
+    /** Convert a salary range (min and max) to a string containing rounded,
+     *  comma-formatted numbers */
+    function mapSalary(minSalary: number, maxSalary: number): string {
+        if (minSalary < 1 && maxSalary < 1) {
+            return "Not specified";
+        } else {
+            return "$" + Math.floor(minSalary).toLocaleString() 
+                       + " - $" + Math.floor(maxSalary).toLocaleString();
+        }
+    }
+
     return (
         <div>
             <h2><a href={link}>{title}</a></h2>
-            <h4>Your compatibility: {score}/100</h4>
+            <h4>{company}</h4>
+            <p>Your compatibility: <b>{Math.round(score)}/100</b></p>
             <p>{cityName}, {stateCode}</p>
-            <p>Salary: ${Math.floor(minSalary).toLocaleString()} - ${Math.floor(maxSalary).toLocaleString()}</p>
+            <p>Salary: {mapSalary(minSalary, maxSalary)}</p>
             <p>{mapYearsExperience(yearsExperience)}</p>
             <p>Education requirement: {mapEducation(education)}</p>
             <p>Prerequisite skills: {mapSkills(skills)}</p>
-            <p>{description}</p>
+            <span style={{whiteSpace: "pre-line"}}>{description}</span>
         </div>
     )
 }
