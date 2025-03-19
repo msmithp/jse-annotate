@@ -24,7 +24,7 @@ education = {
 
 # When searching for skills, we check if they are surrounded by
 # any two characters from this expression
-ignore = " !\"\'\\`()\n\t,:;=<>?./"
+ignore = " !\"\'\\`()\n\t,:;=<>?./’"
 
 # Create a skill cache so the database is hit only once when extracting
 # skills from jobs in bulk
@@ -63,7 +63,7 @@ def preprocess(job_desc: str) -> str:
         new_desc = " " + job_desc.lower() + " "
 
         # Replace characters
-        char_map = {"\n": " ", "\t": " ", "\\": ""}
+        char_map = {"\n": " ", "\t": " ", "\\": "", "’": "\'"}
         new_desc = new_desc.translate(str.maketrans(char_map))
 
         return new_desc

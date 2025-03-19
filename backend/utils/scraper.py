@@ -12,7 +12,8 @@ file_name = f"./jobs/jobs_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv"
 
 # List of job titles and keywords to search for
 titles = ["software developer", "software engineer", "data scientist", "cybersecurity", "web developer",
-          "database administrator", "systems administrator", "system administrator", "devops"]
+          "database administrator", "systems administrator", "system administrator", "devops",
+          "frontend developer", "backend developer"]
 
 
 def make_query(titles: list[str]) -> str:
