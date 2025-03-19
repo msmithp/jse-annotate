@@ -27,28 +27,27 @@ def skill_search(request): #assume userState is the state's id
 @csrf_exempt
 def job_search(request): #assume userState is the state's id
     #Output: JSON dictionary consisting of a list of jobs. Each job should itself be a Python dictionary consisting of the title, location, description, salary, link to apply, and compatibility score.
-    skillSet = request.GET.get("skills")
+    userState = request.GET.get("stateID")
     edu = request.GET.get("education")
     yearsExp = request.GET.get("yearsExperience")
-    userState = request.GET.get("stateID")
+    skillSet = request.GET.getlist("skills[]")
 
-    print(userState)
+    yearsExp = int(yearsExp)
 
     jobList = []
     jobs = list(Job.objects.filter(city__county__state=userState))
     for job in jobs:
         state = State.objects.filter(pk=userState)
-        print(job.skills)
         reqSkills = list(job.skills.values_list())
         reqEdu = job.education
         reqYears = int(job.years_exp)
         score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
-        jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city, 'stateName': state, 'description': job.job_desc,
-                        'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': job.skills,
+        reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
+        print(reqSkillsNames)
+        jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateName': state, 'description': job.job_desc,
+                        'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
                         'education': job.education, 'yearsExperience': job.years_exp })
         
-    json.dumps(jobList, indent=4)
-
     return JsonResponse({'jobs': jobList})
 
 def get_static_data(request):

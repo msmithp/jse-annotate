@@ -1,4 +1,5 @@
 education = {
+        " ": 0,
         "high_school": 0.2,
         "associate": 0.4,
         "bachelor": 0.6,
@@ -6,30 +7,51 @@ education = {
         "doctorate": 1
 }
 
-def calculate_compatibility(userSkills, reqSkills, userEdu, reqEdu, userYears, reqYears):
+def calculate_compatibility(userSkills, userEdu, userYears, reqSkills, reqEdu, reqYears):
+    #calculate score for skills
+    skillScore = calc_skills(userSkills,reqSkills)
+    eduScore = calc_edu(userEdu, reqEdu)
+    yearScore = calc_years(userYears, reqYears)
+
+    total = ((skillScore*0.25) + (eduScore*0.25) + (yearScore*0.5)) * 100
+
+    return total
+
+def calc_skills(userSkills, reqSkills):
     #calculate score for skills
     jobSkillPoints = len(reqSkills) + 2
+    userSkillPoints = 0
     for skill in reqSkills:
-        userSkillPoints = 0
         if skill in userSkills:
             userSkillPoints += 1
-    skillScore = userSkillPoints/jobSkillPoints
+    score = userSkillPoints/jobSkillPoints
+    return score
 
-    #calculate score for education
+def calc_edu(userEdu, reqEdu):
+    userEduScore = 0
+    reqEduScore = 0
+
     if userEdu in education:
         userEduScore = education[userEdu]
     if reqEdu in education:
         reqEduScore = education[reqEdu]
-    
-    tempScore = userEduScore/reqEduScore
-    if tempScore >= 1:
-        eduScore = 1
-    if tempScore < 1:
-        eduScore = tempScore
 
-    #calculate score for years of experience
-    yearScore = min((userYears / reqYears), 1)
+    if reqEduScore == 0:
+        return 1
+    else:
+        tempScore = userEduScore/reqEduScore
 
-    total = [(skillScore*0.25) + (eduScore*0.25) + (yearScore*0.5)] * 100
+        if tempScore >= 1:
+            score = 1
+        if tempScore < 1:
+            score = tempScore
 
-    return total
+    return score
+
+def calc_years(userYears, reqYears):
+    if reqYears == 0:
+        return 1
+    else:
+        score = min((userYears / reqYears), 1)
+
+    return score
