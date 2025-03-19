@@ -37,14 +37,13 @@ def job_search(request): #assume userState is the state's id
     jobList = []
     jobs = list(Job.objects.filter(city__county__state=userState))
     for job in jobs:
-        state = State.objects.filter(pk=userState)
+        state = State.objects.get(pk=userState)
         reqSkills = list(job.skills.values_list())
         reqEdu = job.education
         reqYears = int(job.years_exp)
         score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
         reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
-        print(reqSkillsNames)
-        jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateName': state, 'description': job.job_desc,
+        jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateName': state.state_name, 'description': job.job_desc,
                         'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
                         'education': job.education, 'yearsExperience': job.years_exp })
         
