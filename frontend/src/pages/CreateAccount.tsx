@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import DropdownList from "../components/DropdownList";
 import { useStaticData } from "../context/StaticDataProvider";
+import { mapDropdownSkills } from "../static/utils";
 
 
 interface CreateAccountFormProps {
@@ -65,8 +66,9 @@ function CreateAccountForm({ onSubmit }: CreateAccountFormProps) {
             <label>
                 <p>Skills:</p>
                 <DropdownList
-                    values={skillValues}
+                    values={mapDropdownSkills(skillValues)}
                     selections={skills}
+                    categories={true}
                     onChange={handleDropdownChange}
                     onRemove={handleRemoveDropdown} />
             </label>

@@ -4,18 +4,19 @@ import Dropdown from "./Dropdown"
 interface DropdownListProps {
     values: {
         category: string,
-        skills: {
+        items: {
             id: number,
             name: string
         }[]
     }[],
     selections: number[],
+    categories: boolean,
     onChange: (index: number, value: number) => void,
     onRemove: (index: number) => void
 }
 
 
-function DropdownList({ values, selections, onChange, onRemove }: DropdownListProps) {
+function DropdownList({ values, selections, categories, onChange, onRemove }: DropdownListProps) {
     // Event handlers
     function addDropdown() {
         // Append a -1 (empty dropdown) to the dropdown list
@@ -28,6 +29,7 @@ function DropdownList({ values, selections, onChange, onRemove }: DropdownListPr
                 key={selection}
                 values={values}
                 selected={selection} 
+                categories={categories}
                 onChange={id => onChange(i, id)} />
             <button 
                 key={"delete-" + selection}
@@ -45,7 +47,7 @@ function DropdownList({ values, selections, onChange, onRemove }: DropdownListPr
             <button onClick={e => {
                 e.preventDefault();
                 addDropdown();
-            }}>Add a skill</button>
+            }}>+</button>
         </div>
     )
 }

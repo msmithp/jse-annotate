@@ -57,11 +57,13 @@ function JobCard({ title, company, cityName, stateCode, description, minSalary,
     /** Convert a number of years of experience to a string */
     function mapYearsExperience(years: number): string {
         if (years < 1) {
-            return "No prior experience requirements"
+            return "No prior experience requirements";
         } else if (years >= 20) {
-            return "20+ years of experience necessary"
+            return "20+ years of experience necessary";
+        } else if (years == 1) {
+            return "1 year of experience necessary";
         } else {
-            return String(years) + " years of experience necessary"
+            return String(years) + " years of experience necessary";
         }
     }
 

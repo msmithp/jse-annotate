@@ -1,12 +1,13 @@
 import React from "react";
 import { useState } from "react";
-import { SkillSearchMap, SkillChart } from "../components";
+import { SkillSearchMap, SkillChart, DropdownList } from "../components";
 import { useStaticData } from "../context/StaticDataProvider";
+import { mapDropdownStates } from "../static/utils";
 import axios from "axios";
 
 
 interface SkillSearchFormProps {
-    onUpdate: (stateID: number) => void
+    onUpdate: (states: number[]) => void
 }
 
 function SkillSearchForm({ onUpdate }: SkillSearchFormProps) {
@@ -15,27 +16,33 @@ function SkillSearchForm({ onUpdate }: SkillSearchFormProps) {
     const stateValues = staticData.states;
 
     // State variables
-    const [state, setState] = useState(-1);
+    const [states, setStates] = useState([-1]);
 
-    // Create dropdown options
-    const locationOptions = stateValues.map(loc =>
-        <option key={loc.id} value={loc.id}>{loc.name}</option>
-    );
+    // Event handlers
+    function handleStateDropdownChange(index: number, id: number): void {
+        const updatedLocations = [...states];
+        updatedLocations[index] = id;
+        setStates(updatedLocations);
+        onUpdate(updatedLocations);
+    }
+
+    function handleRemoveStateDropdown(index: number): void {
+        const newStates = states.filter((_, i) => i !== index);
+        setStates(newStates);
+        onUpdate(newStates);
+    }
 
     return (
         <div>
-            <p>Select a state</p>
-            <select
-                required
-                value={state}
-                onChange={e => {
-                    e.preventDefault();
-                    setState(Number(e.currentTarget.value));
-                    onUpdate(Number(e.currentTarget.value))
-                }}>
-                <option disabled key={-1} value={-1}>Select a state:</option>
-                {locationOptions}
-            </select>
+            <label>
+                <p>Select states:</p>
+                    <DropdownList 
+                        values={mapDropdownStates(stateValues)}
+                        selections={states}
+                        categories={false}
+                        onChange={handleStateDropdownChange}
+                        onRemove={handleRemoveStateDropdown}/>
+            </label>
         </div>
     )
 }
@@ -49,11 +56,11 @@ interface SkillData {
 function SkillSearch() {
     const [skillData, setSkillData] = useState<SkillData[]>([]);
 
-    function handleSkillSearch(stateID: number) {
+    function handleSkillSearch(states: number[]) {
         // Call back-end to retrieve skill data for this state
         // and assign it to skillData using setSkillData()
         const params = {
-            stateID: stateID
+            states: states.filter((x) => x !== -1)
         }
 
         axios.get("http://127.0.0.1:8000/api/skill-search/", {params: params})

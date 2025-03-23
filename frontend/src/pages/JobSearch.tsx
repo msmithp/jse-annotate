@@ -2,6 +2,8 @@ import React from "react";
 import { useState } from "react";
 import { DropdownList, JobList } from "../components";
 import { useStaticData } from "../context/StaticDataProvider";
+import { Job } from "../static/types";
+import { mapDropdownSkills, mapDropdownStates } from "../static/utils";
 import axios from "axios";
 
 
@@ -33,7 +35,7 @@ function orderJobs(job1: Job, job2: Job): number {
 
 interface JobSearchFormProps {
     onSubmit: (
-        location: number, education: string,
+        location: number[], education: string,
         experience: number, skills: number[]
     ) => void
 };
@@ -46,7 +48,7 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
     const skillValues = staticData.skills;
 
     // State variables
-    const [location, setLocation] = useState(-1);
+    const [locations, setLocations] = useState([-1]);
     const [education, setEducation] = useState("none");
     const [experience, setExperience] = useState(0);
     const [skills, setSkills] = useState([-1]);
@@ -54,10 +56,10 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
     // Event handlers
     function handleSubmit(event: React.FormEvent): void {
         event.preventDefault();
-        onSubmit(location, education, experience, skills);
+        onSubmit(locations, education, experience, skills);
     }
 
-    function handleDropdownChange(index: number, id: number): void {
+    function handleSkillDropdownChange(index: number, id: number): void {
         // Copy list of dropdown selections
         const updatedSkills = [...skills];
         // Update dropdown list at index of changed dropdown
@@ -66,16 +68,22 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
         setSkills(updatedSkills);
     }
 
-    function handleRemoveDropdown(index: number): void {
+    function handleRemoveSkillDropdown(index: number): void {
         // Remove the skill at the selected index
         setSkills(skills.filter((_, i) => i !== index));
     }
 
-    // Create dropdown options
-    const locationOptions = locationValues.map(loc =>
-        <option key={loc.id} value={loc.id}>{loc.name}</option>
-    );
+    function handleStateDropdownChange(index: number, id: number): void {
+        const updatedLocations = [...locations];
+        updatedLocations[index] = id;
+        setLocations(updatedLocations);
+    }
 
+    function handleRemoveStateDropdown(index: number): void {
+        setLocations(locations.filter((_, i) => i !== index));
+    }
+
+    // Create dropdown options
     const educationOptions = educationValues.map(edu =>
         <option key={edu.value} value={edu.value}>{edu.level}</option>
     );
@@ -83,19 +91,13 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
     return (
         <form onSubmit={handleSubmit}>
             <label>
-                <p>Location:</p>
-                <select 
-                    required
-                    value={location}
-                    onChange={e => {
-                        e.preventDefault();
-                        setLocation(Number(e.currentTarget.value));
-                    }}>
-                    <option disabled key={-1} value={-1}>
-                        Select a state
-                    </option>
-                    {locationOptions}
-                </select>
+                <p>States:</p>
+                    <DropdownList 
+                        values={mapDropdownStates(locationValues)}
+                        selections={locations}
+                        categories={false}
+                        onChange={handleStateDropdownChange}
+                        onRemove={handleRemoveStateDropdown}/>
             </label>
 
             <label>
@@ -138,10 +140,11 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
             <label>
                 <p>Skills:</p>
                 <DropdownList 
-                    values={skillValues}
+                    values={mapDropdownSkills(skillValues)}
                     selections={skills}
-                    onChange={handleDropdownChange}
-                    onRemove={handleRemoveDropdown}/>
+                    categories={true}
+                    onChange={handleSkillDropdownChange}
+                    onRemove={handleRemoveSkillDropdown}/>
             </label>
             <div>
                 <button type="submit">Search jobs</button>
@@ -150,26 +153,11 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
     )
 }
 
-interface Job {
-    id: number,
-    title: string,
-    company: string,
-    cityName: string,
-    stateCode: string,
-    description: string,
-    minSalary: number,
-    maxSalary: number,
-    link: string,
-    score: number,
-    skills: string[],
-    education: string,
-    yearsExperience: number
-}
 
 function JobSearch() {
     const [jobs, setJobs] = useState<Job[]>([]);
 
-    function handleJobSearch(location: number, education: string,
+    function handleJobSearch(location: number[], education: string,
         experience: number, skills: number[]): void {
             console.log("Location: " + location 
                 + "\nEducation: " + education + "\nExperience: "

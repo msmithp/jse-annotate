@@ -1,5 +1,6 @@
 import React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
+import { Skill, State, EducationLevel } from "../static/types";
 import axios from "axios";
 
 const educationValues = [
@@ -10,24 +11,6 @@ const educationValues = [
     {value: "master", level: "Master's degree"},
     {value: "doctorate", level: "Doctorate degree or higher"}
 ]
-
-interface Skill {
-    category: string,
-    skills: {
-        id: number,
-        name: string
-    }[]
-}
-
-interface State {
-    id: number;
-    name: string;
-}
-
-interface EducationLevel {
-    value: string,
-    level: string
-}
 
 interface ContextType {
     skills: Skill[],
