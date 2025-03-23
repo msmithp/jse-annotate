@@ -42,12 +42,7 @@ def calc_edu(userEdu, reqEdu):
     if reqEduScore == 0:
         return 1
     else:
-        tempScore = userEduScore/reqEduScore
-
-        if tempScore >= 1:
-            score = 1
-        if tempScore < 1:
-            score = tempScore
+        score = min((userEduScore / reqEduScore), 1)
 
     return score
 
