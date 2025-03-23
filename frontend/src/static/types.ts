@@ -36,3 +36,15 @@ export interface Job {
     education: string,
     yearsExperience: number
 }
+
+export interface User {
+    id: number,
+    username: string,
+    state: number,
+    education: string,
+    yearsExperience: number,
+    skills: {
+        id: number,
+        name: string
+    }[]
+}

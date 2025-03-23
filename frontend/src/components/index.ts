@@ -6,3 +6,4 @@ export {default as DashboardMap} from "./DashboardMap";
 export {default as SkillChart} from "./SkillChart";
 export {default as JobList} from "./JobList";
 export {default as JobCard} from "./JobCard";
+export {default as PrivateRoute} from "./PrivateRoute";

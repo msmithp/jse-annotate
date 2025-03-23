@@ -5,7 +5,18 @@ from .models import Skill, Job, City, County, State
 from utils.calc_compatibility import calculate_compatibility
 from django.views.decorators.csrf import csrf_exempt
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+from .serializers import MyTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 # Create your views here.
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
 
 def skill_search(request): #assume userState is the state's id
     #Output: JSON dictionary containing the following: List of skills, each with an associated integer representing the number of descriptions that mention that skill
