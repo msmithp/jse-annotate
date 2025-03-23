@@ -18,3 +18,8 @@ export function mapDropdownStates(states: State[]) {
         }))
     }];
 }
+
+export function mapSkillToColor(skill: number): string {
+    const colors = ["red", "orange", "yellow", "green", "blue", "purple"];
+    return colors[skill % colors.length];
+}

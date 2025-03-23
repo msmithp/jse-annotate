@@ -1,49 +1,59 @@
 import React from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import Leaflet from "leaflet";
-import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
+import { mapSkillToColor } from "src/static/utils";
 
 // Placeholder data
-const countySkills = {
-    state: {
-        stateID: 0,
-        stateName: "Delaware",
-        stateCode: "DE"
+const stateSkills = [
+    {
+        stateData: {
+            stateID: 0,
+            stateName: "Delaware",
+            stateCode: "DE"
+        },
+        countyData: [
+            {countyID: 0, countyName: "Kent", skillID: 5, skillName: "Python"},
+            {countyID: 1, countyName: "New Castle", skillID: 6, skillName: "Go"},
+            {countyID: 2, countyName: "Sussex", skillID: 9, skillName: "Java"}
+        ]
     },
-    countyData: [
-        {countyID: 0, countyName: "Kent", skillID: 5, skillName: "Python"},
-        {countyID: 1, countyName: "New Castle", skillID: 6, skillName: "Go"},
-        {countyID: 2, countyName: "Sussex", skillID: 9, skillName: "Java"}
-    ]
-}
-
-const colors = ["red", "orange", "yellow", "green", "blue", "purple"];
+    {
+        stateData: {
+            stateID: 1,
+            stateName: "Rhode Island",
+            stateCode: "RI"
+        },
+        countyData: [
+            {countyID: 5, countyName: "Bristol", skillID: 5, skillName: "Python"},
+            {countyID: 6, countyName: "Kent", skillID: 18, skillName: "JavaScript"},
+            {countyID: 7, countyName: "Newport", skillID: 9, skillName: "Java"},
+            {countyID: 10, countyName: "Providence", skillID: 9, skillName: "Java"},
+            {countyID: 23, countyName: "Washington", skillID: 9, skillName: "Java"}
+        ]
+    }
+];
 
 interface SkillSearchMapProps {
-    state: {
-        stateID: number,
-        stateName: string,
-        stateCode: string
-    }
-    countyData: {
-        countyID: number,
-        countyName: string,
-        skillID: number,
-        skillName: string
+    states: {
+        stateData: {
+            stateID: number,
+            stateName: string,
+            stateCode: string
+        }
+        countyData: {
+            countyID: number,
+            countyName: string,
+            skillID: number,
+            skillName: string
+        }[]
     }[]
 }
 
 function SkillSearchMap() {
     // Cast geoData to FeatureCollection
     const geoData = counties as GeoJSON.FeatureCollection;
-
-    // Data on all counties in this state
-    const allCounties = countySkills.countyData;
-
-    let colorDict: { [skillName: string]: string } = {};
-    let colorIdx = 0;
 
     function style(feature: GeoJSON.Feature | undefined) {
         if (!feature || !feature.properties) {
@@ -56,28 +66,35 @@ function SkillSearchMap() {
         let stroke = "";
         let weight = 0.5;
 
-        // Check if this county is in the current state
-        if (feature.properties.STATECODE == countySkills.state.stateCode) {
-            // Name of current county (e.g., "Sussex")
-            const countyName = feature.properties.NAME;
+        // Check if this county is in the current state selection
+        let isInState = false;
+        for (let i = 0; i < stateSkills.length; i++) {
+            if (feature.properties.STATECODE === stateSkills[i].stateData.stateCode) {
+                isInState = true;
+                break;
+            }
+        }
 
+        if (isInState) {
+            // Name of current county (e.g., "Frederick")
+            const countyName = feature.properties.NAME;
+            const stateCode = feature.properties.STATECODE;
+
+            // Get data on current state
+            const currentState = stateSkills[
+                stateSkills.findIndex(item => item.stateData.stateCode === stateCode)
+            ];
+            
             // Get data on the current county
-            const county = allCounties[allCounties.findIndex(item => item.countyName === countyName)];
+            const county = currentState.countyData[
+                currentState.countyData.findIndex(item => item.countyName === countyName)
+            ];
 
             // ID of skill mapped to this county
             const skillID = county.skillID;
 
-            if (!(skillID in colorDict)) {
-                // If this skill is not in the color dictionary, assign it a
-                // new color from the colors list and add it to the dictionary
-                colorDict[skillID] = colors[colorIdx];
-
-                // Increment index so next new skill will take a different color
-                colorIdx = (colorIdx + 1) % colors.length;
-            }
-
             // Update properties for county in this state
-            fill = colorDict[skillID];
+            fill = mapSkillToColor(skillID);
             stroke = "white";
             weight = 2;
         }
