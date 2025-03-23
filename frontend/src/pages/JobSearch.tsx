@@ -157,9 +157,9 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
 function JobSearch() {
     const [jobs, setJobs] = useState<Job[]>([]);
 
-    function handleJobSearch(location: number[], education: string,
+    function handleJobSearch(locations: number[], education: string,
         experience: number, skills: number[]): void {
-            console.log("Location: " + location 
+            console.log("Locations: " + locations 
                 + "\nEducation: " + education + "\nExperience: "
                 + experience + "\nSkills: " + skills);
 
@@ -167,7 +167,7 @@ function JobSearch() {
         setJobs([]);
 
         const params = {
-            stateID: location,
+            stateID: locations,
             education: education,
             yearsExperience: experience,
             skills: skills

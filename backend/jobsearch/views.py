@@ -27,25 +27,27 @@ def skill_search(request): #assume userState is the state's id
 @csrf_exempt
 def job_search(request): #assume userState is the state's id
     #Output: JSON dictionary consisting of a list of jobs. Each job should itself be a Python dictionary consisting of the title, location, description, salary, link to apply, and compatibility score.
-    userState = request.GET.get("stateID")
+    userState = request.GET.getlist("stateID[]")
     edu = request.GET.get("education")
     yearsExp = request.GET.get("yearsExperience")
     skillSet = request.GET.getlist("skills[]")
 
     yearsExp = int(yearsExp)
+    states = State.objects.filter(pk__in=userState)
 
     jobList = []
-    jobs = list(Job.objects.filter(city__county__state=userState))
-    for job in jobs:
-        state = State.objects.get(pk=userState)
-        reqSkills = list(job.skills.values_list())
-        reqEdu = job.education
-        reqYears = int(job.years_exp)
-        score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
-        reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
-        jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateCode': state.state_code, 'description': job.job_desc,
-                        'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
-                        'education': job.education, 'yearsExperience': job.years_exp })
+    
+    for state in states:
+        jobs = list(Job.objects.filter(city__county__state=state))
+        for job in jobs:
+            reqSkills = list(job.skills.values_list())
+            reqEdu = job.education
+            reqYears = int(job.years_exp)
+            score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
+            reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
+            jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateCode': state.state_code, 'description': job.job_desc,
+                            'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
+                            'education': job.education, 'yearsExperience': job.years_exp })
         
     return JsonResponse({'jobs': jobList})
 
