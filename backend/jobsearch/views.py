@@ -4,7 +4,6 @@ import json
 from .models import Skill, Job, City, County, State
 from utils.calc_compatibility import calculate_compatibility
 from django.views.decorators.csrf import csrf_exempt
-import string
 
 # Create your views here.
 
@@ -12,13 +11,14 @@ def skill_search(request): #assume userState is the state's id
     #Output: JSON dictionary containing the following: List of skills, each with an associated integer representing the number of descriptions that mention that skill
     #for each skill in db
         #find all jobs requiring that skill within specified state
-    userState = request.GET.get("stateID")
+    userState = request.GET.getlist("states[]")
+    states = State.objects.filter(pk__in=userState)
 
     skillSet = Skill.objects.all()
     skill_counts = []
     for item in skillSet:
-        jobList = list(Job.objects.filter(skills=item, city__county__state=userState))
-        skill_counts.append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': len(jobList)})
+        numJobs = Job.objects.filter(skills=item, city__county__state__in=states).count()
+        skill_counts.append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': numJobs})
 
     return JsonResponse({'skills': skill_counts, 'counties': []})
 
