@@ -1,5 +1,5 @@
 import React from "react";
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import Leaflet from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
@@ -35,6 +35,18 @@ const stateSkills = [
     }
 ];
 
+interface InnerMapProps {
+    bounds: Leaflet.LatLngBoundsExpression
+}
+
+/** Inner map component for bounds fitting */
+function InnerMap({ bounds }: InnerMapProps) {
+    const map = useMap();
+    map.fitBounds(bounds, {padding: [20, 20]});
+
+    return null;
+}
+
 interface SkillSearchMapProps {
     states: {
         stateData: {
@@ -48,7 +60,7 @@ interface SkillSearchMapProps {
             skillID: number,
             skillName: string
         }[]
-    }[]
+    }[],
 }
 
 function SkillSearchMap() {
@@ -78,6 +90,8 @@ function SkillSearchMap() {
         if (isInState) {
             // Name of current county (e.g., "Frederick")
             const countyName = feature.properties.NAME;
+
+            // Name of current state (e.g., "MD")
             const stateCode = feature.properties.STATECODE;
 
             // Get data on current state
@@ -126,8 +140,6 @@ function SkillSearchMap() {
             let currentLayer = e.target;
 
             // Reset layer's style back to the default
-            // TODO: This is too computationally expensive, change it to just
-            // check if county is in state and set color/dashArray/weight accordingly
             currentLayer.setStyle(style(feature))
 
             currentLayer.bringToFront();
@@ -137,6 +149,72 @@ function SkillSearchMap() {
             mouseover: highlightFeature,
             mouseout: resetHighlight
         })
+    }
+
+    function getBounds(): Leaflet.LatLngBoundsExpression {
+        // Initialize to most extreme lat/lon points in America
+        let upperMost = 72;
+        let bottomMost = 18;
+        let leftMost = -177;
+        let rightMost = -67;
+
+        // Iterate through GeoJSON features
+        for (let i = 0; i < geoData.features.length; i++) {
+            const feature = geoData.features[i];
+
+            if (!feature || !feature.properties) {
+                // Skip feature if feature is undefined
+                continue;
+            }
+
+            // Check if this county is in the current state selection
+            let isInState = false;
+            for (let i = 0; i < stateSkills.length; i++) {
+                if (feature.properties.STATECODE === stateSkills[i].stateData.stateCode) {
+                    isInState = true;
+                    break;
+                }
+            }
+
+            // Only count bounds if this county is in the states we're showing
+            if (isInState) {
+                let samplePoint: number[] = [];
+
+                if (feature.geometry.type === "Polygon") {
+                    samplePoint = feature.geometry.coordinates[0][0];
+                } else if (feature.geometry.type === "MultiPolygon") {
+                    samplePoint = feature.geometry.coordinates[0][0][0];
+                }
+
+                if (samplePoint.length === 0) {
+                    // No point found, continue
+                    continue;
+                }
+
+                const lon = samplePoint[0];
+                const lat = samplePoint[1];
+
+                if (lat > bottomMost) {
+                    bottomMost = lat;
+                }
+                if (lat < upperMost) {
+                    upperMost = lat;
+                }
+                if (lon > leftMost) {
+                    leftMost = lon;
+                }
+                if (lon < rightMost) {
+                    rightMost = lon;
+                }
+            }
+        }
+        
+        const bounds: Leaflet.LatLngBoundsExpression = [
+            [bottomMost, leftMost],  // bottom left
+            [upperMost, rightMost],  // top right
+        ];
+
+        return bounds;
     }
 
     return (
@@ -150,6 +228,7 @@ function SkillSearchMap() {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
                 <GeoJSON data={geoData} style={style} onEachFeature={onEachFeature} />
+                <InnerMap bounds={getBounds()}/>
             </MapContainer>
         </div>
     )
