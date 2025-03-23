@@ -46,6 +46,7 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
     const locationValues = staticData.states;
     const educationValues = staticData.eduLevels;
     const skillValues = staticData.skills;
+    const experienceValues = staticData.experience;
 
     // State variables
     const [locations, setLocations] = useState([-1]);
@@ -88,6 +89,10 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
         <option key={edu.value} value={edu.value}>{edu.level}</option>
     );
 
+    const experienceOptions = experienceValues.map(exp =>
+        <option key={exp.id} value={exp.id}>{exp.years}</option>
+    );
+
     return (
         <form onSubmit={handleSubmit}>
             <label>
@@ -118,23 +123,15 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
 
             <label>
                 <p>Years of experience:</p>
-                <input 
+                <select
                     required
-                    type="number"
-                    defaultValue={0}
-                    min={0}
+                    value={experience}
                     onChange={e => {
-                        // Update experience with validated input
                         e.preventDefault();
-                        console.log(Math.max(Number(e.currentTarget.value), 0));
-                        setExperience(Math.max(Number(e.currentTarget.value), 0))
-                    }}
-                    onBlur={e => {
-                        // When user clicks off of input, update field with
-                        // validated input
-                        e.preventDefault();
-                        e.currentTarget.value = String(experience);
-                    }} />
+                        setExperience(Number(e.currentTarget.value));
+                    }}>
+                    {experienceOptions}
+                </select>
             </label>
             
             <label>

@@ -16,6 +16,11 @@ export interface EducationLevel {
     level: string
 }
 
+export interface Experience {
+    id: number,
+    years: string
+}
+
 export interface Job {
     id: number,
     title: string,
