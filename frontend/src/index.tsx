@@ -12,9 +12,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <StaticDataProvider>
-    <AuthProvider>
       <App />
-    </AuthProvider>
     </StaticDataProvider>
   </React.StrictMode>
 );

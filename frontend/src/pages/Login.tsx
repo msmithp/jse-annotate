@@ -55,8 +55,6 @@ function Login() {
 
         // Send username and password to back-end to validate user
         loginUser(username, password);
-
-        // Redirect user to home page after login
     }
 
     return (

@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/get-static-data/', views.get_static_data, name='get-static-data'),
     path('api/skill-search/', views.skill_search, name='skill-search'),
     path('api/job-search/', views.job_search, name='job-search'),
+    path('api/get-user/', views.get_user, name='get-user'),
 
     path('token/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),

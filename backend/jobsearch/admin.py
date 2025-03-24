@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import Skill, User, Job, AltSkill, City, County, State
+from .models import Skill, Profile, Job, AltSkill, City, County, State
 
 # Register your models here.
 class SkillAdmin(admin.ModelAdmin):
     list_display = ('id', 'skill_name', 'category')
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user_name', 'password', 'state', 'education', 'years_exp')
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user__username', 'user__password', 'state', 'education', 'years_exp')
 
 class JobAdmin(admin.ModelAdmin):
     list_display = ('id', 'job_name', 'job_type', 'job_desc', 'company', 'city',
@@ -26,7 +26,7 @@ class StateAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Skill, SkillAdmin)
-admin.site.register(User, UserAdmin)
+admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Job, JobAdmin)
 admin.site.register(AltSkill, AltSkillAdmin)
 admin.site.register(City, CityAdmin)
