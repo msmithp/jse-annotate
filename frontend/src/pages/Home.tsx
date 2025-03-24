@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "src/context/AuthProvider";
 import { User } from "../static/types";
+import axiosInstance from "../api/axiosInstance";
 import axios from "axios";
 
 
@@ -15,12 +16,12 @@ function Home() {
         let ignore = false;
         setUserData(null);
         if (user) {
-            axios.get("http://127.0.0.1:8000/api/get-user/", {params: {id: user.user_id}})
+            axiosInstance.get("api/get-user/", {params: {id: user.user_id}})
             .then(res => {
                 if (!ignore) {
                     setUserData(res.data);
                 }
-            })
+            }).catch(err => console.log("Error in home page: " + err));
         }
 
         return () => {

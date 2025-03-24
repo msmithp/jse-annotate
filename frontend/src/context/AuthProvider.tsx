@@ -25,9 +25,9 @@ interface CustomJwtPayload {
     username: string;
   }
 
-interface ContextType {
+interface AuthContextType {
     user: CustomJwtPayload | null,
-    authTokens: AuthTokens | null,
+    // authTokens: AuthTokens | null,
     loginUser: (username: string, password: string) => Promise<void>,
     logoutUser: () => void 
 }
@@ -37,26 +37,29 @@ interface AuthTokens {
     refresh: string
 }
 
-const AuthContext = createContext<ContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
     children?: React.ReactNode
 }
 
 export default function AuthProvider({ children }: AuthProviderProps) {
+    // Store user as a decoded JWT access token
     const [user, setUser] = useState<CustomJwtPayload | null>(
         localStorage.getItem("access") ? 
             jwtDecode<CustomJwtPayload>(localStorage.getItem("access")!)
             : null
     );
-    const [authTokens, setAuthTokens] = useState<AuthTokens | null>(
-        localStorage.getItem("access") && localStorage.getItem("refresh") ?
-            { 
-                access: localStorage.getItem("access")!, 
-                refresh: localStorage.getItem("refresh")!
-            }
-            : null
-    );
+
+    // Store access and refresh tokens
+    // const [authTokens, setAuthTokens] = useState<AuthTokens | null>(
+    //     localStorage.getItem("access") && localStorage.getItem("refresh") ?
+    //         { 
+    //             access: localStorage.getItem("access")!, 
+    //             refresh: localStorage.getItem("refresh")!
+    //         }
+    //         : null
+    // );
 
     const navigate = useNavigate();
 
@@ -76,10 +79,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
             }
         ).then(res => {
             // Set JWT access and refresh tokens
-            setAuthTokens({
-                access: res.data.access,
-                refresh: res.data.refresh
-            });
+            // setAuthTokens({
+            //     access: res.data.access,
+            //     refresh: res.data.refresh
+            // });
             localStorage.setItem("access", res.data.access);
             localStorage.setItem("refresh", res.data.refresh);
 
@@ -93,14 +96,42 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     function logoutUser() {
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
-        setAuthTokens(null);
+        // setAuthTokens(null);
         setUser(null);
         navigate("/login");
     }
 
+    // async function updateToken() {
+    //     console.log("Updating access and refresh tokens...");
+
+    //     await axios.post("http://127.0.0.1:8000/token/refresh/",
+    //         {
+    //             refresh: authTokens?.refresh
+    //         },
+    //         {
+    //             headers: {
+    //                 "Content-Type": "application/json"
+    //             }
+    //         }
+    //     ).then(res => {
+    //         if (res.status === 200) {
+    //             // setAuthTokens({
+    //             //     access: res.data.access,
+    //             //     refresh: res.data.refresh
+    //             // })
+    //             localStorage.setItem("access", res.data.access);
+    //             localStorage.setItem("refresh", res.data.refresh);
+    
+    //             setUser(jwtDecode<CustomJwtPayload>(res.data.access));
+    //         } else {
+    //             logoutUser();
+    //         }
+    //     }).catch(err => console.log(err));
+    // }
+
     const contextData = {
         user: user,
-        authTokens: authTokens,
+        // authTokens: authTokens,
         loginUser: loginUser,
         logoutUser: logoutUser
     }

@@ -7,11 +7,17 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .serializers import MyTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Create your views here.
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def get_user(request):
     id = request.GET.get("id")
     user = User.objects.get(pk=id)
@@ -30,7 +36,6 @@ def get_user(request):
         "skills": user_skills
     }
 
-    print(user_dict)
     return JsonResponse(user_dict)
 
 def skill_search(request): #assume userState is the state's id
