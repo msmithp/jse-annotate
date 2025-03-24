@@ -26,7 +26,7 @@ interface CustomJwtPayload {
   }
 
 interface ContextType {
-    user: User | null,
+    user: CustomJwtPayload | null,
     authTokens: AuthTokens | null,
     loginUser: (username: string, password: string) => Promise<void>,
     logoutUser: () => void 
@@ -44,14 +44,26 @@ interface AuthProviderProps {
 }
 
 export default function AuthProvider({ children }: AuthProviderProps) {
-    const [user, setUser] = useState<User | null>(null);
-    const [authTokens, setAuthTokens] = useState<AuthTokens | null>(null);
+    const [user, setUser] = useState<CustomJwtPayload | null>(
+        localStorage.getItem("access") ? 
+            jwtDecode<CustomJwtPayload>(localStorage.getItem("access")!)
+            : null
+    );
+    const [authTokens, setAuthTokens] = useState<AuthTokens | null>(
+        localStorage.getItem("access") && localStorage.getItem("refresh") ?
+            { 
+                access: localStorage.getItem("access")!, 
+                refresh: localStorage.getItem("refresh")!
+            }
+            : null
+    );
 
     const navigate = useNavigate();
 
     async function loginUser(username: string, password: string) {
         console.log("Logging in user " + username + " with password " + password);
 
+        // Authenticate user in back-end
         await axios.post("http://127.0.0.1:8000/token/", 
             {
                 username: username,
@@ -63,7 +75,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
                 }
             }
         ).then(res => {
-            const id = jwtDecode<CustomJwtPayload>(res.data.access).user_id;
+            // Set JWT access and refresh tokens
             setAuthTokens({
                 access: res.data.access,
                 refresh: res.data.refresh
@@ -71,12 +83,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
             localStorage.setItem("access", res.data.access);
             localStorage.setItem("refresh", res.data.refresh);
 
-            axios.get("http://127.0.0.1:8000/api/get-user/", {params: {id: id}})
-            .then(res => {
-                console.log(res.data);
-                setUser(res.data);
-            }).catch(err => console.log(err));
+            setUser(jwtDecode<CustomJwtPayload>(res.data.access));
 
+            // Redirect user to home page
             navigate("/");
         }).catch(err => console.log(err));
     }
