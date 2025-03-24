@@ -50,11 +50,12 @@ function Login() {
     const authData = useAuthContext();
     const loginUser = authData.loginUser;
 
-    function handleLogin(username: string, password: string): void {
+    async function handleLogin(username: string, password: string): Promise<void> {
         console.log("Username: " + username + " Password: " + password);
 
         // Send username and password to back-end to validate user
-        loginUser(username, password);
+        const res = await loginUser(username, password);
+        console.log(res);
     }
 
     return (

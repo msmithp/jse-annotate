@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useAuthContext } from "src/context/AuthProvider";
 import { User } from "../static/types";
 import axiosInstance from "../api/axiosInstance";
-import axios from "axios";
 
 
 function Home() {
@@ -11,6 +10,7 @@ function Home() {
 
     const authContext = useAuthContext();
     const user = authContext.user;
+    const logoutUser = authContext.logoutUser;
 
     useEffect(() => {
         let ignore = false;
@@ -21,7 +21,7 @@ function Home() {
                 if (!ignore) {
                     setUserData(res.data);
                 }
-            }).catch(err => console.log("Error in home page: " + err));
+            }).catch(err => {console.log("Error in home page: " + err); logoutUser()});
         }
 
         return () => {

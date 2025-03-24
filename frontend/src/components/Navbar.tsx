@@ -4,11 +4,6 @@ import { useAuthContext } from "src/context/AuthProvider";
 
 
 function Navbar() {
-    // function logoutUser(event: React.MouseEvent<HTMLParagraphElement, MouseEvent>) {
-    //     event.preventDefault();
-    //     console.log("Logging out");
-    // }
-
     const authContext = useAuthContext();
     const user = authContext.user;
     const logoutUser = authContext.logoutUser;
