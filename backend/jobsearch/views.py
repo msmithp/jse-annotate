@@ -12,40 +12,58 @@ def skill_search(request): #assume userState is the state's id
     #Output: JSON dictionary containing the following: List of skills, each with an associated integer representing the number of descriptions that mention that skill
     #for each skill in db
         #find all jobs requiring that skill within specified state
-    userState = request.GET.get("stateID")
+    userState = request.GET.getlist("states[]")
 
-    skillSet = Skill.objects.all()
     skill_counts = []
-    for item in skillSet:
-        jobList = list(Job.objects.filter(skills=item, city__county__state=userState))
-        skill_counts.append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': len(jobList)})
+    categories = list(Skill.objects.values('category').distinct())
+    for category in categories:
+        
+        skill_set = Skill.objects.filter(category=category)
+        for item in skill_set:
+            job_list = list(Job.objects.filter(skills=item, city__county__state=userState))
+            skill_counts.append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': len(job_list)})
 
     #After midterm: Dictionary of U.S. states, where each state is a dictionary of (county, most_common_skill) pairs
-    countyVals = {}
-    states = State.objects.all()
-    for i in states:
-        countyVals = {}
-        countyVals = {'state': i.state_name, 'countyData': []}
-        counties = list(County.objects.filter(state=i.pk))
-        for county in counties:
-            #find most common skill for each county
-            total_skills = list(Skill.objects.values_list("pk", flat=True))
+    countyVals = []
+    states = []
+
+    for i in userState: #makes it easier to get state name, code, etc. probably easier way to do this
+        states = list(State.objects.filter(pk=i))
+
+    for thisState in states:
+        #make state info, append to countyVals
+        stateInfo = {'state':{'stateID': thisState.pk, 'stateName': thisState.state_name, 'stateCode': thisState.state_code}, 'countyData': []}
+        countyVals.append(stateInfo)
+
+        #get list of counties within state, get list of all skill pks
+        counties = list(County.objects.filter(state=thisState))
+        total_skills = list(Skill.objects.values_list("pk", flat=True))
+
+        for thisCounty in counties: #for each county, create new skill_occurrences list
             skill_occurrences = {skill: 0 for skill in total_skills}
-            jobList = list(Job.objects.filter(city__county=county))
-            for item in jobList: #for 
-                skill_list = list(item.skills.values_list("pk", flat=True))
-                if not skill_list:
-                    pass
-                else:
-                    for skill in skill_list:
-                        skill_occurrences[skill] += 1
-            commonSkillID = max(skill_occurrences)
+
+            #get all jobs in county
+            jobList = list(Job.objects.filter(city__county=thisCounty))
+
+            for item in jobList:
+                reqSkills = list(item.skills.values_list("pk", flat=True))
+                if reqSkills: #if job has any required skills, count which skills are found, inc associated listing in skill_occurrences
+                    for thisSkill in reqSkills:
+                        skill_occurrences[thisSkill] += 1
+                    
+            #print(thisCounty, skill_occurrences) #test
+
+            commonSkillID = max(skill_occurrences, key = skill_occurrences.get)
+
+            #print(thisCounty, commonSkillID) #test
+            
             temp = Skill.objects.get(pk=commonSkillID)
             commonSkillName = temp.skill_name
 
-            countyVals['countyData'] = ({'countyID':county.pk, 'countyName': county.county_name,
+            stateInfo['countyData'].append({'countyID':thisCounty.pk, 'countyName': thisCounty.county_name,
                                              'skillID': commonSkillID, 'skillName': commonSkillName})
 
+    print(countyVals)
     return JsonResponse({'skills': skill_counts, 'counties': []})
 
 @csrf_exempt
