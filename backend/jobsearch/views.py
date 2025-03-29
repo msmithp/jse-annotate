@@ -15,13 +15,25 @@ def skill_search(request): #assume userState is the state's id
     userState = request.GET.getlist("states[]")
 
     skill_counts = []
-    categories = list(Skill.objects.values('category').distinct())
-    for category in categories:
-        
+    categories = list(Skill.objects.values_list('category', flat=True).distinct())
+    """for category in categories:
+        catInfo = {'category': category, 'skill info': []}
+        skill_counts.append(catInfo)
         skill_set = Skill.objects.filter(category=category)
         for item in skill_set:
-            job_list = list(Job.objects.filter(skills=item, city__county__state=userState))
-            skill_counts.append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': len(job_list)})
+            for state in userState:
+                job_list = list(Job.objects.filter(skills=item, city__county__state=userState))
+                catInfo['skill info'].append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': len(job_list)})"""
+
+    for state in userState:
+        for category in categories:
+            catInfo = {'category': category, 'skill counts': []}
+            skill_counts.append(catInfo)
+            skill_set = Skill.objects.filter(category=category)
+            for item in skill_set:
+                    job_list = list(Job.objects.filter(skills=item, city__county__state=state))
+                    catInfo['skill counts'].append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': len(job_list)})
+    print(skill_counts)
 
     #After midterm: Dictionary of U.S. states, where each state is a dictionary of (county, most_common_skill) pairs
     countyVals = []
@@ -63,8 +75,8 @@ def skill_search(request): #assume userState is the state's id
             stateInfo['countyData'].append({'countyID':thisCounty.pk, 'countyName': thisCounty.county_name,
                                              'skillID': commonSkillID, 'skillName': commonSkillName})
 
-    print(countyVals)
-    return JsonResponse({'skills': skill_counts, 'counties': []})
+    #print(countyVals)
+    return JsonResponse({'skills': skill_counts, 'counties': countyVals})
 
 @csrf_exempt
 def job_search(request): #assume userState is the state's id
