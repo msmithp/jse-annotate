@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Location data
 class State(models.Model):
@@ -33,16 +34,15 @@ class Skill(models.Model):
     def __str__(self):
         return self.skill_name
 
-class User(models.Model):
-    user_name = models.CharField(max_length=50, unique=True)
-    password = models.CharField(max_length=50)
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     state = models.ForeignKey(State, on_delete=models.CASCADE)
     education = models.CharField(max_length=20, blank=True)
     years_exp = models.IntegerField(null=True)
     skill_name = models.ManyToManyField(Skill, blank=True)
 
     def __str__(self):
-        return self.user_name
+        return self.user.username
 
 class Job(models.Model):
     job_name = models.CharField(max_length=200)

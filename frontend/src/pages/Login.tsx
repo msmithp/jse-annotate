@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useAuthContext } from "src/context/AuthProvider";
 
 
 interface LoginFormProps {
@@ -46,12 +47,15 @@ function LoginForm({ handler }: LoginFormProps) {
 
 
 function Login() {
-    function handleLogin(username: string, password: string): void {
+    const authData = useAuthContext();
+    const loginUser = authData.loginUser;
+
+    async function handleLogin(username: string, password: string): Promise<void> {
         console.log("Username: " + username + " Password: " + password);
 
         // Send username and password to back-end to validate user
-
-        // Redirect user to home page after login
+        const res = await loginUser(username, password);
+        console.log(res);
     }
 
     return (

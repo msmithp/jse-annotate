@@ -74,7 +74,7 @@ export default function StaticDataProvider({ children }: StaticDataProviderProps
 export function useStaticData() {
     const context = useContext(StaticDataContext);
     if (context === undefined) {
-        throw new Error("useStaticData must be used within a StaticDataProvider")
+        throw new Error("useStaticData must be used within a StaticDataProvider");
     }
 
     return context

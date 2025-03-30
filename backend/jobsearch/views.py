@@ -1,12 +1,43 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
-from .models import Skill, Job, City, County, State
+from .models import Skill, Job, City, County, State, User
 from utils.calc_compatibility import calculate_compatibility
 from django.views.decorators.csrf import csrf_exempt
 import string
 
+from .serializers import MyTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 # Create your views here.
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user(request):
+    id = request.GET.get("id")
+    user = User.objects.get(pk=id)
+
+    user_skills = user.profile.skill_name.all()
+    user_skills = [
+        {"id": s.pk, "name": s.skill_name} for s in user_skills
+    ]
+
+    user_dict = {
+        "id": id,
+        "username": user.username,
+        "state": user.profile.state.pk,
+        "education": user.profile.education,
+        "yearsExperience": user.profile.years_exp,
+        "skills": user_skills
+    }
+
+    return JsonResponse(user_dict)
 
 def skill_search(request): #assume userState is the state's id
     #Output: JSON dictionary containing the following: List of skills, each with an associated integer representing the number of descriptions that mention that skill
