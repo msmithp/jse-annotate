@@ -50,13 +50,21 @@ def create_account(request):
 
     state_instance = State.objects.get(pk=state)
 
-    # TODO: Duplicate username checking, password checking
+    # Check for duplicate username
+    if User.objects.filter(username=username).exists():
+        return HttpResponse("Username already exists", status=409)
+    else:
+        # Perform password checking
+        if len(password) < 8:
+            return HttpResponse("Password must be at least 8 characters long",
+                                status=403)
+
     new_user = User.objects.create_user(username=username, password=password)
     new_profile = Profile.objects.create(user=new_user, state=state_instance, 
                                          education=edu, years_exp=years_exp)
     new_profile.skill_name.set(skills)
 
-    return HttpResponse(200)
+    return HttpResponse(status=200)
 
 def skill_search(request): #assume userState is the state's id
     #Output: JSON dictionary containing the following: List of skills, each with an associated integer representing the number of descriptions that mention that skill

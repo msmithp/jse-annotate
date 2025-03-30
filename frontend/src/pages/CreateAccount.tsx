@@ -165,10 +165,18 @@ function CreateAccount() {
             education: education,
             yearsExperience: experience,
             skills: skills
-        }).then((res) => {console.log(res)})
-
-        // Redirect user to login page after account creation
-        navigate("/login");
+        }).then((res) => {
+            if (res.status == 200) {
+                // Success - redirect user to login page
+                navigate("/login");
+            } 
+        }).catch((err) => {
+            if (err.status == 409) {
+                console.log("Duplicate username");
+            } else if (err.status == 403) {
+                console.log(err.response.data);
+            }
+        })
     }
 
     return (
