@@ -1,11 +1,10 @@
-from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
-from .models import Skill, Job, City, County, State, User
+from .models import Skill, Job, City, County, State, User, Profile
 from utils.calc_compatibility import calculate_compatibility
 from django.views.decorators.csrf import csrf_exempt
-import string
 
+# Authentication
 from .serializers import MyTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -38,6 +37,26 @@ def get_user(request):
     }
 
     return JsonResponse(user_dict)
+
+@csrf_exempt
+def create_account(request):
+    data = json.loads(request.body.decode("utf-8"))
+    username = data["username"]
+    password = data["password"]
+    state = data["stateID"]
+    edu = data["education"]
+    years_exp = data["yearsExperience"]
+    skills = data["skills"]
+
+    state_instance = State.objects.get(pk=state)
+
+    # TODO: Duplicate username checking, password checking
+    new_user = User.objects.create_user(username=username, password=password)
+    new_profile = Profile.objects.create(user=new_user, state=state_instance, 
+                                         education=edu, years_exp=years_exp)
+    new_profile.skill_name.set(skills)
+
+    return HttpResponse(200)
 
 def skill_search(request): #assume userState is the state's id
     #Output: JSON dictionary containing the following: List of skills, each with an associated integer representing the number of descriptions that mention that skill
@@ -112,25 +131,26 @@ def skill_search(request): #assume userState is the state's id
 @csrf_exempt
 def job_search(request): #assume userState is the state's id
     #Output: JSON dictionary consisting of a list of jobs. Each job should itself be a Python dictionary consisting of the title, location, description, salary, link to apply, and compatibility score.
-    userState = request.GET.get("stateID")
+    userState = request.GET.getlist("stateID[]")
     edu = request.GET.get("education")
     yearsExp = request.GET.get("yearsExperience")
     skillSet = request.GET.getlist("skills[]")
 
     yearsExp = int(yearsExp)
+    states = State.objects.filter(pk__in=userState)
 
     jobList = []
-    jobs = list(Job.objects.filter(city__county__state=userState))
-    for job in jobs:
-        state = State.objects.get(pk=userState)
-        reqSkills = list(job.skills.values_list())
-        reqEdu = job.education
-        reqYears = int(job.years_exp)
-        score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
-        reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
-        jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateCode': state.state_code, 'description': job.job_desc,
-                        'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
-                        'education': job.education, 'yearsExperience': job.years_exp })
+    for state in states:
+         jobs = list(Job.objects.filter(city__county__state=state))
+         for job in jobs:
+             reqSkills = list(job.skills.values_list())
+             reqEdu = job.education
+             reqYears = int(job.years_exp)
+             score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
+             reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
+             jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateCode': state.state_code, 'description': job.job_desc,
+                             'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
+                             'education': job.education, 'yearsExperience': job.years_exp })
         
     return JsonResponse({'jobs': jobList})
 

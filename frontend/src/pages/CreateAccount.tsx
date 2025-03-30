@@ -4,6 +4,7 @@ import DropdownList from "../components/DropdownList";
 import { useStaticData } from "../context/StaticDataProvider";
 import { mapDropdownSkills } from "../static/utils";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 interface CreateAccountFormProps {
@@ -156,7 +157,15 @@ function CreateAccount() {
             + " Education: " + education + " Experience: " + experience
             + " Skills: " + skills);
         
-        // TODO: Send username and password to back-end to create account
+        // Send username and password to back-end to create account
+        axios.post("http://127.0.0.1:8000/api/create-account/", {
+            username: username,
+            password: password,
+            stateID: state,
+            education: education,
+            yearsExperience: experience,
+            skills: skills
+        }).then((res) => {console.log(res)})
 
         // Redirect user to login page after account creation
         navigate("/login");
