@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import DropdownList from "../components/DropdownList";
+import { DropdownList, MessageBox } from "../components";
 import { useStaticData } from "../context/StaticDataProvider";
 import { mapDropdownSkills } from "../static/utils";
 import { useNavigate } from "react-router-dom";
@@ -147,15 +147,37 @@ function CreateAccountForm({ onSubmit }: CreateAccountFormProps) {
 
 
 function CreateAccount() {
+    // State variables
+    const [error, setError] = useState("");
+
     const navigate = useNavigate();
 
     function handleCreateAccount(username: string, 
         password: string, state: number, education: string,
         experience: number, skills: number[]): void {
+        setError("");
+
+        // Remove empty skill dropdown boxes from consideration
+        skills = skills.filter(sk => sk !== -1);
+
         console.log("Username: " + username 
             + " Password: " + password + " State: " + state
             + " Education: " + education + " Experience: " + experience
             + " Skills: " + skills);
+
+        if (username === "") {
+            setError("You must enter a username.");
+            return;
+        } else if (password === "") {
+            setError("You must enter a password.");
+            return;
+        } else if (state === -1) {
+            setError("You must select a state.");
+            return;
+        } else if (education === "none") {
+            setError("You must select an education level.");
+            return;
+        }
         
         // Send username and password to back-end to create account
         axios.post("http://127.0.0.1:8000/api/create-account/", {
@@ -166,15 +188,15 @@ function CreateAccount() {
             yearsExperience: experience,
             skills: skills
         }).then((res) => {
-            if (res.status == 200) {
+            if (res.status === 200) {
                 // Success - redirect user to login page
                 navigate("/login");
             } 
         }).catch((err) => {
-            if (err.status == 409) {
-                console.log("Duplicate username");
-            } else if (err.status == 403) {
-                console.log(err.response.data);
+            if (err.status === 409) {
+                setError("Error: Username \"" + username + "\" is already taken");
+            } else if (err.status === 403) {
+                setError("Error: " + err.response.data);
             }
         })
     }
@@ -182,6 +204,7 @@ function CreateAccount() {
     return (
         <div>
             <h1>Create Account</h1>
+            {error !== "" && <MessageBox type={"error"} text={error} />}
             <CreateAccountForm onSubmit={handleCreateAccount}/>
         </div>
     )

@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuthContext } from "src/context/AuthProvider";
+import { MessageBox } from "../components";
 
 
 interface LoginFormProps {
@@ -47,20 +48,29 @@ function LoginForm({ handler }: LoginFormProps) {
 
 
 function Login() {
+    // State variables
+    const [error, setError] = useState(false);
+
     const authData = useAuthContext();
     const loginUser = authData.loginUser;
 
     async function handleLogin(username: string, password: string): Promise<void> {
+        // Reset error message box
+        setError(false);
         console.log("Username: " + username + " Password: " + password);
 
         // Send username and password to back-end to validate user
         const res = await loginUser(username, password);
-        console.log(res);
+        if (!res) {
+            // If login failed, set error message box
+            setError(true);
+        }
     }
 
     return (
         <div>
             <h1>Log In</h1>
+            {error && <MessageBox type={"error"} text={"Invalid login credentials"} />}
             <LoginForm handler={handleLogin}/>
             <NavLink to="/create-account">Create an account</NavLink>
         </div>

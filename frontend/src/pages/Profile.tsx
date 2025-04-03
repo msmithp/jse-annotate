@@ -163,6 +163,9 @@ function Profile() {
 
         console.log("State: " + state + " Education: " + education
             + " Experience: " + experience + " Skills: " + skills);
+
+        // Remove empty dropdown boxes from consideration
+        skills = skills.filter(sk => sk !== -1);
         
         // Send updated data to back-end to update profile
         axios.post("http://127.0.0.1:8000/api/update-account/", {
@@ -172,7 +175,7 @@ function Profile() {
             yearsExperience: experience,
             skills: skills
         }).then((res) => {
-            if (res.status == 200) {
+            if (res.status === 200) {
                 // Success - display success message box
                 setSuccess(true);
             } 
@@ -186,40 +189,42 @@ function Profile() {
     }
 
     return (
-        // If currently loading, set loading screen
-        loading ? (
-            <p>Loading...</p>
-        ) : (
-            // Otherwise, check if user is not null (i.e., user is logged in)
-            user ? (
-                // Then check if user data was successfully loaded
-                userData ? (
-                    // User is logged in and user data was successfully loaded
-                    <div>
-                        <h1>Edit profile</h1>
-                        {success && <MessageBox 
-                            type={"success"} 
-                            text={"Successfully updated account."}/>
-                        }
-                        {error && <MessageBox 
-                            type={"error"}
-                            text={"Error updating account."} />
-                        }
-                        <EditProfileForm onSubmit={handleEditProfile} user={userData} />
-                    </div>
+        <div>
+            <h1>Edit profile</h1>
+            {/* If currently loading, set loading screen */}
+            {loading ? (
+                <p>Loading...</p>
+            ) : (
+                // Otherwise, check if user is not null (i.e., user is logged in)
+                user ? (
+                    // Then check if user data was successfully loaded
+                    userData ? (
+                        // User is logged in and user data was successfully loaded
+                        <div>
+                            {success && <MessageBox 
+                                type={"success"} 
+                                text={"Successfully updated account."}/>
+                            }
+                            {error && <MessageBox 
+                                type={"error"}
+                                text={"Error updating account."} />
+                            }
+                            <EditProfileForm onSubmit={handleEditProfile} user={userData} />
+                        </div>
+                    ) : (
+                        // User is logged in, but user data could not be loaded
+                        <div>
+                            <p>Unable to load profile data.</p>
+                        </div>
+                    )
                 ) : (
-                    // User is logged in, but user data could not be loaded
+                    // User is not logged in
                     <div>
-                        <p>Unable to load profile data.</p>
+                        <p>Log in to see your profile</p>
                     </div>
                 )
-            ) : (
-                // User is not logged in
-                <div>
-                    <p>Log in to see your profile</p>
-                </div>
-            )
-        )
+            )}
+        </div>
     )
 }
 

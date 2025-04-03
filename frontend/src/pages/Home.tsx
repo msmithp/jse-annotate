@@ -7,6 +7,7 @@ import axiosInstance from "../api/axiosInstance";
 function Home() {
     // State variables
     const [userData, setUserData] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
 
     const authContext = useAuthContext();
     const user = authContext.user;
@@ -20,8 +21,11 @@ function Home() {
             .then(res => {
                 if (!ignore) {
                     setUserData(res.data);
+                    setLoading(false);
                 }
             }).catch(err => {console.log("Error in home page: " + err); logoutUser()});
+        } else {
+            setLoading(false);
         }
 
         return () => {
@@ -32,22 +36,30 @@ function Home() {
     return (
         <div>
             <h1>Home</h1>
-            {user ? (
-                <div>
-                    <p>Welcome, {user.username}.</p>
-                    {userData && 
-                        <>
-                            <p>Your data:</p>
-                            <ul>
-                                <li>Education: {userData.education}</li>
-                                <li>Years of experience: {userData.yearsExperience}</li>
-                                <li>Skills: {userData.skills.map(sk => "" + sk.name + ", ")}</li>
-                            </ul>
-                        </>
-                    }
-                </div>
+            {/* If currently loading, then set loading screen */}
+            {loading ? (
+                <p>Loading...</p>
             ) : (
-                <p>Log in to see custom metrics.</p>
+                // Check if user is not null (i.e., user is logged in)
+                user ? (
+                    <div>
+                        <p>Welcome, {user.username}.</p>
+                        {/* Check if user data was able to be loaded */}
+                        {userData && 
+                            <>
+                                <p>Your data:</p>
+                                <ul>
+                                    <li>Education: {userData.education}</li>
+                                    <li>Years of experience: {userData.yearsExperience}</li>
+                                    <li>Skills: {userData.skills.map(sk => "" + sk.name + ", ")}</li>
+                                </ul>
+                            </>
+                        }
+                    </div>
+                ) : (
+                    // User is not logged in
+                    <p>Log in to see custom metrics.</p>
+                )
             )}
         </div>
     )

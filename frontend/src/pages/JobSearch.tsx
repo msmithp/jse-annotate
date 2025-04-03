@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { DropdownList, JobList } from "../components";
+import { DropdownList, JobList, MessageBox } from "../components";
 import { useStaticData } from "../context/StaticDataProvider";
 import { Job } from "../static/types";
 import { mapDropdownSkills, mapDropdownStates } from "../static/utils";
@@ -153,26 +153,42 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
 
 function JobSearch() {
     const [jobs, setJobs] = useState<Job[]>([]);
+    const [error, setError] = useState("");
 
     function handleJobSearch(locations: number[], education: string,
         experience: number, skills: number[]): void {
-            console.log("Locations: " + locations 
-                + "\nEducation: " + education + "\nExperience: "
-                + experience + "\nSkills: " + skills);
+        // Reset error message box
+        setError("");
+
+        // Filter out empty location and skill dropboxes
+        locations = locations.filter(loc => loc !== -1);
+        skills = skills.filter(skill => skill !== -1);
+
+        console.log("Locations: " + locations 
+            + "\nEducation: " + education + "\nExperience: "
+            + experience + "\nSkills: " + skills);
 
         // Set resulting jobs by retrieving job data from the back-end
         setJobs([]);
+
+        if (locations.length === 0) {
+            setError("You must select a location.");
+            return;
+        } else if (education === "none") {
+            setError("You must select an education level.");
+            return;
+        }
 
         const params = {
             stateID: locations,
             education: education,
             yearsExperience: experience,
             skills: skills
-        }
+        };
 
         const headers = {
             "Content-Type": "application/json"
-        }
+        };
 
         axios.get("http://127.0.0.1:8000/api/job-search/", {params: params, headers: headers})
         .then((res) => {
@@ -187,6 +203,7 @@ function JobSearch() {
     return (
         <div>
             <h1>Search jobs</h1>
+            {error !== "" && <MessageBox type={"error"} text={error}/>}
             <JobSearchForm onSubmit={handleJobSearch} />
             { jobs.length === 0 ?
                 <></>
