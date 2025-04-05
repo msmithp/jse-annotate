@@ -21,7 +21,6 @@ def update_account(request):
     try:
         # Extract data from request body
         data = json.loads(request.body.decode("utf-8"))
-        print(data)
         user_id = data["userID"]
         state = data["stateID"]
         edu = data["education"]
@@ -111,14 +110,13 @@ def skill_search(request): #assume userState is the state's id
                 job_list = list(Job.objects.filter(skills=item, city__county__state=userState))
                 catInfo['skill info'].append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': len(job_list)})"""
 
-    for state in userState:
-        for category in categories:
-            catInfo = {'category': category, 'skill counts': []}
-            skill_counts.append(catInfo)
-            skill_set = Skill.objects.filter(category=category)
-            for item in skill_set:
-                    job_list = list(Job.objects.filter(skills=item, city__county__state=state))
-                    catInfo['skill counts'].append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': len(job_list)})
+    for category in categories:
+        catInfo = {'category': category, 'skills': []}
+        skill_counts.append(catInfo)
+        skill_set = Skill.objects.filter(category=category)
+        for item in skill_set:
+                num_jobs = Job.objects.filter(skills=item, city__county__state__in=userState).count()
+                catInfo['skills'].append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': num_jobs})
     print(skill_counts)
 
     #After midterm: Dictionary of U.S. states, where each state is a dictionary of (county, most_common_skill) pairs
@@ -130,7 +128,7 @@ def skill_search(request): #assume userState is the state's id
 
     for thisState in states:
         #make state info, append to countyVals
-        stateInfo = {'state':{'stateID': thisState.pk, 'stateName': thisState.state_name, 'stateCode': thisState.state_code}, 'countyData': []}
+        stateInfo = {'stateData':{'stateID': thisState.pk, 'stateName': thisState.state_name, 'stateCode': thisState.state_code}, 'countyData': []}
         countyVals.append(stateInfo)
 
         #get list of counties within state, get list of all skill pks

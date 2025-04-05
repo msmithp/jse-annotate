@@ -4,6 +4,7 @@ import Leaflet from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
 import { mapSkillToColor } from "src/static/utils";
+import { StateSkillData } from "../static/types";
 
 
 interface InnerMapProps {
@@ -45,19 +46,7 @@ interface HoverData {
 }
 
 interface SkillSearchMapProps {
-    stateSkills: {
-        stateData: {
-            stateID: number,
-            stateName: string,
-            stateCode: string
-        }
-        countyData: {
-            countyID: number,
-            countyName: string,
-            skillID: number,
-            skillName: string
-        }[]
-    }[],
+    stateSkills: StateSkillData[],
 }
 
 function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {

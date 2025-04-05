@@ -8,3 +8,4 @@ export {default as JobList} from "./JobList";
 export {default as JobCard} from "./JobCard";
 export {default as PrivateRoute} from "./PrivateRoute";
 export {default as MessageBox} from "./MessageBox";
+export {default as ChartGrid} from "./ChartGrid";

@@ -48,3 +48,26 @@ export interface User {
         name: string
     }[]
 }
+
+export interface ChartSkillData {
+    category: string,
+    skills: {
+        id: number;
+        skillName: string;
+        occurrences: number;
+    }[]
+}
+
+export interface StateSkillData {
+    stateData: {
+        stateID: number,
+        stateName: string,
+        stateCode: string
+    }
+    countyData: {
+        countyID: number,
+        countyName: string,
+        skillID: number,
+        skillName: string
+    }[]
+}

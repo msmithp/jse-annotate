@@ -1,8 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import { SkillSearchMap, SkillChart, DropdownList } from "../components";
+import { SkillSearchMap, ChartGrid, DropdownList } from "../components";
 import { useStaticData } from "../context/StaticDataProvider";
 import { mapDropdownStates } from "../static/utils";
+import { ChartSkillData, StateSkillData } from "../static/types";
 import axios from "axios";
 
 // Placeholder data
@@ -77,25 +78,22 @@ function SkillSearchForm({ onUpdate }: SkillSearchFormProps) {
     )
 }
 
-interface SkillData {
-    id: number;
-    skillName: string;
-    occurrences: number;
-}
-
 function SkillSearch() {
-    const [skillData, setSkillData] = useState<SkillData[]>([]);
+    const [skillData, setSkillData] = useState<ChartSkillData[]>([]);
+    const [stateSkills, setStateSkills] = useState<StateSkillData[]>([]);
 
     function handleSkillSearch(states: number[]) {
         // Call back-end to retrieve skill data for this state
         // and assign it to skillData using setSkillData()
         const params = {
-            states: states.filter((x) => x !== -1)
+            // Filter out blank dropdown selections
+            states: states.filter((id) => id !== -1)
         }
 
         axios.get("http://127.0.0.1:8000/api/skill-search/", {params: params})
         .then((res) => {
             setSkillData(res.data.skills);
+            setStateSkills(res.data.counties);
         })
         .catch((err) => console.log(err));
     }
@@ -108,7 +106,7 @@ function SkillSearch() {
                 <></>
             :
                 <div>
-                    <SkillChart skillData={skillData} />
+                    <ChartGrid data={skillData} />
                 </div>
             }
             {/* <SkillSearchMap stateSkills={stateSkills} /> */}
