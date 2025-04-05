@@ -15,6 +15,34 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+def update_account(request):
+    try:
+        # Extract data from request body
+        data = json.loads(request.body.decode("utf-8"))
+        print(data)
+        user_id = data["userID"]
+        state = data["stateID"]
+        edu = data["education"]
+        years_exp = data["yearsExperience"]
+        skills = data["skills"]
+
+        # Update user attributes
+        user = User.objects.get(pk=user_id)
+        profile = user.profile
+        profile.state = State.objects.get(pk=state)
+        profile.education = edu
+        profile.years_exp = years_exp
+        profile.skill_name.set(skills)
+        profile.save()
+
+        # Return successful HTTP response
+        return HttpResponse(status=200)
+    except:
+        # Something went wrong, return error HTTP response
+        return HttpResponse("Error updating account", status=400)
+
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
