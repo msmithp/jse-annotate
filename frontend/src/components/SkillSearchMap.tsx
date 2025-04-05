@@ -93,9 +93,6 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
             currentState.countyData.findIndex(item => item.countyName === countyName)
         ];
 
-        // ID of skill mapped to this county
-        const skillID = county.skillID;
-
         // Update properties for selected county
         let weight = 2;
         let dashArray = "5";
@@ -105,7 +102,7 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
         }
 
         return {
-            fillColor: mapSkillToColor(skillID),
+            fillColor: mapSkillToColor(county.skillName),
             weight: weight,
             opacity: 1,
             color: "white",

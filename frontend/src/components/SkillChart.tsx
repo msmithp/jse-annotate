@@ -2,6 +2,7 @@ import React from "react";
 import { Chart as ChartJS, CategoryScale, 
     LinearScale, BarElement, Title, Tooltip } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { mapSkillToColor } from "../static/utils";
 
 ChartJS.register(
     CategoryScale,
@@ -39,6 +40,10 @@ function SkillChart({ title, skillData } : SkillChartProps) {
         return skill.skillName;
     });
 
+    const colors = skillData.map(skill => {
+        return mapSkillToColor(skill.skillName);
+    })
+
     // Set chart options
     const options = {
         responsive: true,
@@ -55,7 +60,7 @@ function SkillChart({ title, skillData } : SkillChartProps) {
         labels: labels,
         datasets: [{
             label: "Jobs",
-            backgroundColor: "#79AEC8",
+            backgroundColor: colors,
             borderColor: "#417690",
             data: values
         }]
