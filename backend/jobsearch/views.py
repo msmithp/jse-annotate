@@ -117,7 +117,7 @@ def skill_search(request): #assume userState is the state's id
         for item in skill_set:
                 num_jobs = Job.objects.filter(skills=item, city__county__state__in=userState).count()
                 catInfo['skills'].append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': num_jobs})
-    print(skill_counts)
+    #print(skill_counts)
 
     #After midterm: Dictionary of U.S. states, where each state is a dictionary of (county, most_common_skill) pairs
     countyVals = []

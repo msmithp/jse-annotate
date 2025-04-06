@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand
 from jobsearch.models import Skill, AltSkill
+import csv
+from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     help = "Imports skill data into the database"
@@ -16,7 +18,23 @@ class Command(BaseCommand):
             Skill.objects.all().delete()
             AltSkill.objects.all().delete()
 
-        Skill.objects.get_or_create(skill_name='Python', category='Languages')
+        with open("utils/initial_data/skill_data.csv", encoding="utf8") as f:
+            reader = csv.reader(f)
+            next(reader, None)  # Skip header
+
+            for row in reader:
+                Skill.objects.get_or_create(skill_name=row[0], category=row[1])
+
+        
+        with open("utils/initial_data/alt_skill_data.csv", encoding="utf8") as f:
+            reader = csv.reader(f)
+            next(reader, None)  # Skip header
+
+            for row in reader:
+                skill = Skill.objects.get(skill_name=row[0])
+                AltSkill.objects.get_or_create(skill = skill, alt_name=row[1])
+
+        """Skill.objects.get_or_create(skill_name='Python', category='Languages')
         Skill.objects.get_or_create(skill_name='Java', category='Languages')
         Skill.objects.get_or_create(skill_name='C++', category='Languages')
         Skill.objects.get_or_create(skill_name='R', category='Languages')
@@ -82,5 +100,5 @@ class Command(BaseCommand):
         AltSkill.objects.get_or_create(skill=Skill.objects.get(skill_name="Angular"), alt_name="AngularJS")
         AltSkill.objects.get_or_create(skill=Skill.objects.get(skill_name="Next.js"), alt_name="NextJS")
         AltSkill.objects.get_or_create(skill=Skill.objects.get(skill_name="Vue"), alt_name="Vue.js")
-        AltSkill.objects.get_or_create(skill=Skill.objects.get(skill_name="Vue"), alt_name="VueJS")
+        AltSkill.objects.get_or_create(skill=Skill.objects.get(skill_name="Vue"), alt_name="VueJS")"""
         
