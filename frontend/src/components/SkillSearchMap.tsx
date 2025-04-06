@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import Leaflet from "leaflet";
 import L from "leaflet";
@@ -40,37 +40,52 @@ function InnerMap({ bounds }: InnerMapProps) {
     return null;
 }
 
-interface HoverData {
-    countyName: string,
-    stateCode: string,
-    skillName: string
+
+class InfoControl extends L.Control {
+    private _div: HTMLDivElement | null = null;
+  
+    constructor(opts?: L.ControlOptions) {
+        super({ position: 'topright', ...opts });
+    }
+  
+    onAdd(map: L.Map) {
+        this._div = L.DomUtil.create('div', 'info'); 
+        this.update();
+        return this._div;
+    }
+  
+    // Update info control based on properties of feature
+    update(props?: {countyName: string, stateCode: string, skillName: string}) {
+        if (!this._div) return;
+        this._div.innerHTML = `
+            <h4>In-Demand Skills</h4>
+            ${props
+                ? `<b>${props.countyName}, ${props.stateCode}</b><br/>${props.skillName}`
+                : 'Hover over a county'
+            }
+        `;
+    }
 }
 
-interface SkillSearchMapProps {
-    stateSkills: StateSkillData[],
+interface ChoroplethProps {
+    geoData: GeoJSON.FeatureCollection
 }
 
-function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
-    // State variables
-    const [hover, setHover] = useState<HoverData>({countyName: "", stateCode: "", skillName: ""});
+function Choropleth({ geoData }: ChoroplethProps) {
+    console.log("Re-rendering choropleth layer");
 
-    // Get list of included state codes
-    const states = stateSkills.map(state =>
-        state.stateData.stateCode
-    );
+    const map = useMap();
+    const infoControlRef = useRef<InfoControl | null>(null);
 
-    // Filter out all counties not in included states
-    const filteredFeatures = counties.features.filter(feature => (
-        states.includes(feature.properties.STATECODE)
-    ));
-
-    // Cast geoData to FeatureCollection
-    const geoData = {
-        type: counties.type,
-        name: counties.name,
-        crs: counties.crs,
-        features: filteredFeatures
-    } as GeoJSON.FeatureCollection;
+    useEffect(() => {
+        const info = new InfoControl();
+        info.addTo(map);
+        infoControlRef.current = info;
+        // Cleanup on unmount
+        return () => {
+            map.removeControl(info);
+        };
+    }, [map]);
 
     function style(feature: GeoJSON.Feature | undefined) {
         if (!feature || !feature.properties) {
@@ -78,36 +93,12 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
             return {};
         }
 
-        // Name of current county (e.g., "Frederick")
-        const countyName = feature.properties.NAME;
-
-        // Name of current state (e.g., "MD")
-        const stateCode = feature.properties.STATECODE;
-
-        // Get data on current state
-        const currentState = stateSkills[
-            stateSkills.findIndex(item => item.stateData.stateCode === stateCode)
-        ];
-        
-        // Get data on the current county
-        const county = currentState.countyData[
-            currentState.countyData.findIndex(item => item.countyName === countyName)
-        ];
-
-        // Update properties for selected county
-        let weight = 2;
-        let dashArray = "5";
-        if (hover.countyName === countyName && hover.stateCode === stateCode) {
-            weight = 3;
-            dashArray = "";
-        }
-
         return {
-            fillColor: mapSkillToColor(county.skillName),
-            weight: weight,
+            fillColor: mapSkillToColor(feature.properties.SKILL),
+            weight: 2,
             opacity: 1,
             color: "white",
-            dashArray: dashArray,
+            dashArray: "5",
             fillOpacity: 0.75,
           };
     }
@@ -124,30 +115,15 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
             
             currentLayer.bringToFront();
 
-            // Name of current county (e.g., "Frederick")
-            const countyName = feature.properties!.NAME;
-
-            // Name of current state (e.g., "MD")
-            const stateCode = feature.properties!.STATECODE;
-
-            // Get data on current state
-            const currentState = stateSkills[
-                stateSkills.findIndex(item => item.stateData.stateCode === stateCode)
-            ];
-            
-            // Get data on the current county
-            const county = currentState.countyData[
-                currentState.countyData.findIndex(item => item.countyName === countyName)
-            ];
-
-            // ID of skill mapped to this county
-            const skillName = county.skillName;
-
-            setHover({
-                countyName: feature.properties!.NAME,
-                stateCode: feature.properties!.STATECODE,
-                skillName: skillName
-            });
+            if (!feature || !feature.properties) {
+                infoControlRef.current?.update();
+            } else {
+                infoControlRef.current?.update({
+                    countyName: feature.properties.NAME,
+                    stateCode: feature.properties.STATECODE,
+                    skillName: feature.properties.SKILL
+                });
+            }
         }
 
         function resetHighlight(e: Leaflet.LayerEvent) {
@@ -158,7 +134,7 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
 
             currentLayer.bringToFront();
 
-            setHover({countyName: "", stateCode: "", skillName: ""});
+            infoControlRef.current?.update();
         }
 
         layer.on({
@@ -166,6 +142,69 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
             mouseout: resetHighlight
         })
     }
+
+    return (
+        <GeoJSON data={geoData} style={style} onEachFeature={onEachFeature} />
+    )
+}
+
+interface SkillSearchMapProps {
+    stateSkills: StateSkillData[],
+}
+
+function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
+    console.log("Re-rendering map component");
+
+    // Get list of included state codes
+    const states = stateSkills.map(state =>
+        state.stateData.stateCode
+    );
+
+    let processedFeatures = [];
+    for (let i = 0; i < counties.features.length; i++) {
+        // Name of current state (e.g., "MD")
+        const stateCode = counties.features[i].properties.STATECODE;
+
+        // Filter out all counties not in included states
+        if (!states.includes(stateCode)) {
+            continue;
+        }
+
+        // Name of current county (e.g., "Frederick")
+        const countyName = counties.features[i].properties.NAME;
+
+        // Get data on current state
+        const currentStateData = stateSkills[
+            stateSkills.findIndex(item => item.stateData.stateCode === stateCode)
+        ];
+        
+        // Get data on the current county
+        const county = currentStateData.countyData[
+            currentStateData.countyData.findIndex(item => item.countyName === countyName)
+        ];
+
+        // Add skill name to each GeoJSON property
+        const properties = {
+            NAME: countyName,
+            STATECODE: stateCode,
+            SKILL: county.skillName
+        }
+
+        // Add 
+        processedFeatures.push({
+            type: counties.features[i].type,
+            properties: properties,
+            geometry: counties.features[i].geometry
+        });
+    }
+
+    // Cast geoData to FeatureCollection
+    const geoData = {
+        type: counties.type,
+        name: counties.name,
+        crs: counties.crs,
+        features: processedFeatures
+    } as GeoJSON.FeatureCollection;
 
     function getBounds(): number[][] {
         // Initialize to most extreme lat/lon points in America
@@ -230,10 +269,10 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
                             <a href="https://www.openstreetmap.org/copyright">
                             OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                <GeoJSON data={geoData} style={style} onEachFeature={onEachFeature} />
+                />
+                <Choropleth geoData={geoData}/>
                 <InnerMap bounds={getBounds()}/>
-                <div 
+                {/* <div 
                     style={{
                         position: "absolute", 
                         top: "10px", 
@@ -246,16 +285,8 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
                         zIndex: 1000
                     }}>
                     <h4 style={{margin: "0 0 0px"}}>In-Demand Skills</h4>
-                    {hover.countyName === "" ? (
-                        <div>
-                            {"Select a county"}
-                        </div>
-                    ) : (
-                        <div>
-                            {hover.countyName + ", " + hover.stateCode} <br /> <b>{hover.skillName}</b>
-                        </div>
-                    )}
-                </div>
+                </div> */}
+                {/* <InfoControl /> */}
             </MapContainer>
         </div>
     )
