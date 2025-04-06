@@ -106,10 +106,10 @@ function SkillSearch() {
                 <></>
             :
                 <div>
+                    <SkillSearchMap stateSkills={stateSkills} />
                     <ChartGrid data={skillData} />
                 </div>
             }
-            {/* <SkillSearchMap stateSkills={stateSkills} /> */}
         </div>
     )
 }

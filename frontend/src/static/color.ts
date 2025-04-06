@@ -2,7 +2,7 @@
  *  which is between 0 and 1
  */
 export function polylinearGradient(colors: string[], n: number): string {
-    const threshold = 1 / colors.length;
+    const threshold = 1 / (colors.length - 1);
     const startIndex = Math.min(Math.floor(n / threshold), colors.length - 2);
     const endIndex = startIndex + 1;
 
@@ -52,7 +52,14 @@ function rgbToHex(vals: number[]): string {
     let hex = "#";
 
     for (const val of vals) {
-        hex += val.toString(16);
+        let hexVal = val.toString(16);
+
+        if (hexVal.length === 1) {
+            // Add leading 0, if necessary
+            hexVal = "0" + hexVal;
+        }
+        
+        hex += hexVal;
     }
 
     return hex;
@@ -85,8 +92,7 @@ function scaleArray(arr1: number[], scalar: number): number[] {
     let scaledArr = [];
 
     for (let i = 0; i < arr1.length; i++) {
-        let scaledVal = Math.round(arr1[i] * scalar);
-        scaledArr[i] = Math.max(0, Math.min(255, scaledVal));
+        scaledArr[i] = Math.round(arr1[i] * scalar);
     }
 
     return scaledArr;

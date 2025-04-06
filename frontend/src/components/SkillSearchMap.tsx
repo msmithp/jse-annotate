@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import Leaflet from "leaflet";
+import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
 import { mapSkillToColor } from "src/static/utils";
@@ -107,7 +108,7 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
             opacity: 1,
             color: "white",
             dashArray: dashArray,
-            fillOpacity: 0.7,
+            fillOpacity: 0.75,
           };
     }
 

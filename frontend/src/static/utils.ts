@@ -20,7 +20,7 @@ export function mapDropdownStates(states: State[]) {
     }];
 }
 
-/** Map a skill to a color */
+/** Map a skill to a color based on its name */
 export function mapSkillToColor(skill: string): string {
     const numColors = 5000;
 
@@ -29,6 +29,7 @@ export function mapSkillToColor(skill: string): string {
     return polylinearGradient(colors, n/numColors);
 }
 
+/** Generate a hash value for a string `s` in modulo `n` */
 function hashString(s: string, n: number): number {
     let hash = 0;
     const p = 59;  // somewhat arbitrary prime number
