@@ -150,6 +150,7 @@ def skill_search(request): #assume userState is the state's id
             #print(thisCounty, skill_occurrences) #test
 
             commonSkillID = max(skill_occurrences, key = skill_occurrences.get)
+            numJobs = skill_occurrences[commonSkillID]
 
             #print(thisCounty, commonSkillID) #test
             
@@ -157,7 +158,8 @@ def skill_search(request): #assume userState is the state's id
             commonSkillName = temp.skill_name
 
             stateInfo['countyData'].append({'countyID':thisCounty.pk, 'countyName': thisCounty.county_name,
-                                             'skillID': commonSkillID, 'skillName': commonSkillName})
+                                            'countyFips': thisCounty.fips, 'skillID': commonSkillID, 
+                                            'skillName': commonSkillName, 'numJobs': numJobs})
 
     #print(countyVals)
     return JsonResponse({'skills': skill_counts, 'counties': countyVals})

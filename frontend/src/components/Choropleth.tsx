@@ -19,12 +19,12 @@ class InfoControl extends L.Control {
     }
   
     // Update info control based on properties of feature
-    update(props?: {countyName: string, stateCode: string, skillName: string}) {
+    update(props?: {countyName: string, stateCode: string, skillName: string, numJobs: number}) {
         if (!this._div) return;
         this._div.innerHTML = `
             <h4 style="margin: 0 0 0px">In-Demand Skills</h4>
             ${props
-                ? `${props.countyName}, ${props.stateCode}<br/><b>${props.skillName}</b>`
+                ? `${props.countyName}, ${props.stateCode}<br/><b>${props.skillName}</b><br/>${props.numJobs} jobs`
                 : 'Hover over a county'
             }
         `;
@@ -86,7 +86,8 @@ function Choropleth({ geoData }: ChoroplethProps) {
                 infoControlRef.current?.update({
                     countyName: feature.properties.NAME,
                     stateCode: feature.properties.STATECODE,
-                    skillName: feature.properties.SKILL
+                    skillName: feature.properties.SKILL,
+                    numJobs: feature.properties.JOBS
                 });
             }
         }

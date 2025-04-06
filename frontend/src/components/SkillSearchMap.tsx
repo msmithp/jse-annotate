@@ -67,6 +67,9 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
         // Name of current county (e.g., "Frederick")
         const countyName = counties.features[i].properties.NAME;
 
+        // FIPS code of current county (e.g., "24021")
+        const fips = counties.features[i].properties.GEOID;
+
         // Get data on current state
         const currentStateData = stateSkills[
             stateSkills.findIndex(item => item.stateData.stateCode === stateCode)
@@ -74,14 +77,16 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
         
         // Get data on the current county
         const county = currentStateData.countyData[
-            currentStateData.countyData.findIndex(item => item.countyName === countyName)
+            currentStateData.countyData.findIndex(item => item.countyFips === fips)
         ];
 
         // Add skill name to each GeoJSON property
         const properties = {
             NAME: countyName,
             STATECODE: stateCode,
-            SKILL: county.skillName
+            COUNTYFIPS: fips,
+            SKILL: county.skillName,
+            JOBS: county.numJobs
         }
 
         // Add processed feature

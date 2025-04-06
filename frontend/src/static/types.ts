@@ -67,7 +67,9 @@ export interface StateSkillData {
     countyData: {
         countyID: number,
         countyName: string,
+        countyFips: string,
         skillID: number,
-        skillName: string
+        skillName: string,
+        numJobs: number
     }[]
 }
