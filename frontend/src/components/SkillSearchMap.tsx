@@ -1,19 +1,20 @@
-import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
+import { useRef } from "react";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import Leaflet from "leaflet";
-import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
-import { mapSkillToColor } from "src/static/utils";
 import { StateSkillData } from "../static/types";
+import { Choropleth } from ".";
 
 
-interface InnerMapProps {
+interface MapBoundsControlProps {
     bounds: number[][]
 }
 
 /** Inner map component for bounds fitting */
-function InnerMap({ bounds }: InnerMapProps) {
+function MapBoundsControl({ bounds }: MapBoundsControlProps) {
+    console.log("Checking bounds...");
+
     const map = useMap();
     const boundsRef = useRef<number[][]>([[0, 0],[0, 0]]);
     
@@ -40,120 +41,13 @@ function InnerMap({ bounds }: InnerMapProps) {
     return null;
 }
 
-
-class InfoControl extends L.Control {
-    private _div: HTMLDivElement | null = null;
-  
-    constructor(opts?: L.ControlOptions) {
-        super({ position: 'topright', ...opts });
-    }
-  
-    onAdd(map: L.Map) {
-        this._div = L.DomUtil.create('div', 'info'); 
-        this.update();
-        return this._div;
-    }
-  
-    // Update info control based on properties of feature
-    update(props?: {countyName: string, stateCode: string, skillName: string}) {
-        if (!this._div) return;
-        this._div.innerHTML = `
-            <h4>In-Demand Skills</h4>
-            ${props
-                ? `<b>${props.countyName}, ${props.stateCode}</b><br/>${props.skillName}`
-                : 'Hover over a county'
-            }
-        `;
-    }
-}
-
-interface ChoroplethProps {
-    geoData: GeoJSON.FeatureCollection
-}
-
-function Choropleth({ geoData }: ChoroplethProps) {
-    console.log("Re-rendering choropleth layer");
-
-    const map = useMap();
-    const infoControlRef = useRef<InfoControl | null>(null);
-
-    useEffect(() => {
-        const info = new InfoControl();
-        info.addTo(map);
-        infoControlRef.current = info;
-        // Cleanup on unmount
-        return () => {
-            map.removeControl(info);
-        };
-    }, [map]);
-
-    function style(feature: GeoJSON.Feature | undefined) {
-        if (!feature || !feature.properties) {
-            // Return empty dictionary if feature is undefined
-            return {};
-        }
-
-        return {
-            fillColor: mapSkillToColor(feature.properties.SKILL),
-            weight: 2,
-            opacity: 1,
-            color: "white",
-            dashArray: "5",
-            fillOpacity: 0.75,
-          };
-    }
-
-    function onEachFeature(feature: GeoJSON.Feature, layer: Leaflet.Layer) {
-        function highlightFeature(e: Leaflet.LayerEvent) {
-            let currentLayer = e.target;
-
-            currentLayer.setStyle({
-                color: "white",
-                dashArray: "",
-                weight: 3,
-            })
-            
-            currentLayer.bringToFront();
-
-            if (!feature || !feature.properties) {
-                infoControlRef.current?.update();
-            } else {
-                infoControlRef.current?.update({
-                    countyName: feature.properties.NAME,
-                    stateCode: feature.properties.STATECODE,
-                    skillName: feature.properties.SKILL
-                });
-            }
-        }
-
-        function resetHighlight(e: Leaflet.LayerEvent) {
-            let currentLayer = e.target;
-
-            // Reset layer's style back to the default
-            currentLayer.setStyle(style(feature))
-
-            currentLayer.bringToFront();
-
-            infoControlRef.current?.update();
-        }
-
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight
-        })
-    }
-
-    return (
-        <GeoJSON data={geoData} style={style} onEachFeature={onEachFeature} />
-    )
-}
-
 interface SkillSearchMapProps {
     stateSkills: StateSkillData[],
 }
 
 function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
     console.log("Re-rendering map component");
+    console.log(stateSkills);
 
     // Get list of included state codes
     const states = stateSkills.map(state =>
@@ -190,7 +84,7 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
             SKILL: county.skillName
         }
 
-        // Add 
+        // Add processed feature
         processedFeatures.push({
             type: counties.features[i].type,
             properties: properties,
@@ -271,22 +165,7 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <Choropleth geoData={geoData}/>
-                <InnerMap bounds={getBounds()}/>
-                {/* <div 
-                    style={{
-                        position: "absolute", 
-                        top: "10px", 
-                        right: "10px", 
-                        backgroundColor: "rgba(255, 255, 255, 0.7)", 
-                        padding: "5px", 
-                        borderRadius: "5px", 
-                        fontSize: "14px",
-                        width: "150px",
-                        zIndex: 1000
-                    }}>
-                    <h4 style={{margin: "0 0 0px"}}>In-Demand Skills</h4>
-                </div> */}
-                {/* <InfoControl /> */}
+                <MapBoundsControl bounds={getBounds()}/>
             </MapContainer>
         </div>
     )

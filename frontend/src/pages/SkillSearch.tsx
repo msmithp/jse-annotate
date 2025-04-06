@@ -92,6 +92,7 @@ function SkillSearch() {
 
         axios.get("http://127.0.0.1:8000/api/skill-search/", {params: params})
         .then((res) => {
+            console.log(res.data);
             setSkillData(res.data.skills);
             setStateSkills(res.data.counties);
         })
@@ -102,7 +103,7 @@ function SkillSearch() {
         <div>
             <h1>Find in-demand skills</h1>
             <SkillSearchForm onUpdate={handleSkillSearch} />
-            { skillData.length === 0 ?
+            { skillData.length === 0 || stateSkills.length === 0 ?
                 <></>
             :
                 <div>
