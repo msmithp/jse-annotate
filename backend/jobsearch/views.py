@@ -121,10 +121,7 @@ def skill_search(request): #assume userState is the state's id
 
     #After midterm: Dictionary of U.S. states, where each state is a dictionary of (county, most_common_skill) pairs
     countyVals = []
-    states = []
-
-    for i in userState: #makes it easier to get state name, code, etc. probably easier way to do this
-        states = list(State.objects.filter(pk=i))
+    states = State.objects.filter(pk__in=userState)
 
     for thisState in states:
         #make state info, append to countyVals
@@ -150,14 +147,20 @@ def skill_search(request): #assume userState is the state's id
             #print(thisCounty, skill_occurrences) #test
 
             commonSkillID = max(skill_occurrences, key = skill_occurrences.get)
+            numJobs = skill_occurrences[commonSkillID]
 
             #print(thisCounty, commonSkillID) #test
-            
-            temp = Skill.objects.get(pk=commonSkillID)
-            commonSkillName = temp.skill_name
+
+            if numJobs == 0:
+                commonSkillID = -1
+                commonSkillName = ""
+            else:
+                temp = Skill.objects.get(pk=commonSkillID)
+                commonSkillName = temp.skill_name
 
             stateInfo['countyData'].append({'countyID':thisCounty.pk, 'countyName': thisCounty.county_name,
-                                             'skillID': commonSkillID, 'skillName': commonSkillName})
+                                            'countyFips': thisCounty.fips, 'skillID': commonSkillID, 
+                                            'skillName': commonSkillName, 'numJobs': numJobs})
 
     #print(countyVals)
     return JsonResponse({'skills': skill_counts, 'counties': countyVals})

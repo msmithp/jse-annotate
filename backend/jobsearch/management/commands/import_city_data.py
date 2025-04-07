@@ -47,8 +47,6 @@ class Command(BaseCommand):
 
 
         """ Add cities and counties to database """
-        # County mapping: `county_name state` -> `county_ID` (e.g., "Queens NY" -> 1)
-        # County keys require state codes since U.S. county names are non-unique
         county_map = {}
         with open("./initialdata/uscities.csv") as f:
             reader = csv.reader(f)
@@ -58,6 +56,7 @@ class Command(BaseCommand):
             for row in reader:
                 county_name = row[5]
                 state_code = row[2]
+                fips = row[4]
 
                 if state_code not in state_map:
                     # Skip if county's state is not in the state map
@@ -66,12 +65,13 @@ class Command(BaseCommand):
                 # Create county entry in database
                 county_ID, created = County.objects.get_or_create(
                     county_name=county_name,
-                    state=state_map[state_code]
+                    state=state_map[state_code],
+                    fips=fips
                 )
 
                 # Only add county to map if it was newly created
                 if created:
-                    county_map[county_name + " " + state_code] = county_ID
+                    county_map[fips] = county_ID
 
             # Reset CSV iterable
             f.seek(1)
@@ -83,20 +83,54 @@ class Command(BaseCommand):
                 latitude = row[6]
                 longitude = row[7]
                 population = row[8]
-                county_name = row[5] + " " + row[2]
+                fips = row[4]
 
-                if county_name not in county_map:
-                    # Skip if city's county is not in the county map
+                if fips not in county_map:
+                    # Skip if this city's county is not in the county map
                     continue
 
                 # Create new City object and append to cities list
                 city = City(city_name=city_name, latitude=latitude,
                             longitude=longitude, population=population,
-                            county=county_map[county_name])
+                            county=county_map[fips])
                 
                 cities.append(city)
 
             # Bulk create cities
             City.objects.bulk_create(cities)
+
+        """ Add missing counties """
+        # Add counties missing from the CSV (i.e., counties with no cities)
+        County.objects.get_or_create(county_name="Greensville",
+                                     state=state_map["VA"],
+                                     fips="51081")
+        
+        County.objects.get_or_create(county_name="James City",
+                                     state=state_map["VA"],
+                                     fips="51095")
+        
+        County.objects.get_or_create(county_name="Kalawao",
+                                     state=state_map["HI"],
+                                     fips="15005")
+
+        County.objects.get_or_create(county_name="Lincoln",
+                                     state=state_map["ME"],
+                                     fips="23015")
+        
+        County.objects.get_or_create(county_name="Bristol",
+                                     state=state_map["RI"],
+                                     fips="44001")
+        
+        County.objects.get_or_create(county_name="Echols",
+                                     state=state_map["GA"],
+                                     fips="13101")
+
+        County.objects.get_or_create(county_name="Quitman",
+                                     state=state_map["GA"],
+                                     fips="13239")
+
+        County.objects.get_or_create(county_name="Webster",
+                                     state=state_map["GA"],
+                                     fips="13307")
 
         print("Successfully created location data")

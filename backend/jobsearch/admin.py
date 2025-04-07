@@ -17,9 +17,10 @@ class AltSkillAdmin(admin.ModelAdmin):
 
 class CityAdmin(admin.ModelAdmin):
     list_display = ('id', 'city_name', 'latitude', 'longitude', 'population', 'county')
+    search_fields = ['city_name', 'county__county_name', 'county__state__state_name']
 
 class CountyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'county_name', 'state')
+    list_display = ('id', 'county_name', 'state', 'fips')
 
 class StateAdmin(admin.ModelAdmin):
     list_display = ('id', 'state_name', 'state_code')

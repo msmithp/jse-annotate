@@ -6,36 +6,6 @@ import { mapDropdownStates } from "../static/utils";
 import { ChartSkillData, StateSkillData } from "../static/types";
 import axios from "axios";
 
-// Placeholder data
-const stateSkills = [
-    {
-        stateData: {
-            stateID: 0,
-            stateName: "Delaware",
-            stateCode: "DE"
-        },
-        countyData: [
-            {countyID: 0, countyName: "Kent", skillID: 5, skillName: "Python"},
-            {countyID: 1, countyName: "New Castle", skillID: 6, skillName: "Go"},
-            {countyID: 2, countyName: "Sussex", skillID: 9, skillName: "Java"}
-        ]
-    },
-    {
-        stateData: {
-            stateID: 1,
-            stateName: "Rhode Island",
-            stateCode: "RI"
-        },
-        countyData: [
-            {countyID: 5, countyName: "Bristol", skillID: 5, skillName: "Python"},
-            {countyID: 6, countyName: "Kent", skillID: 18, skillName: "JavaScript"},
-            {countyID: 7, countyName: "Newport", skillID: 9, skillName: "Java"},
-            {countyID: 10, countyName: "Providence", skillID: 9, skillName: "Java"},
-            {countyID: 23, countyName: "Washington", skillID: 9, skillName: "Java"}
-        ]
-    }
-];
-
 
 interface SkillSearchFormProps {
     onUpdate: (states: number[]) => void
@@ -92,6 +62,7 @@ function SkillSearch() {
 
         axios.get("http://127.0.0.1:8000/api/skill-search/", {params: params})
         .then((res) => {
+            console.log(res.data);
             setSkillData(res.data.skills);
             setStateSkills(res.data.counties);
         })
@@ -102,7 +73,7 @@ function SkillSearch() {
         <div>
             <h1>Find in-demand skills</h1>
             <SkillSearchForm onUpdate={handleSkillSearch} />
-            { skillData.length === 0 ?
+            { skillData.length === 0 || stateSkills.length === 0 ?
                 <></>
             :
                 <div>

@@ -12,6 +12,7 @@ class State(models.Model):
 class County(models.Model):
     county_name = models.CharField(max_length=50)
     state = models.ForeignKey(State, on_delete=models.CASCADE)
+    fips = models.CharField(max_length=5, unique=True)
 
     def __str__(self):
         return self.county_name

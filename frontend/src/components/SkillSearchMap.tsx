@@ -1,19 +1,20 @@
-import { useState, useRef } from "react";
-import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
+import { useRef } from "react";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import Leaflet from "leaflet";
-import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
-import { mapSkillToColor } from "src/static/utils";
 import { StateSkillData } from "../static/types";
+import { Choropleth } from ".";
 
 
-interface InnerMapProps {
+interface MapBoundsControlProps {
     bounds: number[][]
 }
 
 /** Inner map component for bounds fitting */
-function InnerMap({ bounds }: InnerMapProps) {
+function MapBoundsControl({ bounds }: MapBoundsControlProps) {
+    console.log("Checking bounds...");
+
     const map = useMap();
     const boundsRef = useRef<number[][]>([[0, 0],[0, 0]]);
     
@@ -40,132 +41,69 @@ function InnerMap({ bounds }: InnerMapProps) {
     return null;
 }
 
-interface HoverData {
-    countyName: string,
-    stateCode: string,
-    skillName: string
-}
-
 interface SkillSearchMapProps {
     stateSkills: StateSkillData[],
 }
 
 function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
-    // State variables
-    const [hover, setHover] = useState<HoverData>({countyName: "", stateCode: "", skillName: ""});
+    console.log("Re-rendering map component");
+    console.log(stateSkills);
 
     // Get list of included state codes
     const states = stateSkills.map(state =>
         state.stateData.stateCode
     );
 
-    // Filter out all counties not in included states
-    const filteredFeatures = counties.features.filter(feature => (
-        states.includes(feature.properties.STATECODE)
-    ));
+    let processedFeatures = [];
+    for (let i = 0; i < counties.features.length; i++) {
+        // Name of current state (e.g., "MD")
+        const stateCode = counties.features[i].properties.STATECODE;
+
+        // Filter out all counties not in included states
+        if (!states.includes(stateCode)) {
+            continue;
+        }
+
+        // Name of current county (e.g., "Frederick")
+        const countyName = counties.features[i].properties.NAME;
+
+        // FIPS code of current county (e.g., "24021")
+        const fips = counties.features[i].properties.GEOID;
+
+        // Get data on current state
+        const currentStateData = stateSkills[
+            stateSkills.findIndex(item => item.stateData.stateCode === stateCode)
+        ];
+        
+        // Get data on the current county
+        const county = currentStateData.countyData[
+            currentStateData.countyData.findIndex(item => item.countyFips === fips)
+        ];
+
+        // Add skill name to each GeoJSON property
+        const properties = {
+            NAME: countyName,
+            STATECODE: stateCode,
+            COUNTYFIPS: fips,
+            SKILL: county.skillName,
+            JOBS: county.numJobs
+        }
+
+        // Add processed feature
+        processedFeatures.push({
+            type: counties.features[i].type,
+            properties: properties,
+            geometry: counties.features[i].geometry
+        });
+    }
 
     // Cast geoData to FeatureCollection
     const geoData = {
         type: counties.type,
         name: counties.name,
         crs: counties.crs,
-        features: filteredFeatures
+        features: processedFeatures
     } as GeoJSON.FeatureCollection;
-
-    function style(feature: GeoJSON.Feature | undefined) {
-        if (!feature || !feature.properties) {
-            // Return empty dictionary if feature is undefined
-            return {};
-        }
-
-        // Name of current county (e.g., "Frederick")
-        const countyName = feature.properties.NAME;
-
-        // Name of current state (e.g., "MD")
-        const stateCode = feature.properties.STATECODE;
-
-        // Get data on current state
-        const currentState = stateSkills[
-            stateSkills.findIndex(item => item.stateData.stateCode === stateCode)
-        ];
-        
-        // Get data on the current county
-        const county = currentState.countyData[
-            currentState.countyData.findIndex(item => item.countyName === countyName)
-        ];
-
-        // Update properties for selected county
-        let weight = 2;
-        let dashArray = "5";
-        if (hover.countyName === countyName && hover.stateCode === stateCode) {
-            weight = 3;
-            dashArray = "";
-        }
-
-        return {
-            fillColor: mapSkillToColor(county.skillName),
-            weight: weight,
-            opacity: 1,
-            color: "white",
-            dashArray: dashArray,
-            fillOpacity: 0.75,
-          };
-    }
-
-    function onEachFeature(feature: GeoJSON.Feature, layer: Leaflet.Layer) {
-        function highlightFeature(e: Leaflet.LayerEvent) {
-            let currentLayer = e.target;
-
-            currentLayer.setStyle({
-                color: "white",
-                dashArray: "",
-                weight: 3,
-            })
-            
-            currentLayer.bringToFront();
-
-            // Name of current county (e.g., "Frederick")
-            const countyName = feature.properties!.NAME;
-
-            // Name of current state (e.g., "MD")
-            const stateCode = feature.properties!.STATECODE;
-
-            // Get data on current state
-            const currentState = stateSkills[
-                stateSkills.findIndex(item => item.stateData.stateCode === stateCode)
-            ];
-            
-            // Get data on the current county
-            const county = currentState.countyData[
-                currentState.countyData.findIndex(item => item.countyName === countyName)
-            ];
-
-            // ID of skill mapped to this county
-            const skillName = county.skillName;
-
-            setHover({
-                countyName: feature.properties!.NAME,
-                stateCode: feature.properties!.STATECODE,
-                skillName: skillName
-            });
-        }
-
-        function resetHighlight(e: Leaflet.LayerEvent) {
-            let currentLayer = e.target;
-
-            // Reset layer's style back to the default
-            currentLayer.setStyle(style(feature))
-
-            currentLayer.bringToFront();
-
-            setHover({countyName: "", stateCode: "", skillName: ""});
-        }
-
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight
-        })
-    }
 
     function getBounds(): number[][] {
         // Initialize to most extreme lat/lon points in America
@@ -230,32 +168,9 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
                             <a href="https://www.openstreetmap.org/copyright">
                             OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                <GeoJSON data={geoData} style={style} onEachFeature={onEachFeature} />
-                <InnerMap bounds={getBounds()}/>
-                <div 
-                    style={{
-                        position: "absolute", 
-                        top: "10px", 
-                        right: "10px", 
-                        backgroundColor: "rgba(255, 255, 255, 0.7)", 
-                        padding: "5px", 
-                        borderRadius: "5px", 
-                        fontSize: "14px",
-                        width: "150px",
-                        zIndex: 1000
-                    }}>
-                    <h4 style={{margin: "0 0 0px"}}>In-Demand Skills</h4>
-                    {hover.countyName === "" ? (
-                        <div>
-                            {"Select a county"}
-                        </div>
-                    ) : (
-                        <div>
-                            {hover.countyName + ", " + hover.stateCode} <br /> <b>{hover.skillName}</b>
-                        </div>
-                    )}
-                </div>
+                />
+                <Choropleth geoData={geoData}/>
+                <MapBoundsControl bounds={getBounds()}/>
             </MapContainer>
         </div>
     )
