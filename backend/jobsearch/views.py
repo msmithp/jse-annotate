@@ -153,9 +153,13 @@ def skill_search(request): #assume userState is the state's id
             numJobs = skill_occurrences[commonSkillID]
 
             #print(thisCounty, commonSkillID) #test
-            
-            temp = Skill.objects.get(pk=commonSkillID)
-            commonSkillName = temp.skill_name
+
+            if numJobs == 0:
+                commonSkillID = -1
+                commonSkillName = ""
+            else:
+                temp = Skill.objects.get(pk=commonSkillID)
+                commonSkillName = temp.skill_name
 
             stateInfo['countyData'].append({'countyID':thisCounty.pk, 'countyName': thisCounty.county_name,
                                             'countyFips': thisCounty.fips, 'skillID': commonSkillID, 

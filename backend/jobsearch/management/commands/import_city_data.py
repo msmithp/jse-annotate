@@ -99,4 +99,38 @@ class Command(BaseCommand):
             # Bulk create cities
             City.objects.bulk_create(cities)
 
+        """ Add missing counties """
+        # Add counties missing from the CSV (i.e., counties with no cities)
+        County.objects.get_or_create(county_name="Greensville",
+                                     state=state_map["VA"],
+                                     fips="51081")
+        
+        County.objects.get_or_create(county_name="James City",
+                                     state=state_map["VA"],
+                                     fips="51095")
+        
+        County.objects.get_or_create(county_name="Kalawao",
+                                     state=state_map["HI"],
+                                     fips="15005")
+
+        County.objects.get_or_create(county_name="Lincoln",
+                                     state=state_map["ME"],
+                                     fips="23015")
+        
+        County.objects.get_or_create(county_name="Bristol",
+                                     state=state_map["RI"],
+                                     fips="44001")
+        
+        County.objects.get_or_create(county_name="Echols",
+                                     state=state_map["GA"],
+                                     fips="13101")
+
+        County.objects.get_or_create(county_name="Quitman",
+                                     state=state_map["GA"],
+                                     fips="13239")
+
+        County.objects.get_or_create(county_name="Webster",
+                                     state=state_map["GA"],
+                                     fips="13307")
+
         print("Successfully created location data")

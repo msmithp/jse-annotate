@@ -20,14 +20,29 @@ class InfoControl extends L.Control {
   
     // Update info control based on properties of feature
     update(props?: {countyName: string, stateCode: string, skillName: string, numJobs: number}) {
-        if (!this._div) return;
-        this._div.innerHTML = `
-            <h4 style="margin: 0 0 0px">In-Demand Skills</h4>
-            ${props
-                ? `${props.countyName}, ${props.stateCode}<br/><b>${props.skillName}</b><br/>${props.numJobs} jobs`
-                : 'Hover over a county'
+        if (!this._div) {
+            return;
+        }
+
+        // Set text in info box
+        let body = "";
+        if (!props) {
+            // Nothing being hovered over
+            body = "Hover over a county";
+        } else {
+            // County is being hovered over
+            const countyName = `${props.countyName}, ${props.stateCode}`;
+            if (props.numJobs === 0) {
+                // No jobs in this county
+                body = countyName + `<br/>No jobs found`;
+            } else {
+                body = countyName + `<br/>
+                <b>${props.skillName}</b><br/>
+                ${props.numJobs} jobs`;
             }
-        `;
+        }
+
+        this._div.innerHTML = "<h4 style=\"margin: 0 0 0px\">In-Demand Skills</h4>" + body;
     }
 }
 

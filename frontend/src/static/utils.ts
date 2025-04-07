@@ -24,7 +24,7 @@ export function mapDropdownStates(states: State[]) {
 export function mapSkillToColor(skill: string): string {
     if (skill === "") {
         // Return gray for no skill
-        return "#616263"
+        return "#474747"
     }
 
     const numColors = 5000;
