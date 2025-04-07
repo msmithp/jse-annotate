@@ -121,10 +121,7 @@ def skill_search(request): #assume userState is the state's id
 
     #After midterm: Dictionary of U.S. states, where each state is a dictionary of (county, most_common_skill) pairs
     countyVals = []
-    states = []
-
-    for i in userState: #makes it easier to get state name, code, etc. probably easier way to do this
-        states = list(State.objects.filter(pk=i))
+    states = State.objects.filter(pk__in=userState)
 
     for thisState in states:
         #make state info, append to countyVals
