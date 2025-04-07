@@ -35,6 +35,10 @@ class InfoControl extends L.Control {
             if (props.numJobs === 0) {
                 // No jobs in this county
                 body = countyName + `<br/>No jobs found`;
+            } else if (props.numJobs === 1) {
+                body = countyName + `<br/>
+                <b>${props.skillName}</b><br/>
+                ${props.numJobs} job`;
             } else {
                 body = countyName + `<br/>
                 <b>${props.skillName}</b><br/>

@@ -1,4 +1,3 @@
-import React from "react";
 import { useState } from "react";
 import { SkillSearchMap, ChartGrid, DropdownList } from "../components";
 import { useStaticData } from "../context/StaticDataProvider";

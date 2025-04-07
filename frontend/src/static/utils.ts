@@ -5,7 +5,15 @@ import { polylinearGradient } from "./color";
 export function mapDropdownSkills(skills: Skill[]) {
     return skills.map(skill => ({
         category: skill.category,
-        items: skill.skills
+        items: skill.skills.sort((x, y) => {
+            if (x.name < y.name) {
+                return -1;
+            } else if (x.name > y.name) {
+                return 1;
+            } else {
+                return 0;
+            }
+        })
     }));
 }
 
