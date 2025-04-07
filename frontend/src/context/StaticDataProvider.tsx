@@ -58,7 +58,15 @@ export default function StaticDataProvider({ children }: StaticDataProviderProps
     }, []);
 
     const data = {
-        skills: skills,
+        skills: skills.sort((x, y) => {
+            if (x.category < y.category) {
+                return -1;
+            } else if (x.category > y.category) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }),
         eduLevels: educationValues,
         states: states,
         experience: generateExperienceOptions(20)

@@ -63,7 +63,7 @@ export interface StateSkillData {
         stateID: number,
         stateName: string,
         stateCode: string
-    }
+    },
     countyData: {
         countyID: number,
         countyName: string,
@@ -72,4 +72,23 @@ export interface StateSkillData {
         skillName: string,
         numJobs: number
     }[]
+}
+
+export interface StateDensityData {
+    stateData: {
+        stateID: number,
+        stateName: string,
+        stateCode: string
+    },
+    countyData: {
+        countyID: number,
+        countyName: string,
+        countyFips: string,
+        density: number,
+        numJobs: number
+    }[],
+    skillData: {
+        skillID: number,
+        skillName: string
+    }
 }
