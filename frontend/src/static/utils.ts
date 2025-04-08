@@ -1,5 +1,7 @@
 import { Skill, State } from "./types";
-import { polylinearGradient } from "./color";
+import { polylinearGradient, linearGradient } from "./color";
+
+const GRAY = "#474747"
 
 /** Map a list of Skill types to conform to the type expected by DropdownList */
 export function mapDropdownSkills(skills: Skill[]) {
@@ -32,7 +34,7 @@ export function mapDropdownStates(states: State[]) {
 export function mapSkillToColor(skill: string): string {
     if (skill === "") {
         // Return gray for no skill
-        return "#474747"
+        return GRAY;
     }
 
     const numColors = 5000;
@@ -52,4 +54,13 @@ function hashString(s: string, n: number): number {
     }
 
     return hash % n;
+}
+
+/** Generate a color between gray and a skill's color based on density.
+ *  Higher density means that the resulting color will be closer to the skill's
+ *  original color, while lower density means that the resulting color will be
+ *  closer to gray.
+ */
+export function skillDensityGradient(skill: string, density: number): string {
+    return linearGradient(GRAY, mapSkillToColor(skill), density);
 }

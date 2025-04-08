@@ -87,8 +87,4 @@ export interface StateDensityData {
         density: number,
         numJobs: number
     }[],
-    skillData: {
-        skillID: number,
-        skillName: string
-    }
 }

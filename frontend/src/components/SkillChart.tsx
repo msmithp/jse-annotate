@@ -47,6 +47,14 @@ function SkillChart({ title, skillData } : SkillChartProps) {
     // Set chart options
     const options = {
         responsive: true,
+        scales: {
+            y: {
+                title: {
+                    display: true,
+                    text: "Jobs"
+                }
+            }
+        },
         plugins: {
             title: {
                 display: true,
