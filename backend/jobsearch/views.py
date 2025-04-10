@@ -209,12 +209,52 @@ def get_static_data(request):
     return JsonResponse({'skills': skillValues, 'states': locationValues})
 
 def get_dashboard_data(request):
-    return
+    user_id = request.GET.get("user_id")
+
+    dashboard_data = {}
 
 def get_density_data(request):
     user_id = request.GET.get("user_id")
     skill_id = request.GET.get("skill_id")
 
+    user = User.objects.get(pk=user_id)
+
     #get user state based on ID
 
-    state = "Maryland"
+    profile = user.profile
+    stateID = profile.state
+
+    state = State.objects.get(pk = stateID)
+
+    skill = Skill.objects.get(pk=skill_id)
+
+    data = {'stateData': {'stateID': stateID, 'stateName': state.state_name, 'stateCode': state.state_code}, 'countyData': [],
+            'skillData': {'skillID': skill_id, 'skillName': skill.skill_name}}
+    counties = list(County.objects.filter(state=state))
+    occurrences = []
+
+    for county in counties:
+        count = 0
+        job_set = list(Job.objects.filter(city__county=county))
+        for job in job_set:
+            print(job.skills)
+            if job.skills == skill_id:
+                count += 1
+        occurrences.append({'countyName': county.county_name, 'occurrences': count})
+
+    max = 0
+    for item in occurrences:
+        if item['occurrences'] > max:
+            max = item['occurrences']
+
+    for county in counties: 
+        for item in occurrences:
+            if item['countyName'] == county.county_name:
+                density = item['occurrences']/max
+        data['countyData'].append({'countyID':county.pk, 'countyName': county.county_name, 'countyFips': county.fips,
+                                   'density': density, 'numJobs': count})
+    
+    print(data)
+    return JsonResponse({'densityData': data})
+
+
