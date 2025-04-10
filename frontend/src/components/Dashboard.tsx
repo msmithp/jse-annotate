@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Job, SkillCategory, ChartSkillData, 
-    StateDensityData, CountyMapData } from "../static/types";
+    StateDensityData, StateData } from "../static/types";
 import { mapDropdownSkills } from "../static/utils";
 import { useAuthContext } from "../context/AuthProvider";
 import { SkillChart, JobList, DashboardMap, 
     CountyMap, Dropdown } from "../components";
 import axiosInstance from "../api/axiosInstance";
+
 
 const placeholderMapData: StateDensityData = {
     stateData: {
@@ -31,7 +32,7 @@ interface DashboardProps {
     chartData: ChartSkillData,
     jobs: Job[],
     userSkills: SkillCategory[],
-    blankMapData: CountyMapData
+    blankMapData: StateData
 }
 
 function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps) {
@@ -72,7 +73,7 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
                 {selected !== -1 && mapData != null ? (
                     <DashboardMap stateDensity={placeholderMapData} />
                 ) : (
-                    <CountyMap mapData={blankMapData} />
+                    <CountyMap stateData={blankMapData} />
                 )}
             </div>
             <div style={{ height: "300px" }}>

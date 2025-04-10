@@ -93,17 +93,10 @@ export interface StateDensityData {
     }
 }
 
-export interface CountyMapData {
-    stateData: {
-        stateID: number,
-        stateName: string,
-        stateCode: string
-    },
-    countyData: {
-        countyID: number,
-        countyName: string,
-        countyFips: string
-    }[]
+export interface StateData {
+    stateID: number,
+    stateName: string,
+    stateCode: string
 }
 
 export interface DashboardData {
@@ -114,5 +107,5 @@ export interface DashboardData {
     }[],
     jobs: Job[],
     userSkills: SkillCategory[],
-    mapData: CountyMapData
+    mapData: StateData
 }

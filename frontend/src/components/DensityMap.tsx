@@ -5,6 +5,7 @@ import L from "leaflet";
 import 'leaflet/dist/leaflet.css';
 import { skillDensityGradient } from "src/static/utils";
 
+
 class InfoControl extends L.Control {
     private _div: HTMLDivElement | null = null;
   
@@ -46,7 +47,7 @@ class InfoControl extends L.Control {
             }
         }
 
-        this._div.innerHTML = "<h4 style=\"margin: 0 0 0px\">Popularity of Skill</h4>" + body;
+        this._div.innerHTML = "<h4 style=\"margin: 0 0 0px\">Skill Demand</h4>" + body;
     }
 }
 

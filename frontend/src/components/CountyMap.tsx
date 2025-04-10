@@ -1,37 +1,32 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
-import { CountyMapData } from "src/static/types";
+import { StateData } from "src/static/types";
 import { DensityMap, MapBoundsControl } from "../components";
 
 
 interface CountyMapProps {
-    mapData: CountyMapData,
+    stateData: StateData,
 }
 
-function CountyMap({ mapData } : CountyMapProps) {
+function CountyMap({ stateData } : CountyMapProps) {
     let processedFeatures = [];
 
     for (let i = 0; i < counties.features.length; i++) {
         const feature = counties.features[i];
         const stateCode = feature.properties.STATECODE;
 
-        // Filter out all counties not in state
-        if (stateCode !== mapData.stateData.stateCode) {
+        // Filter out counties not in state
+        if (stateCode !== stateData.stateCode) {
             continue;
         }
 
         // FIPS code of current county (e.g., "24021")
         const fips = feature.properties.GEOID;
 
-        // Data on county
-        const county = mapData.countyData[
-            mapData.countyData.findIndex(item => item.countyFips === fips)
-        ];
-
         const properties = {
-            NAME: county.countyName,
-            STATECODE: mapData.stateData.stateCode,
+            NAME: feature.properties.NAME,
+            STATECODE: stateData.stateCode,
             COUNTYFIPS: fips,
             SKILL: null,
             JOBS: 0,

@@ -53,17 +53,10 @@ const placeholderDashboardData = {
     ],
 
     // Geographical information associated with user's state
-    mapData: {
-        stateData: {
-            stateID: 3,
-            stateName: "Delaware",
-            stateCode: "DE"
-        },
-        countyData: [
-            {countyID: 1, countyName: "Kent", countyFips: "10001"},
-            {countyID: 2, countyName: "New Castle", countyFips: "10003"},
-            {countyID: 3, countyName: "Sussex", countyFips: "10005"}
-        ],
+    stateData: {
+        stateID: 3,
+        stateName: "Delaware",
+        stateCode: "DE"
     }
 }
 
@@ -112,7 +105,7 @@ function Home() {
                             chartData={{category: "Skills", skills: placeholderDashboardData.skills}}
                             jobs={placeholderDashboardData.jobs}
                             userSkills={placeholderDashboardData.userSkills}
-                            blankMapData={placeholderDashboardData.mapData} />
+                            blankMapData={placeholderDashboardData.stateData} />
                     </div>
                 ) : (
                     // User is not logged in
