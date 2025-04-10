@@ -1,6 +1,6 @@
 import React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
-import { Skill, State, EducationLevel, Experience } from "../static/types";
+import { SkillCategory, State, EducationLevel, Experience } from "../static/types";
 import axios from "axios";
 
 const educationValues = [
@@ -22,7 +22,7 @@ function generateExperienceOptions(numOptions: number): Experience[] {
 }
 
 interface ContextType {
-    skills: Skill[],
+    skills: SkillCategory[],
     eduLevels: EducationLevel[],
     states: State[],
     experience: Experience[]
@@ -35,7 +35,7 @@ interface StaticDataProviderProps {
 const StaticDataContext = createContext<ContextType | undefined>(undefined);
 
 export default function StaticDataProvider({ children }: StaticDataProviderProps) {
-    const [skills, setSkills] = useState<Skill[]>([]);
+    const [skills, setSkills] = useState<SkillCategory[]>([]);
     const [states, setStates] = useState<State[]>([]);
 
     useEffect(() => {

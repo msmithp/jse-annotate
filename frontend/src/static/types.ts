@@ -1,4 +1,4 @@
-export interface Skill {
+export interface SkillCategory {
     category: string,
     skills: {
         id: number,
@@ -87,4 +87,21 @@ export interface StateDensityData {
         density: number,
         numJobs: number
     }[],
+    skillData: {
+        skillID: number,
+        skillName: string
+    }
+}
+
+export interface CountyMapData {
+    stateData: {
+        stateID: number,
+        stateName: string,
+        stateCode: string
+    },
+    countyData: {
+        countyID: number,
+        countyName: string,
+        countyFips: string
+    }[]
 }

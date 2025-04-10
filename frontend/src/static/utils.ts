@@ -1,10 +1,10 @@
-import { Skill, State } from "./types";
+import { SkillCategory, State } from "./types";
 import { polylinearGradient, linearGradient } from "./color";
 
 const GRAY = "#474747"
 
 /** Map a list of Skill types to conform to the type expected by DropdownList */
-export function mapDropdownSkills(skills: Skill[]) {
+export function mapDropdownSkills(skills: SkillCategory[]) {
     return skills.map(skill => ({
         category: skill.category,
         items: skill.skills.sort((x, y) => {

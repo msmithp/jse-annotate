@@ -12,7 +12,7 @@ class InfoControl extends L.Control {
         super({ position: 'topright', ...opts });
     }
   
-    onAdd(map: L.Map) {
+    onAdd(_: L.Map) {
         this._div = L.DomUtil.create('div', 'info'); 
         this.update();
         return this._div;
@@ -29,6 +29,8 @@ class InfoControl extends L.Control {
         if (!props) {
             // Nothing being hovered over
             body = "Hover over a county";
+        } else if (props.skillName === null) {
+            body = "Select a skill";
         } else {
             // County is being hovered over
             const countyName = `${props.countyName}, ${props.stateCode}`;
@@ -53,7 +55,7 @@ interface DensityMapProps {
     skill: {
         skillID: number,
         skillName: string
-    }
+    } | null
 }
 
 function DensityMap({ geoData, skill }: DensityMapProps) {
@@ -76,8 +78,15 @@ function DensityMap({ geoData, skill }: DensityMapProps) {
             return {};
         }
 
+        let color;
+        if (skill == null) {
+            color = "#474747";
+        } else {
+            color = skillDensityGradient(skill.skillName, feature.properties.DENSITY);
+        }
+
         return {
-            fillColor: skillDensityGradient(skill.skillName, feature.properties.DENSITY),
+            fillColor: color,
             weight: 2,
             opacity: 1,
             color: "white",
