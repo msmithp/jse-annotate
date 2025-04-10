@@ -134,7 +134,7 @@ class Command(BaseCommand):
                                      fips="13307")
         
         County.objects.get_or_create(county_name="Las Marías",
-                                     county=state_map["PR"],
+                                     state=state_map["PR"],
                                      fips="72083")
 
         print("Successfully created location data")
