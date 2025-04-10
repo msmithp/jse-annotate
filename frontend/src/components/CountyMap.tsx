@@ -1,41 +1,36 @@
 import { MapContainer, TileLayer } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
-import { StateDensityData } from "src/static/types";
-import { DensityMap, MapBoundsControl, Dropdown } from "../components";
+import { StateData } from "src/static/types";
+import { DensityMap, MapBoundsControl } from "../components";
 
 
-interface DashboardMapProps {
-    stateDensity: StateDensityData,
+interface CountyMapProps {
+    stateData: StateData,
 }
 
-function DashboardMap({ stateDensity } : DashboardMapProps) {
+function CountyMap({ stateData } : CountyMapProps) {
     let processedFeatures = [];
 
     for (let i = 0; i < counties.features.length; i++) {
         const feature = counties.features[i];
         const stateCode = feature.properties.STATECODE;
 
-        // Filter out all counties not in state
-        if (stateCode !== stateDensity.stateData.stateCode) {
+        // Filter out counties not in state
+        if (stateCode !== stateData.stateCode) {
             continue;
         }
 
         // FIPS code of current county (e.g., "24021")
         const fips = feature.properties.GEOID;
 
-        // Data on county
-        const county = stateDensity.countyData[
-            stateDensity.countyData.findIndex(item => item.countyFips === fips)
-        ];
-
         const properties = {
-            NAME: county.countyName,
-            STATECODE: stateDensity.stateData.stateCode,
+            NAME: feature.properties.NAME,
+            STATECODE: stateData.stateCode,
             COUNTYFIPS: fips,
-            SKILL: stateDensity.skillData.skillName,
-            JOBS: county.numJobs,
-            DENSITY: county.density
+            SKILL: null,
+            JOBS: 0,
+            DENSITY: 0
         };
 
         processedFeatures.push({
@@ -62,7 +57,7 @@ function DashboardMap({ stateDensity } : DashboardMapProps) {
                                 OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    <DensityMap geoData={geoData} skill={stateDensity.skillData} />
+                    <DensityMap geoData={geoData} skill={null} />
                     <MapBoundsControl geoData={geoData} />
                 </MapContainer>
             </div>
@@ -70,4 +65,4 @@ function DashboardMap({ stateDensity } : DashboardMapProps) {
     )
 }
 
-export default DashboardMap;
+export default CountyMap;
