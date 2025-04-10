@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../context/AuthProvider";
 import { Dashboard }from "../components";
-import { User } from "../static/types";
+import { DashboardData } from "../static/types";
 import axiosInstance from "../api/axiosInstance";
 
 // Placeholder data
-const dashboardData = {
+const placeholderDashboardData = {
     // Top 10 skills in the user's state, in any category,
     // sorted in descending order by number of occurrences
     skills: [
@@ -69,7 +69,7 @@ const dashboardData = {
 
 function Home() {
     // State variables
-    const [userData, setUserData] = useState<User | null>(null);
+    const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
 
     const authContext = useAuthContext();
@@ -78,12 +78,13 @@ function Home() {
 
     useEffect(() => {
         let ignore = false;
-        setUserData(null);
+        setDashboardData(null);
         if (user) {
+            // axiosInstance.get("api/get-dashboard-data/", {params: {id: user.user_id}})
             axiosInstance.get("api/get-user/", {params: {id: user.user_id}})
             .then(res => {
                 if (!ignore) {
-                    setUserData(res.data);
+                    setDashboardData(res.data);
                     setLoading(false);
                 }
             }).catch(err => {console.log("Error in home page: " + err); logoutUser()});
@@ -108,10 +109,10 @@ function Home() {
                     <div>
                         <p>Welcome, {user.username}.</p>
                         <Dashboard 
-                            chartData={{category: "Skills", skills: dashboardData.skills}}
-                            jobs={dashboardData.jobs}
-                            userSkills={dashboardData.userSkills}
-                            blankMapData={dashboardData.mapData} />
+                            chartData={{category: "Skills", skills: placeholderDashboardData.skills}}
+                            jobs={placeholderDashboardData.jobs}
+                            userSkills={placeholderDashboardData.userSkills}
+                            blankMapData={placeholderDashboardData.mapData} />
                     </div>
                 ) : (
                     // User is not logged in

@@ -105,3 +105,14 @@ export interface CountyMapData {
         countyFips: string
     }[]
 }
+
+export interface DashboardData {
+    skills: {
+        id: number,
+        skillName: string,
+        occurrences: number
+    }[],
+    jobs: Job[],
+    userSkills: SkillCategory[],
+    mapData: CountyMapData
+}
