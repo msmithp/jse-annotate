@@ -40,16 +40,24 @@ def calc_edu(userEdu, reqEdu):
         reqEduScore = education[reqEdu]
 
     if reqEduScore == 0:
-        return 1
+        score = max(0, 1 - userEduScore)
+    elif reqEduScore > userEduScore:
+        score = userEduScore / reqEduScore
+    elif userEduScore == reqEduScore:
+        score = 1
     else:
-        score = min((userEduScore / reqEduScore), 1)
+        score = max(0, 1-(abs(userEduScore/reqEduScore)/reqEduScore))
 
     return score
 
 def calc_years(userYears, reqYears):
     if reqYears == 0:
-        return 1
+        score = max(0, 1 - 0.1*userYears)
+    elif reqYears > userYears:
+        score = max(0, userYears/reqYears)
+    elif userYears == reqYears:
+        score = 1
     else:
-        score = min((userYears / reqYears), 1)
+        score = max(0, 1-(userYears/reqYears))
 
     return score

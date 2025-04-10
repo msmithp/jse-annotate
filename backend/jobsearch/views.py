@@ -101,14 +101,6 @@ def skill_search(request): #assume userState is the state's id
 
     skill_counts = []
     categories = list(Skill.objects.values_list('category', flat=True).distinct())
-    """for category in categories:
-        catInfo = {'category': category, 'skill info': []}
-        skill_counts.append(catInfo)
-        skill_set = Skill.objects.filter(category=category)
-        for item in skill_set:
-            for state in userState:
-                job_list = list(Job.objects.filter(skills=item, city__county__state=userState))
-                catInfo['skill info'].append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': len(job_list)})"""
 
     for category in categories:
         catInfo = {'category': category, 'skills': []}
@@ -215,3 +207,14 @@ def get_static_data(request):
 
     #output:
     return JsonResponse({'skills': skillValues, 'states': locationValues})
+
+def get_dashboard_data(request):
+    return
+
+def get_density_data(request):
+    user_id = request.GET.get("user_id")
+    skill_id = request.GET.get("skill_id")
+
+    #get user state based on ID
+
+    state = "Maryland"
