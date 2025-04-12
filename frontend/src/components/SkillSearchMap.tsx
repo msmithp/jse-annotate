@@ -71,7 +71,7 @@ function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
 
     return (
         <div>
-            <MapContainer style={{ height: "400px", width: "600px" }} zoom={6}>
+            <MapContainer zoom={6} scrollWheelZoom={false} className="skillSearchMap">
                 <TileLayer 
                         attribution='&copy; 
                             <a href="https://www.openstreetmap.org/copyright">

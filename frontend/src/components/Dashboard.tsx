@@ -66,7 +66,9 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
         <div className="dashboard">
             <div className="dashboardLeft">
                 <div className="dashboardChart">
-                    <SkillChart title={"test"} skillData={chartData.skills} />
+                    <SkillChart 
+                        title={`Top Skills in ${blankMapData.stateName}`} 
+                        skillData={chartData.skills} />
                 </div>
                 <div className="dashboardSelectAndMap">
                     <label className="dashboardStateSelect">

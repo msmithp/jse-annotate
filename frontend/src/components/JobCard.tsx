@@ -94,17 +94,31 @@ function JobCard({ title, company, cityName, stateCode, description, minSalary,
             <span style={{whiteSpace: "pre-line"}}>
                 Description:{"\n"}
 
-                {showMore ? description : `${description.substring(0, 500)}...`}
-                <button 
-                    className="show-more-button"
-                    onClick={() => setShowMore(!showMore)}
-                    style={{backgroundColor: "transparent", 
-                            borderColor: "transparent", 
-                            color: "blue", 
-                            cursor: "pointer"
-                    }}>
-                    {showMore ? "Show less" : "Show more"}
-                </button>
+                {description.length <= 500 ? (
+                    // If description is short, don't show the "show more" button
+                    description 
+                ) : (
+                    <>
+                        {showMore ? (
+                            // Show more is enabled, so show full description
+                            description 
+                        ) : (
+                            // Show more is disabled, so show truncated description
+                            `${description.substring(0, 500)}...`
+                        )}
+                        
+                        <button 
+                            className="showMoreButton"
+                            onClick={() => setShowMore(!showMore)}
+                            style={{backgroundColor: "transparent", 
+                                    borderColor: "transparent", 
+                                    color: "blue", 
+                                    cursor: "pointer"
+                        }}>
+                            {showMore ? "Show less" : "Show more"}
+                        </button>
+                    </>
+                )}
             </span>
             }
             

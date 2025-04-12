@@ -54,7 +54,7 @@ function DashboardMap({ stateDensity } : DashboardMapProps) {
 
     return (
         <div>
-            <MapContainer zoom={6} className="dashboardMap">
+            <MapContainer zoom={6} scrollWheelZoom={false} className="dashboardMap">
                 <TileLayer 
                         attribution='&copy; 
                             <a href="https://www.openstreetmap.org/copyright">

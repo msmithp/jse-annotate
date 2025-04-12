@@ -34,15 +34,17 @@ function SkillSearchForm({ onUpdate }: SkillSearchFormProps) {
 
     return (
         <div>
-            <label>
-                <p>Select states:</p>
-                    <DropdownList 
-                        values={mapDropdownStates(stateValues)}
-                        selections={states}
-                        categories={false}
-                        onChange={handleStateDropdownChange}
-                        onRemove={handleRemoveStateDropdown}/>
-            </label>
+            <form>
+                <label>
+                    <p>Select states:</p>
+                        <DropdownList 
+                            values={mapDropdownStates(stateValues)}
+                            selections={states}
+                            categories={false}
+                            onChange={handleStateDropdownChange}
+                            onRemove={handleRemoveStateDropdown}/>
+                </label>
+            </form>
         </div>
     )
 }
