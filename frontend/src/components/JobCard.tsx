@@ -79,7 +79,7 @@ function JobCard({ title, company, cityName, stateCode, description, minSalary,
     }
 
     return (
-        <div>
+        <div className="jobCard">
             <h2><a href={link}>{title}</a></h2>
             <h4>{company}</h4>
             <p>Your compatibility: <b>{Math.round(score)}/100</b></p>

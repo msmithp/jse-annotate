@@ -9,7 +9,7 @@ function Navbar() {
     const logoutUser = authContext.logoutUser;
 
     return (
-        <div>
+        <div className="navbar">
             <nav>
                 <ul>
                     <li><NavLink to="/">Home</NavLink></li>
@@ -20,12 +20,14 @@ function Navbar() {
                     }
                     
                     { user ? (
-                        <li onClick={logoutUser}>Log out</li>
+                        <li className="logoutButton" 
+                            style={{float: "right", cursor: "pointer"}} 
+                            onClick={logoutUser}>
+                                Log out
+                        </li>
                     ) : (
-                        <li><NavLink to="/login">Log in</NavLink></li>
+                        <li style={{float: "right"}}><NavLink to="/login">Log in</NavLink></li>
                     )}
-                    
-                    
                 </ul>
             </nav>
         </div>

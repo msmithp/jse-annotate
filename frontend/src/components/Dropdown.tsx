@@ -47,13 +47,13 @@ function Dropdown({ values, selected, categories, onChange }: DropdownProps) {
     }
 
     return(
-        <div>
+        <div className="dropdown">
             <select
                 onChange={e => handleChange(e)}
                 value={selection}>
                 <option disabled key={-1} value={-1}>Select an item</option>
                 {options}
-            </select> 
+            </select>
         </div>
     )
 }

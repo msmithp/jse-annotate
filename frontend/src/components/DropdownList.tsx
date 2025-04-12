@@ -24,7 +24,7 @@ function DropdownList({ values, selections, categories, onChange, onRemove }: Dr
     }
 
     const dropdownElements = selections.map((selection, i) =>
-        <div key={i} style={{display: "flex"}}>
+        <div key={i} className="dropdownSelect">
             <Dropdown
                 key={selection}
                 values={values}
@@ -33,6 +33,7 @@ function DropdownList({ values, selections, categories, onChange, onRemove }: Dr
                 onChange={id => onChange(i, id)} />
             <button 
                 key={"delete-" + selection}
+                className="deleteButton"
                 onClick={e => {
                     e.preventDefault();
                     onRemove(i);
@@ -42,11 +43,13 @@ function DropdownList({ values, selections, categories, onChange, onRemove }: Dr
     )
 
     return (
-        <div>
+        <div className="dropdownList">
             {dropdownElements}
-            <button onClick={e => {
-                e.preventDefault();
-                addDropdown();
+            <button 
+                className="plusButton"
+                onClick={e => {
+                    e.preventDefault();
+                    addDropdown();
             }}>+</button>
         </div>
     )

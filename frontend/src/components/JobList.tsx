@@ -21,33 +21,33 @@ interface JobListProps {
 function JobList({ jobs }: JobListProps) {
     const jobCards = jobs.map(job => {
         return (
-            <li key={job.id} value={job.id}>
-                <div>
-                    <JobCard 
-                        title={job.title}
-                        company={job.company}
-                        cityName={job.cityName}
-                        stateCode={job.stateCode}
-                        description={job.description}
-                        minSalary={job.minSalary}
-                        maxSalary={job.maxSalary}
-                        link={job.link}
-                        score={job.score}
-                        skills={job.skills}
-                        education={job.education}
-                        yearsExperience={job.yearsExperience}
-                    />
-                </div>
-            </li>
+            <div className="jobList">
+                <ul>
+                    <li key={job.id} value={job.id}>
+                        <JobCard 
+                            title={job.title}
+                            company={job.company}
+                            cityName={job.cityName}
+                            stateCode={job.stateCode}
+                            description={job.description}
+                            minSalary={job.minSalary}
+                            maxSalary={job.maxSalary}
+                            link={job.link}
+                            score={job.score}
+                            skills={job.skills}
+                            education={job.education}
+                            yearsExperience={job.yearsExperience}
+                        />
+                    </li>
+                </ul>
+            </div>
         )
     });
 
     return (
-        <div>
-            <ul>
-                {jobCards}
-            </ul>
-        </div>
+        <>
+            {jobCards}
+        </>
     )
 }
 

@@ -107,5 +107,5 @@ export interface DashboardData {
     }[],
     jobs: Job[],
     userSkills: SkillCategory[],
-    mapData: StateData
+    stateData: StateData
 }
