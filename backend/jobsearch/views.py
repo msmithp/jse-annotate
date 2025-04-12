@@ -210,8 +210,68 @@ def get_static_data(request):
 
 def get_dashboard_data(request):
     user_id = request.GET.get("user_id")
+    user = User.objects.get(pk=user_id)
 
-    dashboard_data = {}
+    profile = user.profile
+    stateID = profile.state
+    state = State.objects.get(pk = stateID)
+    edu = user.education
+    years_exp = user.yearsExperience
+
+    dashboard_data = {'jobs': [],
+                      'skills': [],
+                      'userSkills': [],
+                      'stateData': {'stateID': stateID, 'stateName': state.state_name, 'stateCode': state.state_code}}
+
+    skill_set = []
+
+    for skill in user.skills:
+        skill_set.append(Skill.objects.get(pk=skill.id))
+
+    #append skill data to dict
+    occurrences = []
+    skill_data = []
+    for skill in skill_set:
+        count = 0
+        job_set = list(Job.objects.filter(city__county_state=stateID))
+        for job in job_set:
+            if job.skills == skill.pk:
+                count += 1
+        occurrences.append({'id': skill.pk, 'skill_name': skill.skill_name, 'occurrences': count})
+
+    for i in range (1,10):
+        max_occ = max(occurrences, key=lambda x:x['occurrences'])
+        dashboard_data['skills'].append(max_occ)
+        occurrences.remove(max_occ)
+
+
+    #append job data to dict - top 10 most compatible jobs
+    jobs = list(Job.objects.filter(city__county__state=state))
+    for job in jobs:
+        reqSkills = list(job.skills.values_list())
+        reqEdu = job.education
+        reqYears = int(job.years_exp)
+        score = calculate_compatibility(skill_set, edu, years_exp, reqSkills, reqEdu, reqYears)
+        reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
+        dashboard_data['jobs'].append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name,
+                         'stateCode': state.state_code, 'description': job.job_desc,
+                         'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
+                         'education': job.education, 'yearsExperience': job.years_exp })
+
+    #append user skill data to dict
+    categories = set()
+    for skill in skill_set:
+        categories.add(skill.category)
+
+    for cat in categories:
+        cat_data = {'category': cat, 'skills': []}
+        for skill in skill_set:
+            if skill.category == cat:
+                cat_data['skills'].append({'id':skill.pk, 'name': skill.skill_name})
+        dashboard_data['userSkills'].append(cat_data)
+
+
+    return JsonResponse({'dashboardData': dashboard_data})
 
 def get_density_data(request):
     user_id = request.GET.get("user_id")
@@ -231,8 +291,8 @@ def get_density_data(request):
     data = {'stateData': {'stateID': stateID, 'stateName': state.state_name, 'stateCode': state.state_code}, 'countyData': [],
             'skillData': {'skillID': skill_id, 'skillName': skill.skill_name}}
     counties = list(County.objects.filter(state=state))
-    occurrences = []
 
+    occurrences = []
     for county in counties:
         count = 0
         job_set = list(Job.objects.filter(city__county=county))
@@ -256,5 +316,3 @@ def get_density_data(request):
     
     print(data)
     return JsonResponse({'densityData': data})
-
-
