@@ -71,23 +71,23 @@ function JobCard({ title, company, cityName, stateCode, minSalary,
     return (
         <div className="jobCard">
             <div className="jobCardHeader">
-                <h2>{title}</h2>
-                <p>
-                    {company}{company ? <br/> : <></>}
-                    {location}{location ? <br/> : <></>}
-                    {salaryRange}{salaryRange ? <br/> : <></>}
-                </p>
-            </div>
-            <hr />
-            <div className="jobCardScore">
-                <div>
-                    <p>Compatibility:</p>
+                <div className="jobCardHeaderLeft">
+                    <h2>{title}</h2>
+                    <p>
+                        {company}{company ? <br/> : <></>}
+                        {location}{location ? <br/> : <></>}
+                        {salaryRange}{salaryRange ? <br/> : <></>}
+                    </p>
                 </div>
-                <div className="scoreSmall" style={{borderColor: scoreColor}}>
-                    <h3>{Math.round(score)}</h3>
+                <div className="jobCardHeaderRight">
+                    <div className="scoreSmall" style={{borderColor: scoreColor}}>
+                        <h3>{Math.round(score)}</h3>
+                    </div>
+                    <div>
+                        <p>COMPATIBILITY</p>
+                    </div>
                 </div>
             </div>
-            <hr />
             <div className="jobCardSection">
                 <h3>Experience</h3>
                 <p>{experienceString}</p>
