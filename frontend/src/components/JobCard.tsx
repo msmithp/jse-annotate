@@ -1,14 +1,44 @@
-import { useState } from "react";
-import { Job } from "../static/types";
-import { mapEducation, mapSkills, 
-    mapYearsExperience, mapSalary } from "../static/utils";
+import { SkillCategory } from "../static/types";
+import { mapEducation, mapSkillToColor, 
+    mapYearsExperience, mapSalary, truncate, 
+    mapScoreToColor} from "../static/utils";
+
+
+const placeholderSkills: SkillCategory[] = [
+    {
+        category: "Languages",
+        skills: [
+            {id: 5, name: "Python"},
+            {id: 8, name: "JavaScript"},
+            {id: 9, name: "Java"},
+            {id: 10, name: "C++"},
+            {id: 11, name: "C"},
+            {id: 8, name: "Rust"},
+            {id: 8, name: "Golang"},
+            {id: 8, name: "Haskell"},
+            {id: 8, name: "TypeScript"}
+        ]
+    },
+    {
+        category: "Methodologies",
+        skills: [
+            {id: 10, name: "Agile"}
+        ]
+    },
+    {
+        category: "Database Management",
+        skills: [
+            {id: 100, name: "PostgreSQL"},
+            {id: 120, name: "SQL"}
+        ]
+    }
+]
 
 interface JobCardProps {
     title: string,
     company: string,
     cityName: string,
     stateCode: string,
-    description: string,
     minSalary: number,
     maxSalary: number,
     link: string,
@@ -18,55 +48,58 @@ interface JobCardProps {
     yearsExperience: number
 };
 
-function JobCard({ title, company, cityName, stateCode, description, minSalary,
+function JobCard({ title, company, cityName, stateCode, minSalary,
     maxSalary, link, score, skills, education, yearsExperience }: JobCardProps) {
-    // State variables
-    const [showMore, setShowMore] = useState(false);
+    const location = `${cityName}, ${stateCode}`;
+    const salaryRange = mapSalary(minSalary, maxSalary);
+    const experienceString = mapYearsExperience(yearsExperience);
+    const educationString = mapEducation(education);
+    const skillCategories = skills.length !== 0 ? placeholderSkills.map(cat => 
+        <div key={cat.category} className="jobCardSkillCategory">
+            <div className="jobCardCategoryName">
+                <p>{cat.category}</p>
+            </div>
+            {cat.skills.map(skill =>
+                <div className="jobCardSkill" style={{borderColor: mapSkillToColor(skill.name)}}>
+                    <p>{truncate(skill.name, 30)}</p>
+                </div>
+            )}
+        </div>
+    ) : <p>None specified</p>
+    const scoreColor = mapScoreToColor(score);
 
     return (
         <div className="jobCard">
-            <h2><a href={link}>{title}</a></h2>
-            <h4>{company}</h4>
-            <p>Your compatibility: <b>{Math.round(score)}/100</b></p>
-            <p>{cityName}, {stateCode}</p>
-            <p>Salary: {mapSalary(minSalary, maxSalary)}</p>
-            <p>{mapYearsExperience(yearsExperience)}</p>
-            <p>Education requirement: {mapEducation(education)}</p>
-            <p>Prerequisite skills: {mapSkills(skills)}</p>
-            {description === "" ? 
-                <></>
-            :
-            <span style={{whiteSpace: "pre-line"}}>
-                Description:{"\n"}
-
-                {description.length <= 500 ? (
-                    // If description is short, don't show the "show more" button
-                    description 
-                ) : (
-                    <>
-                        {showMore ? (
-                            // Show more is enabled, so show full description
-                            description 
-                        ) : (
-                            // Show more is disabled, so show truncated description
-                            `${description.substring(0, 500)}...`
-                        )}
-                        
-                        <button 
-                            className="showMoreButton"
-                            onClick={() => setShowMore(!showMore)}
-                            style={{backgroundColor: "transparent", 
-                                    borderColor: "transparent", 
-                                    color: "blue", 
-                                    cursor: "pointer"
-                        }}>
-                            {showMore ? "Show less" : "Show more"}
-                        </button>
-                    </>
-                )}
-            </span>
-            }
-            
+            <div className="jobCardHeader">
+                <h2>{title}</h2>
+                <p>
+                    {company}{company ? <br/> : <></>}
+                    {location}{location ? <br/> : <></>}
+                    {salaryRange}{salaryRange ? <br/> : <></>}
+                </p>
+            </div>
+            <hr />
+            <div className="jobCardScore">
+                <div>
+                    <p>Compatibility:</p>
+                </div>
+                <div className="scoreSmall" style={{borderColor: scoreColor}}>
+                    <h3>{Math.round(score)}</h3>
+                </div>
+            </div>
+            <hr />
+            <div className="jobCardSection">
+                <h3>Experience</h3>
+                <p>{experienceString}</p>
+            </div>
+            <div className="jobCardSection">
+                <h3>Education</h3>
+                <p>{educationString}</p>
+            </div>
+            <div className="jobCardSection">
+                <h3>Skills</h3>
+                {skillCategories}
+            </div>
         </div>
     )
 }

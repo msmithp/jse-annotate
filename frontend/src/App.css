@@ -278,11 +278,11 @@ select, input {
 .jobCard {
     background-color: var(--window-color-lighter);
     border-radius: 20px;
-    padding: 10px;
+    padding: 1rem;
     word-wrap: break-word;
     transition: 0.1s;
     cursor: pointer;
-    /* max-width: 33%; */
+    height: 100%;
 }
 
 .jobCard:hover {
@@ -296,6 +296,81 @@ select, input {
     gap: 1%;
 }
 
+.jobCardSection {
+    padding: 1rem;
+    background-color: var(--window-color);
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.jobCardSection:last-child {
+    margin-bottom: 0;
+}
+
+.jobCard h2 {
+    margin-top: 0.2rem;
+    margin-bottom: -0.9rem;
+    line-height: 1.8rem;
+}
+
+.jobCardSection h3 {
+    line-height: 1rem;
+    margin-bottom: -0.7rem;
+    margin-top: 0.5rem;
+}
+
+.jobCardScore {
+    display: flex;
+    align-items: center;
+    gap: 2%;
+}
+
+.jobCardScore h3 {
+    font-family: "Geologica";
+}
+
+.jobCardSection p {
+    margin-top: 0.8rem;
+    margin-bottom: 0;
+}
+
+.jobCardSkillCategory {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.jobCardSkillCategory p {
+    padding: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 11pt;
+    line-height: 0;
+}
+
+.jobCardCategoryName {
+    background-color: var(--window-color-lighter);
+    font-weight: 500;
+}
+
+.jobCardSkill {
+    border-style: solid;
+    border-color: var(--fg-color);
+    border-width: 0.15rem;
+}
+
+.jobCardCategoryName, .jobCardSkill {
+    padding-bottom: 4px;
+    border-radius: 2rem;
+}
+
+.jobCardCategoryName p, .jobCardSkill p {
+    transform: translateY(-30%);
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * *
  *                   JOB SUMMARY                   *
  * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -306,11 +381,14 @@ select, input {
 }
 
 .jobSummaryModal div {
-    border-radius: 70px;
+    border-radius: 60px;
 }
 
 .jobSummary {
     padding: 2.3rem;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: normal;
 }
 
 .jobSummaryHeader {
@@ -354,17 +432,30 @@ select, input {
 }
 
 .score {
-    display: flex;
-    width: fit-content;
     min-width: 1rem;
     padding: 0.5rem;
-    align-items: center;  
-    justify-content: center;
     aspect-ratio: 1 / 1;
-    border-radius: 50% !important;
     border: 13px solid;
     width: 7.5rem;
     height: 7.5rem;
+}
+
+.scoreSmall {
+    min-width: 1rem;
+    padding: 0.5rem;
+    aspect-ratio: 1 / 1;
+    border: 5px solid;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.score, .scoreSmall {
+    display: flex;
+    width: fit-content;
+    align-items: center;  
+    justify-content: center;
+    border-radius: 50% !important;
+    box-sizing: unset;
 }
 
 .jobSummaryScore p {
@@ -374,8 +465,8 @@ select, input {
 }
 
 .jobSummaryRequirements {
-    margin-top: 2%;
-    margin-bottom: 2%;
+    margin-top: 3%;
+    margin-bottom: 3%;
 }
 
 .jobSummaryRequirementsTop {
@@ -389,8 +480,8 @@ select, input {
 .jobSummaryRequirementsEducation,
 .jobSummaryRequirementsSkills {
     background-color: var(--window-color);
-    padding: 1rem;
-    border-radius: 1.3rem !important;
+    padding: 1.3rem;
+    border-radius: 1.8rem !important;
 }
 
 .jobSummaryRequirements h2 {

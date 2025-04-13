@@ -134,3 +134,7 @@ export function mapScoreToColor(score: number): string {
         return "#CA2E4B";
     }
 }
+
+export function truncate(str: string, n: number): string {
+    return str.length > n ? `${str.substring(0, n)}...` : str;
+}

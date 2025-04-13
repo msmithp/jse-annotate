@@ -20,7 +20,7 @@ const placeholderDashboardData = {
     // sorted in descending order by compatibility score
     jobs: [
         {
-            id: 2, title: "Job 2: Job with a really long title", company: "The Company 2",
+            id: 2, title: "Job 2: Job with a reallyreallyreallyreallyreallyreally long title", company: "The Company 2",
             cityName: "Dover", stateCode: "DE", description: "descdescdescdescdescdescdescdescdescdescdescdescdesc",
             minSalary: 80000, maxSalary: 100000, link: "https://www.job.com", score: 100,
             skills: ["JavaScript", "SQL"], education: "bachelor", yearsExperience: 1

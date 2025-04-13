@@ -20,7 +20,6 @@ function JobList({ jobs }: JobListProps) {
                     company={job.company}
                     cityName={job.cityName}
                     stateCode={job.stateCode}
-                    description={job.description}
                     minSalary={job.minSalary}
                     maxSalary={job.maxSalary}
                     link={job.link}
@@ -54,16 +53,6 @@ function JobList({ jobs }: JobListProps) {
                 data-bs-theme="dark"
                 dialogClassName="jobSummaryModal"
             >
-                {/* <Modal.Header closeButton>
-                    <Modal.Title><h2>{currentJob?.title}</h2></Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <JobSummary jobData={currentJob}/>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button onClick={handleCloseModal}>Close</button>
-                    <button type="submit">Apply</button>
-                </Modal.Footer> */}
                 <JobSummary jobData={currentJob} />
             </Modal>
         </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Job, SkillCategory } from "../static/types";
-import { mapSalary, mapYearsExperience, mapEducation, mapScoreToColor, mapSkillToColor } from "src/static/utils";
+import { mapSalary, mapYearsExperience, mapEducation, 
+    mapScoreToColor, mapSkillToColor, truncate } from "src/static/utils";
 
 
 const placeholderSkills: SkillCategory[] = [
@@ -54,9 +55,9 @@ function Header({ title, company, cityName,
             <div className="jobSummaryHeaderLeft">
                 <h1>{title}</h1>
                 <p>
-                    {company}<br/>
-                    {location}<br/>
-                    {salaryRange}
+                    {company}{company ? <br/> : <></>}
+                    {location}{location ? <br/> : <></>}
+                    {salaryRange}{salaryRange ? <br/> : <></>}
                 </p>
             </div>
             <div className="jobSummaryHeaderRight">
@@ -100,7 +101,7 @@ function Requirements({ experience, education, skills }: RequirementsProps) {
             </div>
             {cat.skills.map(skill =>
                 <div className="jobSummarySkill" style={{borderColor: mapSkillToColor(skill.name)}}>
-                    <p>{skill.name}</p>
+                    <p>{truncate(skill.name, 50)}</p>
                 </div>
             )}
         </div>
