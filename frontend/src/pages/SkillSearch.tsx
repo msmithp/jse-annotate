@@ -71,7 +71,7 @@ function SkillSearch() {
     }
 
     return (
-        <div>
+        <div className="skillSearch">
             <h1>Find in-demand skills</h1>
             <SkillSearchForm onUpdate={handleSkillSearch} />
             { skillData.length === 0 || stateSkills.length === 0 ?

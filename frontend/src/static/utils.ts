@@ -64,3 +64,73 @@ function hashString(s: string, n: number): number {
 export function skillDensityGradient(skill: string, density: number): string {
     return linearGradient(GRAY, mapSkillToColor(skill), density);
 }
+
+/** Convert an education level to a display-ready string */
+export function mapEducation(education: string): string {
+    switch(education) {
+        case "high_school":
+            return "High school diploma";
+        case "associate":
+            return "Associate's degree";
+        case "bachelor":
+            return "Bachelor's degree";
+        case "master":
+            return "Master's degree";
+        case "doctorate":
+            return "Doctorate degree or higher";
+        default:
+            return "None specified";
+    }
+}
+
+/** Convert an array of skill names to a string delimited by commas */
+export function mapSkills(skills: string[]): string {
+    if (skills.length === 0) {
+        return "None specified";
+    }
+
+    let skillString = ""
+    for (let i = 0; i < skills.length; i++) {
+        skillString += skills[i];
+        if (i !== skills.length - 1) {
+            skillString += ", ";
+        }
+    }
+    return skillString;
+}
+
+/** Convert a number of years of experience to a string */
+export function mapYearsExperience(years: number): string {
+    if (years < 1) {
+        return "None specified";
+    } else if (years >= 20) {
+        return "20+ years";
+    } else if (years == 1) {
+        return "1 year";
+    } else {
+        return String(years) + " years";
+    }
+}
+
+/** Convert a salary range (min and max) to a string containing rounded,
+ *  comma-formatted numbers */
+export function mapSalary(minSalary: number, maxSalary: number): string {
+    if (minSalary < 1 && maxSalary < 1) {
+        return "None specified";
+    } else {
+        return "$" + Math.floor(minSalary).toLocaleString() 
+                    + " - $" + Math.floor(maxSalary).toLocaleString();
+    }
+}
+
+export function mapScoreToColor(score: number): string {
+    if (score >= 80) {
+        return "#2a9756";
+    } else if (score >= 60) {
+        return "#ffe91f";
+    } else if (score >= 40) {
+        return "#ff801f"
+    } else {
+        return "#CA2E4B";
+    }
+}

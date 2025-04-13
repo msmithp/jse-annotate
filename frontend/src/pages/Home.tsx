@@ -20,9 +20,9 @@ const placeholderDashboardData = {
     // sorted in descending order by compatibility score
     jobs: [
         {
-            id: 2, title: "Job 2", company: "The Company 2",
+            id: 2, title: "Job 2: Job with a really long title", company: "The Company 2",
             cityName: "Dover", stateCode: "DE", description: "descdescdescdescdescdescdescdescdescdescdescdescdesc",
-            minSalary: 80000, maxSalary: 100000, link: "https://www.job.com", score: 68,
+            minSalary: 80000, maxSalary: 100000, link: "https://www.job.com", score: 100,
             skills: ["JavaScript", "SQL"], education: "bachelor", yearsExperience: 1
         },
         {
@@ -34,7 +34,7 @@ const placeholderDashboardData = {
         {
             id: 3, title: "Job 3", company: "The Company 3",
             cityName: "Wilmington", stateCode: "DE", description: "desc",
-            minSalary: 100000, maxSalary: 120000, link: "https://www.job.com", score: 10,
+            minSalary: 100000, maxSalary: 120000, link: "https://www.job.com", score: 5,
             skills: ["Python", "Java"], education: "bachelor", yearsExperience: 2
         }
     ],

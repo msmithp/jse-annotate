@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { Job } from "../static/types";
+import { mapEducation, mapSkills, 
+    mapYearsExperience, mapSalary } from "../static/utils";
 
-interface Job {
+interface JobCardProps {
     title: string,
     company: string,
     cityName: string,
@@ -16,67 +19,9 @@ interface Job {
 };
 
 function JobCard({ title, company, cityName, stateCode, description, minSalary,
-    maxSalary, link, score, skills, education, yearsExperience }: Job) {
+    maxSalary, link, score, skills, education, yearsExperience }: JobCardProps) {
     // State variables
     const [showMore, setShowMore] = useState(false);
-
-    /** Convert an education level to a display-ready string */
-    function mapEducation(education: string): string {
-        switch(education) {
-            case "high_school":
-                return "High school diploma";
-            case "associate":
-                return "Associate's degree";
-            case "bachelor":
-                return "Bachelor's degree";
-            case "master":
-                return "Master's degree";
-            case "doctorate":
-                return "Doctorate degree or higher";
-            default:
-                return "None specified";
-        }
-    }
-
-    /** Convert an array of skill names to a string delimited by commas */
-    function mapSkills(skills: string[]): string {
-        if (skills.length === 0) {
-            return "None specified";
-        }
-
-        let skillString = ""
-        for (let i = 0; i < skills.length; i++) {
-            skillString += skills[i];
-            if (i !== skills.length - 1) {
-                skillString += ", ";
-            }
-        }
-        return skillString;
-    }
-
-    /** Convert a number of years of experience to a string */
-    function mapYearsExperience(years: number): string {
-        if (years < 1) {
-            return "No prior experience requirements";
-        } else if (years >= 20) {
-            return "20+ years of experience necessary";
-        } else if (years == 1) {
-            return "1 year of experience necessary";
-        } else {
-            return String(years) + " years of experience necessary";
-        }
-    }
-
-    /** Convert a salary range (min and max) to a string containing rounded,
-     *  comma-formatted numbers */
-    function mapSalary(minSalary: number, maxSalary: number): string {
-        if (minSalary < 1 && maxSalary < 1) {
-            return "None specified";
-        } else {
-            return "$" + Math.floor(minSalary).toLocaleString() 
-                       + " - $" + Math.floor(maxSalary).toLocaleString();
-        }
-    }
 
     return (
         <div className="jobCard">

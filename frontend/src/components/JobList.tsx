@@ -1,27 +1,20 @@
-import { JobCard } from ".";
+import { JobCard, JobSummary } from ".";
+import Modal from "react-bootstrap/Modal";
+import { Job } from "../static/types";
+import { useState } from "react";
+
 
 interface JobListProps {
-    jobs: {
-        id: number,
-        title: string,
-        company: string,
-        cityName: string,
-        stateCode: string,
-        description: string,
-        minSalary: number,
-        maxSalary: number,
-        link: string,
-        score: number,
-        skills: string[],
-        education: string,
-        yearsExperience: number
-    }[]
+    jobs: Job[]
 };
 
 function JobList({ jobs }: JobListProps) {
+    const [showJob, setShowJob] = useState(false);
+    const [currentJob, setCurrentJob] = useState<Job | null>(null)
+
     const jobCards = jobs.map(job => {
         return (
-            <li key={job.id} value={job.id}>
+            <li key={job.id} value={job.id} onClick={_ => handleOpenModal(job)}>
                 <JobCard 
                     title={job.title}
                     company={job.company}
@@ -40,11 +33,39 @@ function JobList({ jobs }: JobListProps) {
         )
     });
 
+    function handleOpenModal(job: Job) {
+        setCurrentJob(job);
+        setShowJob(true);
+    }
+
+    function handleCloseModal() {
+        setShowJob(false);
+    }
+
     return (
         <div className="jobList">
             <ul>
                 {jobCards}
             </ul>
+
+            <Modal 
+                show={showJob} 
+                onHide={handleCloseModal}
+                data-bs-theme="dark"
+                dialogClassName="jobSummaryModal"
+            >
+                {/* <Modal.Header closeButton>
+                    <Modal.Title><h2>{currentJob?.title}</h2></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <JobSummary jobData={currentJob}/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <button onClick={handleCloseModal}>Close</button>
+                    <button type="submit">Apply</button>
+                </Modal.Footer> */}
+                <JobSummary jobData={currentJob} />
+            </Modal>
         </div>
     )
 }
