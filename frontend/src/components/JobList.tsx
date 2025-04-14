@@ -54,6 +54,15 @@ function JobList({ jobs }: JobListProps) {
                 dialogClassName="jobSummaryModal"
             >
                 <JobSummary jobData={currentJob} />
+                
+                <div className="modalFooter">
+                    <button onClick={handleCloseModal}>Cancel</button>
+                    {currentJob && currentJob.link && 
+                        <a href={currentJob!.link} target="_blank">
+                            <button type="submit">Apply</button>
+                        </a>
+                    }
+                </div>
             </Modal>
         </div>
     )
