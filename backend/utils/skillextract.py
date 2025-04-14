@@ -219,7 +219,7 @@ def experience_extract(job_desc: str) -> int:
         # removing the whitespace character from `ignore`, adding mappings for
         # some other special characters, and then making replacement
         char_map = {ch: "" for ch in ignore.replace(" ", "")}
-        char_map = char_map | {"+": "", "#": "", "*": ""}
+        char_map = char_map | {"+": "", "#": "", "*": "", "-": " "}
         job_desc = job_desc.translate(str.maketrans(char_map))
 
         # Split string on spaces to get list of words

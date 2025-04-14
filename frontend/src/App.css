@@ -1,20 +1,637 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                     GENERAL                     *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+:root {
+    /* Color variables */
+    --bg-color: #181a1b;
+    --window-color: #303233;
+    --window-color-lighter: #3e4142;
+    --window-color-lighter2: #4d5052;
+    --window-color-lighter3: #5c5f61;
+    --cancel-color: #CA2E4B;
+    --submit-color: #3F84E5;
+    --submit-color-lighter: #5294f0;
+    --success-color: #2a9756;
+    --success-color-lighter: #32b365;
+    --warning-color: #FFBA1F;
+    --fg-color: rgb(238, 238, 238);
+
+    background-color: var(--bg-color);
+    color: var(--fg-color);
+
+    color-scheme: dark;
+}
+
+body, html, select, button, input, div {
+    font-family: "Geologica", sans-serif;
+    font-weight: 320;
+    font-size: 13pt;
+    color: var(--fg-color);
+}
+
+body {
+    margin-left:   2%;
+    margin-right:  2%;
+    margin-bottom: 2%;
+    margin-top:    1%;
+    width:         96%;
+    height:        96%;
+}
+
+h1, h2, h3, h4 {
+    font-family: "Epilogue", "sans-serif";
+}
+
+h1 {
+    font-size: 45pt;
+    font-weight: 750;
+    line-height: 1.5rem;
+}
+
+button {
+    border: none;
+    border-radius: 1.2rem;
+    padding: 0.4rem;
+    background-color: var(--window-color);
+    cursor: pointer;
+}
+
+.leaflet-control-attribution {
+    font-size: 8pt;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                      FORMS                      *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+form {
+    background-color: var(--window-color);
+    border-radius: 2rem;
+    padding: 1rem;
+}
+
+form label p {
+    margin-bottom: 0.4em;
+}
+
+button[type=submit] {
+    background-color: var(--submit-color);
+    color: var(--fg-color);
+    cursor: pointer;
+    transition: 0.1s;
+}
+
+button[type=submit]:hover {
+    background-color: var(--submit-color-lighter);
+    transition: 0.1s;
+}
+
+form button[type=submit] {
+    margin-top: 0.8em;
+}
+
+select, input {
+    padding: 0.4rem;
+    border-radius: 1.2rem;
+    background-color: var(--bg-color);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                     NAVBAR                      *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.navbar {
+    background-color: var(--window-color);
+    overflow: auto;
+    border-radius: 20px;
+    font-weight: 400;
+}
+
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.navbar li {
+    float: left;
+    border-right: 1px solid #bbbbbb;
+    background-color: var(--window-color);
+    transition: 0.1s;
+}
+
+.navbar li:hover {
+    background-color: var(--window-color-lighter);
+    transition: 0.1s;
+}
+
+.logoutButton {
+    padding: 14px 16px;
+    display: block;
+    text-align: center;
+}
+
+.navbar li:last-child {
+    border-right: none;
+}
+
+.navbar li a {
+    text-decoration: none;
+    color: var(--fg-color);
+    padding: 14px 16px;
+    display: block;
+    text-align: center;
+}
+
+.active {
+    background-color: var(--success-color);
+    transition: 0.1s;
+}
+
+.active:hover {
+    background-color: var(--success-color-lighter);
+    transition: 0.1s;
+}
+
+ /* * * * * * * * * * * * * * * * * * * * * * * * * *
+  *                  DROPDOWN LIST                  *
+  * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.dropdownSelect {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25em;
+    gap: 0.3em;
+}
+
+.dropdownList {
+    display: inline-block;
+}
+
+.dropdownList .plusButton {
+    display: block;
+    width: 100%;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: 0.1s;
+    font-weight: 800;
+    background-color: var(--window-color-lighter2);
+    color: var(--fg-color);
+    font-weight: 500;
+    padding: 5px;
+}
+
+.dropdownList .plusButton:hover {
+    background-color: var(--window-color-lighter3);
+    transition: 0.15s;
+    color: var(--submit-color-lighter);
+}
+
+.deleteButton {
+    background-color: var(--cancel-color);
+    cursor: pointer;
+    transition: 0.1s;
+}
+
+.deleteButton:hover {
+    filter: brightness(120%);
+    transition: 0.1s;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                  MAP INFO BOX                   *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.info {
+    position: absolute;
+    top: 5px; 
+    right: 5px; 
+    background-color: rgba(255, 255, 255, 0.7); 
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 150px;
+    z-index: 1000;
+    text-align: left;
+    color: black;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                    DASHBOARD                    *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.dashboard {
+    display: grid;
+    grid-template-areas: 
+        "chart joblist"
+        "map joblist";
+    grid-template-columns: 5fr 3fr;
+    gap: 1%;
+    row-gap: 0;
+    height: 130vh;
+}
+
+.dashboardRight {
+    grid-area: "joblist";
+    overflow-y: scroll;
+    background-color: var(--window-color);
+    border-radius: 20px;
+    padding: 2vh;
+}
+
+.dashboardSelectAndMap {
+    grid-area: "map";
+    background-color: var(--window-color);
+    border-radius: 20px;
+    padding: 2vh;
+}
+
+.dashboardChart {
+    grid-area: "chart";
+    background-color: var(--window-color);
+    border-radius: 20px;
+    padding: 2vh;
+    height: 50vh;
+    max-width: 80vw;
+    margin-bottom: 1.5%;
+}
+
+.dashboardStateSelect {
+    height: 10vh;
+}
+
+.dashboardMap {
+    height: 65vh;
+    max-width: 80vw;
+    border-radius: 20px;
+}
+
+.dashboard label {
+    display: flex;
+    align-items: center;
+}
+
+.dashboard label p {
+    margin-left: 5px;
+    margin-right: 10px;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                    JOB LIST                     *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.jobList ul {
+    list-style-type: none;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.jobList li {
+    margin-bottom: 2vh;
+}
+
+.jobList li:last-child {
+    margin-bottom: 0;
+}
+
+.jobCard {
+    background-color: var(--window-color);
+    border-radius: 20px;
+    padding: 1rem;
+    word-wrap: break-word;
+    transition: 0.1s;
+    cursor: pointer;
+    height: 100%;
+}
+
+.jobCard:hover {
+    filter: brightness(120%);
+    transition: 0.1s;
+}
+
+.jobSearchList {
+    margin-top: 1rem;
+}
+
+.jobSearchList .jobList ul {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1%;
+    row-gap: 0;
+}
+
+.jobCardSection {
+    padding: 1rem;
+    background-color: var(--window-color-lighter);
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.jobCardExperienceEducation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3%;
+    margin-bottom: 1.3%;
+}
+
+.jobCard h2 {
+    margin-top: 0.2rem;
+    margin-bottom: -0.9rem;
+    line-height: 1.8rem;
+}
+
+.jobCardSection h3 {
+    line-height: 1rem;
+    margin-bottom: -0.7rem;
+    margin-top: 0.5rem;
+}
+
+.jobCardHeader {
+    display: grid;
+    grid-template-columns: 75fr 35fr;
+}
+
+.jobCardHeaderLeft {
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.jobCardHeaderRight {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2%;
+    margin-left: auto;
+}
+
+.jobCardHeaderRight h3 {
+    font-family: "Geologica";
+}
+
+.jobCardHeaderRight p {
+    margin-top: 0;
+    font-weight: 500;
+    font-size: 9pt;  /* "Compatibility" font size in job card */
+}
+
+.jobCardSection p {
+    margin-top: 0.8rem;
+    margin-bottom: 0;
+}
+
+.jobCardSection h3 {
+    margin-bottom: 0.5rem;
+}
+
+.jobCardSkillCategory {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem;
+    margin-bottom: 0.3rem;
+}
+
+.jobCardSkillCategory:last-child {
+    margin-bottom: 0;
+}
+
+.jobCardSkillCategory p {
+    padding: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 11pt;
+    line-height: 0;
+}
+
+.jobCardCategoryName {
+    background-color: var(--window-color-lighter2);
+    font-weight: 500;
+}
+
+.jobCardSkill {
+    border-style: solid;
+    border-color: var(--fg-color);
+    border-width: 0.15rem;
+}
+
+.jobCardCategoryName, .jobCardSkill {
+    padding-bottom: 4px;
+    border-radius: 2rem;
+}
+
+.jobCardCategoryName p, .jobCardSkill p {
+    transform: translateY(-30%);
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                   JOB SUMMARY                   *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.jobSummaryModal {
+    width: 80vw;
+    max-width: 80vw !important;
+}
+
+.jobSummaryModal div {
+    border-radius: 60px;
+}
+
+.jobSummary {
+    padding: 2.3rem;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.jobSummaryHeader {
+    display: grid;
+    grid-template-areas: "info score";
+    grid-template-columns: 7fr 3fr;
+}
+
+.jobSummaryHeaderLeft {
+    align-self: start;
+}
+
+.jobSummaryHeaderLeft h1 {
+    line-height: 3.7rem;
+    margin-bottom: -0.7rem;
+    margin-top: 0.5rem;
+}
+
+.jobSummaryHeaderLeft p {
+    font-size: 20pt;
+    margin-top: 1rem;
+    margin-bottom: 0.6rem;
+    font-weight: 400;
+}
+
+.jobSummaryHeaderRight {
+    align-self: center;
+    margin-left: auto;
+}
+
+.jobSummaryScore {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.jobSummaryScore h1 {
+    font-family: "Geologica";
+    font-size: 52pt;
+    line-height: 0;
+}
+
+.score {
+    min-width: 1rem;
+    padding: 0.5rem;
+    aspect-ratio: 1 / 1;
+    border: 13px solid;
+    width: 7.5rem;
+    height: 7.5rem;
+}
+
+.scoreSmall {
+    min-width: 1rem;
+    padding: 0.5rem;
+    aspect-ratio: 1 / 1;
+    border: 5px solid;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.score, .scoreSmall {
+    display: flex;
+    width: fit-content;
+    align-items: center;  
+    justify-content: center;
+    border-radius: 50% !important;
+    box-sizing: unset;
+}
+
+.jobSummaryScore p {
+    font-size: 20pt;
+    font-weight: 500;
+    line-height: 0;
+}
+
+.jobSummaryRequirements {
+    margin-top: 3%;
+    margin-bottom: 3%;
+}
+
+.jobSummaryRequirementsTop {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3%;
+    margin-bottom: 3%;
+}
+
+.jobSummaryRequirementsExperience, 
+.jobSummaryRequirementsEducation,
+.jobSummaryRequirementsSkills {
+    background-color: var(--window-color);
+    padding: 1.3rem;
+    border-radius: 1.8rem !important;
+}
+
+.jobSummaryRequirements h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.jobSummaryRequirements p {
+    font-size: 20pt;
+    margin-top: 0.2rem;
+    margin-bottom: 0;
+}
+
+.jobSummarySkillCategory {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.jobSummarySkillCategory p {
+    padding: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.jobSummarySkillCategoryName {
+    background-color: var(--window-color-lighter);
+    font-weight: 500;
+    padding-bottom: 4px;
+}
+
+.jobSummarySkill {
+    border-style: solid;
+    border-color: var(--fg-color);
+    border-width: 0.15rem;
+    padding-bottom: 4px;
+}
+
+.modalFooter {
+    margin-top: -2rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 2rem;
+    padding-bottom: 2rem;
+    gap: 0.5rem;
+}
+
+.modalFooter button {
+    padding: 0.7rem;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                  SKILL SEARCH                   *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.skillSearchResults {
+    margin-top: 1rem;
+    background-color: var(--window-color);
+    border-radius: 2rem;
+    padding: 1rem;
+}
+
+.skillSearchMap {
+    height: 65vh; 
+    border-radius: 1rem;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                   CHART GRID                    *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 .grid {
-  display: grid;
-  grid-template-columns: 25% 25% 25%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
 }
 
 .grid > div {
-  padding: 6%;
+    padding: 6%;
 }
 
-.info {
-  position: absolute;
-  /* top: 10px;  */
-  right: 10px; 
-  background-color: rgba(255, 255, 255, 0.7); 
-  padding: 5px;
-  border-radius: 5px;
-  font-size: 14px;
-  width: 150px;
-  z-index: 1000
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                 MESSAGE BOXES                   *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.successMessage {
+    color: var(--success-color);
+}
+
+.errorMessage {
+    color: var(--cancel-color);
 }

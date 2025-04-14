@@ -14,3 +14,4 @@ export {default as Dashboard} from "./Dashboard";
 export {default as DashboardMap} from "./DashboardMap";
 export {default as MapBoundsControl} from "./MapBoundsControl";
 export {default as CountyMap} from "./CountyMap";
+export {default as JobSummary} from "./JobSummary";

@@ -20,16 +20,26 @@ const placeholderDashboardData = {
     // sorted in descending order by compatibility score
     jobs: [
         {
-            id: 2, title: "Job 2", company: "The Company 2",
-            cityName: "Dover", stateCode: "DE", description: "desc",
-            minSalary: 80000, maxSalary: 100000, link: "https://www.job.com", score: 68,
-            skills: ["JavaScript", "SQL"], education: "bachelor", yearsExperience: 1
+            id: 2, title: "Job 2: Job with a reallyreallyreallyreallyreallyreally long title", company: "The Company 2",
+            cityName: "Dover", stateCode: "DE", description: "descdescdescdescdescdescdescdescdescdescdescdescdesc",
+            minSalary: 80000, maxSalary: 100000, link: "https://www.job.com", score: 100,
+            skills: [{category: "Languages", skills: [{id: 3, name: "JavaScript"}]},
+            {category: "Database Management", skills: [{id: 7, name: "SQL"}]}],
+            education: "bachelor", yearsExperience: 1
         },
         {
             id: 1, title: "Job 1", company: "The Company",
             cityName: "Wilmington", stateCode: "DE", description: "desc",
             minSalary: 100000, maxSalary: 120000, link: "https://www.job.com", score: 49,
-            skills: ["Python", "Java"], education: "bachelor", yearsExperience: 2
+            skills: [{category: "Languages", skills: [{id: 1, name: "Python"}, {id: 10, name: "Java"}]}], 
+            education: "bachelor", yearsExperience: 2
+        },
+        {
+            id: 3, title: "Job 3", company: "The Company 3",
+            cityName: "Wilmington", stateCode: "DE", description: "desc",
+            minSalary: 100000, maxSalary: 120000, link: "https://www.job.com", score: 5,
+            skills: [{category: "Languages", skills: [{id: 1, name: "Python"}, {id: 10, name: "Java"}]}], 
+            education: "bachelor", yearsExperience: 2
         }
     ],
 

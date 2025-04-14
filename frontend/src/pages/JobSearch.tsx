@@ -201,14 +201,16 @@ function JobSearch() {
     }
 
     return (
-        <div>
+        <div className="jobSearch">
             <h1>Search jobs</h1>
             {error !== "" && <MessageBox type={"error"} text={error}/>}
             <JobSearchForm onSubmit={handleJobSearch} />
             { jobs.length === 0 ?
                 <></>
             :
-                <JobList jobs={jobs} />
+                <div className="jobSearchList">
+                    <JobList jobs={jobs} />
+                </div>
             }
         </div>
     )

@@ -32,7 +32,7 @@ export interface Job {
     maxSalary: number,
     link: string,
     score: number,
-    skills: string[],
+    skills: SkillCategory[],
     education: string,
     yearsExperience: number
 }
@@ -107,5 +107,5 @@ export interface DashboardData {
     }[],
     jobs: Job[],
     userSkills: SkillCategory[],
-    mapData: StateData
+    stateData: StateData
 }

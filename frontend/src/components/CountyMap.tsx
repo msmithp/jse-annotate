@@ -49,18 +49,17 @@ function CountyMap({ stateData } : CountyMapProps) {
 
     return (
         <div>
-            <div>
-                <MapContainer style={{ height: "400px", width: "600px" }} zoom={6}>
-                    <TileLayer 
-                            attribution='&copy; 
-                                <a href="https://www.openstreetmap.org/copyright">
-                                OpenStreetMap</a> contributors'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <DensityMap geoData={geoData} skill={null} />
-                    <MapBoundsControl geoData={geoData} />
-                </MapContainer>
-            </div>
+            <MapContainer zoom={6} scrollWheelZoom={false} className="dashboardMap">
+                <TileLayer 
+                        attribution='&copy; 
+                        <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; 
+                        <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; 
+                        <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+                />
+                <DensityMap geoData={geoData} skill={null} />
+                <MapBoundsControl geoData={geoData} />
+            </MapContainer>
         </div>
     )
 }

@@ -2,6 +2,7 @@ from django.http import JsonResponse, HttpResponse
 import json
 from .models import Skill, Job, City, County, State, User, Profile
 from utils.calc_compatibility import calculate_compatibility
+from utils.helper_functions import categorize
 from django.views.decorators.csrf import csrf_exempt
 
 # Authentication
@@ -176,9 +177,9 @@ def job_search(request): #assume userState is the state's id
              reqEdu = job.education
              reqYears = int(job.years_exp)
              score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
-             reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
+             reqSkillsCategories = categorize(list(job.skills.values()))
              jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateCode': state.state_code, 'description': job.job_desc,
-                             'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
+                             'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsCategories,
                              'education': job.education, 'yearsExperience': job.years_exp })
         
     return JsonResponse({'jobs': jobList})

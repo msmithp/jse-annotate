@@ -1,52 +1,69 @@
-import { JobCard } from ".";
+import { JobCard, JobSummary } from ".";
+import Modal from "react-bootstrap/Modal";
+import { Job } from "../static/types";
+import { useState } from "react";
+
 
 interface JobListProps {
-    jobs: {
-        id: number,
-        title: string,
-        company: string,
-        cityName: string,
-        stateCode: string,
-        description: string,
-        minSalary: number,
-        maxSalary: number,
-        link: string,
-        score: number,
-        skills: string[],
-        education: string,
-        yearsExperience: number
-    }[]
+    jobs: Job[]
 };
 
 function JobList({ jobs }: JobListProps) {
+    const [showJob, setShowJob] = useState(false);
+    const [currentJob, setCurrentJob] = useState<Job | null>(null)
+
     const jobCards = jobs.map(job => {
         return (
-            <li key={job.id} value={job.id}>
-                <div>
-                    <JobCard 
-                        title={job.title}
-                        company={job.company}
-                        cityName={job.cityName}
-                        stateCode={job.stateCode}
-                        description={job.description}
-                        minSalary={job.minSalary}
-                        maxSalary={job.maxSalary}
-                        link={job.link}
-                        score={job.score}
-                        skills={job.skills}
-                        education={job.education}
-                        yearsExperience={job.yearsExperience}
-                    />
-                </div>
+            <li key={job.id} value={job.id} onClick={_ => handleOpenModal(job)}>
+                <JobCard 
+                    title={job.title}
+                    company={job.company}
+                    cityName={job.cityName}
+                    stateCode={job.stateCode}
+                    minSalary={job.minSalary}
+                    maxSalary={job.maxSalary}
+                    link={job.link}
+                    score={job.score}
+                    skills={job.skills}
+                    education={job.education}
+                    yearsExperience={job.yearsExperience}
+                />
             </li>
         )
     });
 
+    function handleOpenModal(job: Job) {
+        setCurrentJob(job);
+        setShowJob(true);
+    }
+
+    function handleCloseModal() {
+        setShowJob(false);
+    }
+
     return (
-        <div>
+        <div className="jobList">
             <ul>
                 {jobCards}
             </ul>
+
+            <Modal 
+                show={showJob} 
+                onHide={handleCloseModal}
+                data-bs-theme="dark"
+                dialogClassName="jobSummaryModal"
+            >
+                <JobSummary jobData={currentJob} />
+                
+                <div className="modalFooter">
+                    <button onClick={handleCloseModal}>Cancel</button>
+                    {currentJob && currentJob.link && 
+                        <a href={currentJob!.link} target="_blank">
+                            <button type="submit">Apply</button>
+                        </a>
+                    }
+                </div>
+            </Modal>
         </div>
     )
 }

@@ -34,15 +34,17 @@ function SkillSearchForm({ onUpdate }: SkillSearchFormProps) {
 
     return (
         <div>
-            <label>
-                <p>Select states:</p>
-                    <DropdownList 
-                        values={mapDropdownStates(stateValues)}
-                        selections={states}
-                        categories={false}
-                        onChange={handleStateDropdownChange}
-                        onRemove={handleRemoveStateDropdown}/>
-            </label>
+            <form>
+                <label>
+                    <p>Select states:</p>
+                        <DropdownList 
+                            values={mapDropdownStates(stateValues)}
+                            selections={states}
+                            categories={false}
+                            onChange={handleStateDropdownChange}
+                            onRemove={handleRemoveStateDropdown}/>
+                </label>
+            </form>
         </div>
     )
 }
@@ -69,13 +71,13 @@ function SkillSearch() {
     }
 
     return (
-        <div>
+        <div className="skillSearch">
             <h1>Find in-demand skills</h1>
             <SkillSearchForm onUpdate={handleSkillSearch} />
             { skillData.length === 0 || stateSkills.length === 0 ?
                 <></>
             :
-                <div>
+                <div className="skillSearchResults">
                     <SkillSearchMap stateSkills={stateSkills} />
                     <ChartGrid data={skillData} />
                 </div>

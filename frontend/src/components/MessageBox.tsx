@@ -4,15 +4,15 @@ interface MessageBoxProps {
 }
 
 function MessageBox({ type, text }: MessageBoxProps) {
-    let color;
+    let className;
     if (type === "success") {
-        color = "#16913d";
+        className="successMessage";
     } else {
-        color = "#91161e";
+        className = "errorMessage"
     }
 
     return (
-        <p style={{color: color}}>{text}</p>
+        <p className={className}>{text}</p>
     )
 }
 
