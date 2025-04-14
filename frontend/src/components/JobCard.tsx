@@ -30,7 +30,10 @@ function JobCard({ title, company, cityName, stateCode, minSalary,
                 <p>{cat.category}</p>
             </div>
             {cat.skills.map(skill =>
-                <div className="jobCardSkill" style={{borderColor: mapSkillToColor(skill.name)}}>
+                <div key={skill.name}
+                    className="jobCardSkill" 
+                    style={{borderColor: mapSkillToColor(skill.name)}}
+                >
                     <p>{truncate(skill.name, 30)}</p>
                 </div>
             )}

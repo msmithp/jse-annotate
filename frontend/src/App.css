@@ -330,6 +330,10 @@ select, input {
     background-color: var(--window-color-lighter);
     border-radius: 1rem;
     margin-bottom: 0.5rem;
+
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: normal;
 }
 
 .jobCardExperienceEducation {

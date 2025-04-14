@@ -69,7 +69,10 @@ function Requirements({ experience, education, skills }: RequirementsProps) {
                 <p>{cat.category}</p>
             </div>
             {cat.skills.map(skill =>
-                <div className="jobSummarySkill" style={{borderColor: mapSkillToColor(skill.name)}}>
+                <div key={skill.name} 
+                    className="jobSummarySkill" 
+                    style={{borderColor: mapSkillToColor(skill.name)}}
+                >
                     <p>{truncate(skill.name, 50)}</p>
                 </div>
             )}
