@@ -4,36 +4,6 @@ import { mapEducation, mapSkillToColor,
     mapScoreToColor} from "../static/utils";
 
 
-const placeholderSkills: SkillCategory[] = [
-    {
-        category: "Languages",
-        skills: [
-            {id: 5, name: "Python"},
-            {id: 8, name: "JavaScript"},
-            {id: 9, name: "Java"},
-            {id: 10, name: "C++"},
-            {id: 11, name: "C"},
-            {id: 8, name: "Rust"},
-            {id: 8, name: "Golang"},
-            {id: 8, name: "Haskell"},
-            {id: 8, name: "TypeScript"}
-        ]
-    },
-    {
-        category: "Methodologies",
-        skills: [
-            {id: 10, name: "Agile"}
-        ]
-    },
-    {
-        category: "Database Management",
-        skills: [
-            {id: 100, name: "PostgreSQL"},
-            {id: 120, name: "SQL"}
-        ]
-    }
-]
-
 interface JobCardProps {
     title: string,
     company: string,
@@ -43,7 +13,7 @@ interface JobCardProps {
     maxSalary: number,
     link: string,
     score: number,
-    skills: string[],
+    skills: SkillCategory[],
     education: string,
     yearsExperience: number
 };
@@ -54,7 +24,7 @@ function JobCard({ title, company, cityName, stateCode, minSalary,
     const salaryRange = mapSalary(minSalary, maxSalary);
     const experienceString = mapYearsExperience(yearsExperience);
     const educationString = mapEducation(education);
-    const skillCategories = skills.length !== 0 ? placeholderSkills.map(cat => 
+    const skillCategories = skills.length !== 0 ? skills.map(cat => 
         <div key={cat.category} className="jobCardSkillCategory">
             <div className="jobCardCategoryName">
                 <p>{cat.category}</p>

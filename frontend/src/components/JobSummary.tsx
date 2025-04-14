@@ -4,37 +4,6 @@ import { mapSalary, mapYearsExperience, mapEducation,
     mapScoreToColor, mapSkillToColor, truncate } from "src/static/utils";
 
 
-const placeholderSkills: SkillCategory[] = [
-    {
-        category: "Languages",
-        skills: [
-            {id: 5, name: "Python"},
-            {id: 8, name: "JavaScript"},
-            {id: 9, name: "Java"},
-            {id: 10, name: "C++"},
-            {id: 11, name: "C"},
-            {id: 8, name: "Rust"},
-            {id: 8, name: "Golang"},
-            {id: 8, name: "Haskell"},
-            {id: 8, name: "TypeScript"}
-        ]
-    },
-    {
-        category: "Methodologies",
-        skills: [
-            {id: 10, name: "Agile"}
-        ]
-    },
-    {
-        category: "Database Management",
-        skills: [
-            {id: 100, name: "PostgreSQL"},
-            {id: 120, name: "SQL"}
-        ]
-    }
-]
-
-
 interface HeaderProps {
     title: string,
     company: string,
@@ -195,7 +164,7 @@ function JobSummary({ jobData }: JobSummaryProps) {
                     <hr />
                     <Requirements experience={jobData.yearsExperience}
                         education={jobData.education}
-                        skills={placeholderSkills}/>
+                        skills={jobData.skills}/>
                     <hr />
                     <Description description={jobData.description}/>
                 </>
