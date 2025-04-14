@@ -116,13 +116,14 @@ export function mapYearsExperience(years: number): string {
  *  comma-formatted numbers */
 export function mapSalary(minSalary: number, maxSalary: number): string {
     if (minSalary < 1 && maxSalary < 1) {
-        return "None specified";
+        return "No salary specified";
     } else {
         return "$" + Math.floor(minSalary).toLocaleString() 
                     + " - $" + Math.floor(maxSalary).toLocaleString();
     }
 }
 
+/** Map a compatibility score between 0 and 100 to a hex code color */
 export function mapScoreToColor(score: number): string {
     if (score >= 80) {
         return "#2a9756";
@@ -135,6 +136,8 @@ export function mapScoreToColor(score: number): string {
     }
 }
 
+/** If a string is longer than `n` characters, shorten it to be `n` characters
+ *  long with "..." appended */
 export function truncate(str: string, n: number): string {
     return str.length > n ? `${str.substring(0, n)}...` : str;
 }

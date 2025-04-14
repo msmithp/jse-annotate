@@ -58,13 +58,15 @@ function JobCard({ title, company, cityName, stateCode, minSalary,
                     </div>
                 </div>
             </div>
-            <div className="jobCardSection">
-                <h3>Experience</h3>
-                <p>{experienceString}</p>
-            </div>
-            <div className="jobCardSection">
-                <h3>Education</h3>
-                <p>{educationString}</p>
+            <div className="jobCardExperienceEducation">
+                <div className="jobCardSection">
+                    <h3>Experience</h3>
+                    <p>{experienceString}</p>
+                </div>
+                <div className="jobCardSection">
+                    <h3>Education</h3>
+                    <p>{educationString}</p>
+                </div>
             </div>
             <div className="jobCardSection">
                 <h3>Skills</h3>
