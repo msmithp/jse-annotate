@@ -8,6 +8,7 @@
     --window-color: #303233;
     --window-color-lighter: #3e4142;
     --window-color-lighter2: #4d5052;
+    --window-color-lighter3: #5c5f61;
     --cancel-color: #CA2E4B;
     --submit-color: #3F84E5;
     --success-color: #3CAF4D;
@@ -56,6 +57,12 @@ button {
 
 .leaflet-control-attribution {
     font-size: 8pt;
+}
+
+form {
+    background-color: var(--window-color);
+    border-radius: 2rem;
+    padding: 1rem;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -149,13 +156,13 @@ select, input {
     cursor: pointer;
     transition: 0.1s;
     font-weight: 800;
-    background-color: var(--window-color-lighter);
+    background-color: var(--window-color-lighter2);
     color: var(--fg-color);
     font-weight: 500;
 }
 
 .dropdownList .plusButton:hover {
-    background-color: var(--window-color-lighter2);
+    background-color: var(--window-color-lighter3);
     transition: 0.15s;
     color: var(--submit-color);
 }
@@ -163,19 +170,6 @@ select, input {
 .deleteButton {
     background-color: var(--cancel-color);
     cursor: pointer;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * *
- *                   CHART GRID                    *
- * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-.grid {
-    display: grid;
-    grid-template-columns: 25% 25% 25%;
-}
-
-.grid > div {
-    padding: 6%;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -290,6 +284,10 @@ select, input {
     transition: 0.1s;
 }
 
+.jobSearchList {
+    margin-top: 1rem;
+}
+
 .jobSearchList .jobList ul {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -346,7 +344,7 @@ select, input {
 .jobCardHeaderRight p {
     margin-top: 0;
     font-weight: 500;
-    font-size: 10pt;  /* "Compatibility" font size in job card */
+    font-size: 9pt;  /* "Compatibility" font size in job card */
 }
 
 .jobCardSection p {
@@ -554,9 +552,30 @@ select, input {
  *                  SKILL SEARCH                   *
  * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+.skillSearchResults {
+    margin-top: 1rem;
+    background-color: var(--window-color);
+    border-radius: 2rem;
+    padding: 1rem;
+}
+
 .skillSearchMap {
     height: 65vh; 
+    border-radius: 1rem;
     /* width: 600px; */
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                   CHART GRID                    *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.grid > div {
+    padding: 6%;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * *

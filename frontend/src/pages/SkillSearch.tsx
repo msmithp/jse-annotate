@@ -77,7 +77,7 @@ function SkillSearch() {
             { skillData.length === 0 || stateSkills.length === 0 ?
                 <></>
             :
-                <div>
+                <div className="skillSearchResults">
                     <SkillSearchMap stateSkills={stateSkills} />
                     <ChartGrid data={skillData} />
                 </div>
