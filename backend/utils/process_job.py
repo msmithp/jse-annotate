@@ -37,7 +37,7 @@ def process_job(row: list[str]) -> tuple[Job, list]:
     city_and_state = row[6]
     is_remote = row[14]
     post_date = row[7]
-    url = row[3]
+    url = row[3] if len(row[3]) <= 600 else ""
 
     if row[11] != "" and row[12] != "":
         min_sal = float(row[11])

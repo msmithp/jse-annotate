@@ -304,6 +304,7 @@ select, input {
     border-radius: 20px;
     padding: 1rem;
     word-wrap: break-word;
+    hyphens: auto;
     transition: 0.1s;
     cursor: pointer;
     height: 100%;
@@ -334,6 +335,7 @@ select, input {
     word-wrap: break-word;
     overflow-wrap: anywhere;
     word-break: normal;
+    hyphens: auto;
 }
 
 .jobCardExperienceEducation {
@@ -364,6 +366,7 @@ select, input {
     word-wrap: break-word;
     overflow-wrap: anywhere;
     word-break: normal;
+    hyphens: auto;
 }
 
 .jobCardHeaderRight {
@@ -452,6 +455,7 @@ select, input {
     word-wrap: break-word;
     overflow-wrap: anywhere;
     word-break: normal;
+    hyphens: auto;
 }
 
 .jobSummaryHeader {

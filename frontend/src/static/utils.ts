@@ -105,7 +105,7 @@ export function mapYearsExperience(years: number): string {
         return "None specified";
     } else if (years >= 20) {
         return "20+ years";
-    } else if (years == 1) {
+    } else if (years === 1) {
         return "1 year";
     } else {
         return String(years) + " years";

@@ -26,6 +26,7 @@ class Command(BaseCommand):
 
         # Scrape job data
         job_data = scrape(options["num_jobs"], not options["nocsv"], "./utils/jobs/")
+        print("Successfully scraped jobs. Adding to database...")
         
         # Store jobs and skills in arrays for bulk creation
         jobs = []

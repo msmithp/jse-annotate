@@ -57,7 +57,6 @@ function Login() {
     async function handleLogin(username: string, password: string): Promise<void> {
         // Reset error message box
         setError(false);
-        console.log("Username: " + username + " Password: " + password);
 
         // Send username and password to back-end to validate user
         const res = await loginUser(username, password);

@@ -81,6 +81,7 @@ function Home() {
 
     useEffect(() => {
         let ignore = false;
+        
         setDashboardData(null);
         if (user) {
             // axiosInstance.get("api/get-dashboard-data/", {params: {id: user.user_id}})
