@@ -6,6 +6,7 @@ import { useAuthContext } from "../context/AuthProvider";
 import { SkillChart, JobList, DashboardMap, 
     CountyMap, Dropdown } from "../components";
 import axiosInstance from "../api/axiosInstance";
+import { NavLink } from "react-router-dom";
 
 
 const placeholderMapData: StateDensityData = {
@@ -55,7 +56,7 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
         // Call to back-end to get map data for selected skill
         axiosInstance.get("api/get-density-data/", {params: {
             id: user.user_id,
-            skill: selected
+            skill: id
         }}).then(res => {
             console.log(res.data);
             setMapData(res.data);
@@ -88,6 +89,9 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
             </div>
             <div className="dashboardRight">
                 <JobList jobs={jobs}/>
+                <NavLink to="/job-search">
+                    <button className="moreJobsButton">See more jobs</button>
+                </NavLink>
             </div>
         </div>
     )

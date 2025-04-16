@@ -14,7 +14,7 @@ ChartJS.register(
 // Set font of chart
 ChartJS.defaults.font.family = "Geologica";
 ChartJS.defaults.font.size = 13;
-ChartJS.defaults.color = "white";
+ChartJS.defaults.color = "#eeeeee";
 ChartJS.defaults.font.weight = 350;
 
 // Set color of grid lines

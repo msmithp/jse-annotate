@@ -10,12 +10,12 @@
     --window-color-lighter2: #4d5052;
     --window-color-lighter3: #5c5f61;
     --cancel-color: #CA2E4B;
-    --submit-color: #3F84E5;
-    --submit-color-lighter: #5294f0;
+    --submit-color: #387cdb;
+    --submit-color-lighter: #5b9bf3;
     --success-color: #2a9756;
     --success-color-lighter: #32b365;
     --warning-color: #FFBA1F;
-    --fg-color: rgb(238, 238, 238);
+    --fg-color: #eeeeee;
 
     background-color: var(--bg-color);
     color: var(--fg-color);
@@ -49,12 +49,18 @@ h1 {
     line-height: 1.5rem;
 }
 
+button, select, input {
+    padding: 0.45rem;
+}
+
+
 button {
     border: none;
     border-radius: 1.2rem;
-    padding: 0.4rem;
     background-color: var(--window-color);
     cursor: pointer;
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
 }
 
 .leaflet-control-attribution {
@@ -87,12 +93,23 @@ button[type=submit]:hover {
     transition: 0.1s;
 }
 
-form button[type=submit] {
+form button[type=button] {
+    background-color: var(--window-color-lighter);
+    transition: 0.1s;
+}
+
+form button[type=button]:hover {
+    background-color: var(--window-color-lighter2);
+    transition: 0.1s;
+}
+
+.formButtons {
     margin-top: 0.8em;
+    display: flex;
+    gap: 0.5rem;
 }
 
 select, input {
-    padding: 0.4rem;
     border-radius: 1.2rem;
     background-color: var(--bg-color);
 }
@@ -173,6 +190,7 @@ select, input {
 .dropdownList .plusButton {
     display: block;
     width: 100%;
+    min-width: 4em;
     border: none;
     border-radius: 15px;
     cursor: pointer;
@@ -277,6 +295,19 @@ select, input {
 .dashboard label p {
     margin-left: 5px;
     margin-right: 10px;
+}
+
+.moreJobsButton {
+    margin-top: 0.8rem;
+    text-align: center;
+    width: 100%;
+    background-color: var(--window-color-lighter);
+    transition: 0.1s;
+}
+
+.moreJobsButton:hover {
+    background-color: var(--window-color-lighter2);
+    transition: 0.1s;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * *

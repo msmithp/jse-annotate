@@ -138,7 +138,7 @@ function CreateAccountForm({ onSubmit }: CreateAccountFormProps) {
                     onChange={handleDropdownChange}
                     onRemove={handleRemoveDropdown} />
             </label>
-            <div>
+            <div className="formButtons">
                 <button type="submit">Create account</button>
             </div>
         </form>
@@ -167,15 +167,19 @@ function CreateAccount() {
 
         if (username === "") {
             setError("You must enter a username.");
+            window.scrollTo(0, 0);
             return;
         } else if (password === "") {
             setError("You must enter a password.");
+            window.scrollTo(0, 0);
             return;
         } else if (state === -1) {
-            setError("You must select a state.");
+            setError("You must select a location.");
+            window.scrollTo(0, 0);
             return;
         } else if (education === "none") {
             setError("You must select an education level.");
+            window.scrollTo(0, 0);
             return;
         }
         
@@ -194,9 +198,13 @@ function CreateAccount() {
             } 
         }).catch((err) => {
             if (err.status === 409) {
-                setError("Error: Username \"" + username + "\" is already taken");
+                setError("Username \"" + username + "\" is already taken");
+                window.scrollTo(0, 0);
+                return;
             } else if (err.status === 403) {
-                setError("Error: " + err.response.data);
+                setError(err.response.data);
+                window.scrollTo(0, 0);
+                return;
             }
         })
     }

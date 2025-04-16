@@ -12,12 +12,12 @@ education = {
                         "high school equiv", "hs diploma"],
         "associate": ["associate degree", "associates degree", 
                       "associate's degree", "a.s.", "a.a.", "a.a.s."],
-        "bachelor": ["bachelor", "b.s.", "b.a.", "bs", "ba", 
+        "bachelor": ["bachelor", "bachelors", "b.s.", "b.a.", "bs", "ba", 
                      "undergraduate degree", "undergraduate's degree",
                      "four year degree", "4 year degree"],
         "master": ["master's degree", "master degree", "m.s.", "m.a.", 
-                   "master's of"],
-        "doctorate": ["doctorate", "doctoral", "phd", "ph.d.", "d.sc.",
+                   "master's of, mba, m.b.a"],
+        "doctorate": ["doctorate", "doctoral", "phd", "ph.d", "d.sc.",
                       "postgraduate degree"]
 }
 
@@ -83,7 +83,7 @@ def search(search_term: str, job_desc: str) -> bool:
                 return False
         
 
-def extract(job_desc: str) -> tuple[list, str, int]:
+def extract(job_desc: str) -> tuple[list[int], str, int]:
         """
         Extract skill, education, and experience information from a scraped
         job description.
@@ -240,23 +240,23 @@ def experience_extract(job_desc: str) -> int:
         # see if there is a number
         years_of_exp = -1
         search_range = 7
-        number_threshold = 3
+        number_threshold = 7
         for i, word in enumerate(desc_list):
-                if "year" in word:
+                if "year" in word or "yr" in word:
                         low = max(0, i-search_range)
                         high = min(len(desc_list), i+search_range)
                         experience_found = False
 
-                        # Look backwards for "experience"
+                        # Look backwards for "experience" or "skill"
                         for j in range(i, low, -1):
-                                if desc_list[j] == "experience":
+                                if "experience" in desc_list[j] or "skill" in desc_list[j]:
                                         experience_found = True
                                         break
 
                         # Look forwards for "experience"
                         if not experience_found:
                                 for j in range(i, high, 1):
-                                        if desc_list[j] == "experience":
+                                        if "experience" in desc_list[j] or "skill" in desc_list[j]:
                                                 experience_found = True
                                                 break
                         

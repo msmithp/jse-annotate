@@ -39,7 +39,7 @@ function LoginForm({ handler }: LoginFormProps) {
                     type="password"
                 />
             </label>
-            <div>
+            <div className="formButtons">
                 <button type="submit">Log in</button>
             </div>
         </form>
@@ -63,6 +63,7 @@ function Login() {
         if (!res) {
             // If login failed, set error message box
             setError(true);
+            window.scrollTo(0, 0);
         }
     }
 
