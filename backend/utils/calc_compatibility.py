@@ -31,6 +31,7 @@ def calc_skills(userSkills, reqSkills):
     return score
 
 def calc_edu(userEdu, reqEdu):
+    #initialize
     userEduScore = 0
     reqEduScore = 0
 
@@ -45,7 +46,7 @@ def calc_edu(userEdu, reqEdu):
         score = userEduScore / reqEduScore
     elif userEduScore == reqEduScore:
         score = 1
-    else:
+    elif reqEduScore < userEduScore:
         score = max(0, 1-(abs(userEduScore/reqEduScore)/reqEduScore))
 
     return score

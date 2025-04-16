@@ -10,7 +10,7 @@ Ruby,Languages
 Swift,Languages
 Golang,Languages
 Perl,Languages
-TypeScript,Languages
+TypeScript,Web Development
 MATLAB,Languages
 Rust,Languages
 Pascal,Languages
@@ -47,20 +47,19 @@ Docker,Tools
 Google Cloud,Tools
 Azure,Tools
 AWS,Tools
-Shell,Tools
-Scrum,Methodologies
-Agile,Methodologies
-Waterfall,Methodologies
-Lean,Methodologies
-Behavior-Driven,Methodologies
-Feature-Driven,Methodologies
-Extreme Programming,Methodologies
-Spiral,Methodologies
-Rapid Application Development,Methodologies
-DevOps,Methodologies
+Powershell,Tools
+Scrum,Software Development
+Agile,Software Development
+Waterfall,Software Development
+Lean,Software Development
+Behavior-Driven,Software Development
+Feature-Driven,Software Development
+Extreme Programming,Software Development
+Spiral,Software Development
+Rapid Application Development,Software Development
+DevOps,Software Development
 Bash,Languages
 Julia,Languages
-Objective-C,Languages
 Elm,Languages
 Delphi,Languages
 Localstack,Tools
@@ -68,3 +67,18 @@ VMWare,Tools
 SOC,Tools
 Splunk,Tools
 SAS,Languages
+HyperV,Tools
+Atlassian,Tools
+Kubernetes,Tools
+Windows,Tools
+Linux,Tools
+Jenkins,Tools
+Pytest,Tools
+JUnit,Tools
+Pytorch,Tools
+Sklearn,Tools
+Tensorflow,Tools
+Pandas,Tools
+Lua,Languages
+Assembly,Languages
+REST,Web Development

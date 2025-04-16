@@ -221,7 +221,6 @@ def get_dashboard_data(request):
 
     #print(skill_set)
 
-
     #print(state.pk, user_state, edu, years_exp, skill_set)
 
     dashboard_data = {'jobs': [],
@@ -233,7 +232,7 @@ def get_dashboard_data(request):
     #append skill data to dict
     occurrences = []
     skills = list(Skill.objects.all().values())
-    total_skills = list(Skill.objects.values_list("pk", flat=True))
+    #total_skills = list(Skill.objects.values_list("pk", flat=True))
     #print(skills)
     for skill in skills: #for each skill, count how often it occurs in the given state
         count = 0 #reset for each skill
@@ -245,6 +244,7 @@ def get_dashboard_data(request):
                     count += 1
         occurrences.append({'id': skill["id"], 'skillName': skill["skill_name"], 'occurrences': count})
 
+    
     for i in range (0,10): #append top ten most frequent skills to dict
         max_occ = max(occurrences, key=lambda x:x['occurrences'])
         dashboard_data['skills'].append(max_occ)
@@ -253,6 +253,8 @@ def get_dashboard_data(request):
     #append job data to dict - top 10 most compatible jobs
     jobs = list(Job.objects.filter(city__county__state=state))
     top_scores = []
+
+    #print(jobs)
 
     for job in jobs:
         reqSkills = list(job.skills.values_list())
@@ -282,51 +284,47 @@ def get_dashboard_data(request):
                 cat_data['skills'].append({'id':skill['id'], 'name': skill['skill_name']})
         dashboard_data['userSkills'].append(cat_data)
 
-    print(json.dumps(dashboard_data['skills'], indent=4))
-    print(json.dumps(dashboard_data['userSkills'], indent=4))
     return JsonResponse({'dashboardData': dashboard_data})
 
 def get_density_data(request):
-    user_id = request.GET.get("user_id")
-    skill_id = request.GET.get("skill_id")
+    user_id = request.GET.get("id")
+    this_skill = request.GET.get("skill")
 
     user = User.objects.get(pk=user_id)
 
     #get user state based on ID
 
     profile = user.profile
-    stateID = profile.state
+    user_state = profile.state
 
-    state = State.objects.get(pk = stateID)
+    this_state = State.objects.get(state_name = user_state)
 
-    skill = Skill.objects.get(pk=skill_id)
+    skill = Skill.objects.get(pk=this_skill)
 
-    data = {'stateData': {'stateID': stateID, 'stateName': state.state_name, 'stateCode': state.state_code}, 'countyData': [],
-            'skillData': {'skillID': skill_id, 'skillName': skill.skill_name}}
-    counties = list(County.objects.filter(state=state))
+    data = {'stateData': {'stateID': this_state.pk, 'stateName': this_state.state_name, 'stateCode': this_state.state_code}, 'countyData': [],
+            'skillData': {'skillID': this_skill, 'skillName': skill.skill_name}}
+    
+    counties = list(County.objects.filter(state=this_state))
 
     occurrences = []
     for county in counties:
         count = 0
-        job_set = list(Job.objects.filter(city__county=county))
+        job_set = list(Job.objects.filter(city__county=county.pk))
         for job in job_set:
             req_skills = list(job.skills.values_list("pk", flat=True))
             if req_skills:
-                if job.skills == skill_id:
+                if skill.pk in req_skills:
                     count += 1
         occurrences.append({'countyName': county.county_name, 'occurrences': count})
 
-    max = 0
-    for item in occurrences:
-        if item['occurrences'] > max:
-            max = item['occurrences']
+    max_occ = max(occurrences, key=lambda x:x['occurrences'])
 
     for county in counties: 
         for item in occurrences:
             if item['countyName'] == county.county_name:
-                density = item['occurrences']/max
-        data['countyData'].append({'countyID':county.pk, 'countyName': county.county_name, 'countyFips': county.fips,
-                                   'density': density, 'numJobs': count})
+                density = item['occurrences']/max_occ['occurrences']
+                data['countyData'].append({'countyID':county.pk, 'countyName': county.county_name, 'countyFips': county.fips,
+                                   'density': density, 'numJobs': item['occurrences']})
     
-    print(data)
+    #print(json.dumps(data, indent=4))
     return JsonResponse({'densityData': data})

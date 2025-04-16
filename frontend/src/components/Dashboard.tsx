@@ -55,10 +55,10 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
         // Call to back-end to get map data for selected skill
         axiosInstance.get("api/get-density-data/", {params: {
             id: user.user_id,
-            skill: selected
+            skill: id
         }}).then(res => {
-            console.log(res.data);
-            setMapData(res.data);
+            console.log(res.data.densityData);
+            setMapData(res.data.densityData);
         }).catch(err => console.log(err))
     }
 
@@ -71,7 +71,7 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
                     categories={true}
                     onChange={handleSkillChange} />
                 {selected !== -1 && mapData != null ? (
-                    <DashboardMap stateDensity={placeholderMapData} />
+                    <DashboardMap stateDensity={mapData} />
                 ) : (
                     <CountyMap stateData={blankMapData} />
                 )}
