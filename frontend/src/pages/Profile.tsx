@@ -118,7 +118,7 @@ function EditProfileForm({ onSubmit, user }: EditProfileFormProps) {
                     onChange={handleDropdownChange}
                     onRemove={handleRemoveDropdown} />
             </label>
-            <div>
+            <div className="formButtons">
                 <button type="submit">Update profile</button>
             </div>
         </form>

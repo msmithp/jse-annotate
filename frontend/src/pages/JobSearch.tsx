@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { DropdownList, JobList, MessageBox } from "../components";
 import { useStaticData } from "../context/StaticDataProvider";
-import { Job } from "../static/types";
+import { Job, User } from "../static/types";
 import { mapDropdownSkills, mapDropdownStates } from "../static/utils";
 import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
+import { useAuthContext } from "../context/AuthProvider";
 
 
 function orderJobs(job1: Job, job2: Job): number {
@@ -37,10 +39,11 @@ interface JobSearchFormProps {
     onSubmit: (
         location: number[], education: string,
         experience: number, skills: number[]
-    ) => void
+    ) => void,
+    userID?: number
 };
 
-function JobSearchForm({ onSubmit }: JobSearchFormProps) {
+function JobSearchForm({ onSubmit, userID }: JobSearchFormProps) {
     // Get static data (states, education levels, and skills)
     const staticData = useStaticData();
     const locationValues = staticData.states;
@@ -58,6 +61,18 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
     function handleSubmit(event: React.FormEvent): void {
         event.preventDefault();
         onSubmit(locations, education, experience, skills);
+    }
+
+    function handleImport(event: React.FormEvent): void {
+        event.preventDefault();
+        axiosInstance.get("api/get-user/", {params: {id: userID}})
+        .then(res => {
+                const userData: User = res.data;
+                setLocations([userData.state]);
+                setEducation(userData.education);
+                setExperience(userData.yearsExperience);
+                setSkills(userData.skills.map(skill => skill.id));
+        }).catch(err => console.log("Error in profile page: " + err));
     }
 
     function handleSkillDropdownChange(index: number, id: number): void {
@@ -143,7 +158,12 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
                     onChange={handleSkillDropdownChange}
                     onRemove={handleRemoveSkillDropdown}/>
             </label>
-            <div>
+            <div className="formButtons">
+                {userID && 
+                    <button type="button" onClick={e => handleImport(e)}>
+                        Import my skills
+                    </button>
+                }
                 <button type="submit">Search jobs</button>
             </div>
         </form>
@@ -154,6 +174,15 @@ function JobSearchForm({ onSubmit }: JobSearchFormProps) {
 function JobSearch() {
     const [jobs, setJobs] = useState<Job[]>([]);
     const [error, setError] = useState("");
+
+    const authData = useAuthContext();
+    const user = authData.user;
+
+    useEffect(() => {
+        // Automatically scroll to top of page (without this, you won't start
+        // at the top of the page if you're linked from Home)
+        window.scrollTo(0, 0);
+    }, [])
 
     function handleJobSearch(locations: number[], education: string,
         experience: number, skills: number[]): void {
@@ -173,9 +202,11 @@ function JobSearch() {
 
         if (locations.length === 0) {
             setError("You must select a location.");
+            window.scrollTo(0, 0);
             return;
         } else if (education === "none") {
             setError("You must select an education level.");
+            window.scrollTo(0, 0);
             return;
         }
 
@@ -201,14 +232,16 @@ function JobSearch() {
     }
 
     return (
-        <div>
+        <div className="jobSearch">
             <h1>Search jobs</h1>
             {error !== "" && <MessageBox type={"error"} text={error}/>}
-            <JobSearchForm onSubmit={handleJobSearch} />
+            <JobSearchForm onSubmit={handleJobSearch} userID={user?.user_id} />
             { jobs.length === 0 ?
                 <></>
             :
-                <JobList jobs={jobs} />
+                <div className="jobSearchList">
+                    <JobList jobs={jobs} />
+                </div>
             }
         </div>
     )

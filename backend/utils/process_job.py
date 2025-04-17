@@ -21,14 +21,14 @@ def get_cities() -> list[dict]:
     return city_cache
 
 
-def process_job(row: list[str]) -> tuple[Job, list]:
+def process_job(row: list[str]) -> tuple[Job, list[int]]:
     """
     Extract data from row of JobSpy output.
 
     :param row: One row of output from the JobSpy scraper, consisting of
                 columns for job title, company, location, job description, etc.
-    :return: A Job object consisting of data extracted from the JobSpy output
-             and the description of the job
+    :return: A tuple, containing a Job object with extracted data and a list of
+             the IDs of skills contained in the job's description
     """
     job_name = row[4]
     job_type = row[8]
@@ -37,7 +37,7 @@ def process_job(row: list[str]) -> tuple[Job, list]:
     city_and_state = row[6]
     is_remote = row[14]
     post_date = row[7]
-    url = row[3]
+    url = row[3] if len(row[3]) <= 600 else ""
 
     if row[11] != "" and row[12] != "":
         min_sal = float(row[11])
@@ -94,8 +94,9 @@ def process_job(row: list[str]) -> tuple[Job, list]:
     post_date = datetime.date(int(year), int(month), int(day))
 
     """ Skill extraction """
-    # Extract skill, education, and experience information
-    skills, education, years_exp = extract(job_desc)
+    # Extract skill, education, and experience information from
+    # job title and description
+    skills, education, years_exp = extract(job_name + " " + job_desc)
 
     # Remove escape characters from job description
     job_desc = job_desc.replace("\\\\", "")

@@ -36,8 +36,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     const navigate = useNavigate();
 
     async function loginUser(username: string, password: string): Promise<boolean> {
-        console.log("Logging in user " + username + " with password " + password);
-
         let successful = false;
 
         // Authenticate user in back-end

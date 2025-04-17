@@ -1,4 +1,3 @@
-import React from "react";
 import { Chart as ChartJS, CategoryScale, 
     LinearScale, BarElement, Title, Tooltip } from "chart.js";
 import { Bar } from "react-chartjs-2";
@@ -11,6 +10,15 @@ ChartJS.register(
     Title,
     Tooltip
 );
+
+// Set font of chart
+ChartJS.defaults.font.family = "Geologica";
+ChartJS.defaults.font.size = 13;
+ChartJS.defaults.color = "#eeeeee";
+ChartJS.defaults.font.weight = 350;
+
+// Set color of grid lines
+ChartJS.defaults.borderColor = "#545454";
 
 interface SkillChartProps {
     title: string
@@ -58,7 +66,10 @@ function SkillChart({ title, skillData } : SkillChartProps) {
         plugins: {
             title: {
                 display: true,
-                text: title
+                text: title,
+                font: {
+                    size: 18
+                }
             },
         },
         maintainAspectRatio: false,

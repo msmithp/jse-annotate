@@ -39,7 +39,7 @@ function LoginForm({ handler }: LoginFormProps) {
                     type="password"
                 />
             </label>
-            <div>
+            <div className="formButtons">
                 <button type="submit">Log in</button>
             </div>
         </form>
@@ -57,13 +57,13 @@ function Login() {
     async function handleLogin(username: string, password: string): Promise<void> {
         // Reset error message box
         setError(false);
-        console.log("Username: " + username + " Password: " + password);
 
         // Send username and password to back-end to validate user
         const res = await loginUser(username, password);
         if (!res) {
             // If login failed, set error message box
             setError(true);
+            window.scrollTo(0, 0);
         }
     }
 

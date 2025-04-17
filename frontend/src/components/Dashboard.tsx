@@ -6,6 +6,7 @@ import { useAuthContext } from "../context/AuthProvider";
 import { SkillChart, JobList, DashboardMap, 
     CountyMap, Dropdown } from "../components";
 import axiosInstance from "../api/axiosInstance";
+import { NavLink } from "react-router-dom";
 
 
 const placeholderMapData: StateDensityData = {
@@ -63,24 +64,34 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
     }
 
     return (
-        <div>
-            <div>
-                <Dropdown 
-                    values={mapDropdownSkills(userSkills)}
-                    selected={selected}
-                    categories={true}
-                    onChange={handleSkillChange} />
-                {selected !== -1 && mapData != null ? (
-                    <DashboardMap stateDensity={mapData} />
-                ) : (
-                    <CountyMap stateData={blankMapData} />
-                )}
+        <div className="dashboard">
+            <div className="dashboardLeft">
+                <div className="dashboardChart">
+                    <SkillChart 
+                        title={`Top Skills in ${blankMapData.stateName}`} 
+                        skillData={chartData.skills} />
+                </div>
+                <div className="dashboardSelectAndMap">
+                    <label className="dashboardStateSelect">
+                        <p>Select a skill:</p>
+                        <Dropdown 
+                            values={mapDropdownSkills(userSkills)}
+                            selected={selected}
+                            categories={true}
+                            onChange={handleSkillChange} />
+                    </label>
+                    {selected !== -1 && mapData != null ? (
+                        <DashboardMap stateDensity={mapData} />
+                    ) : (
+                        <CountyMap stateData={blankMapData} />
+                    )}
+                </div>
             </div>
-            <div style={{ height: "300px" }}>
-                <SkillChart title={"test"} skillData={chartData.skills} />
-            </div>
-            <div>
+            <div className="dashboardRight">
                 <JobList jobs={jobs}/>
+                <NavLink to="/job-search">
+                    <button className="moreJobsButton">See more jobs</button>
+                </NavLink>
             </div>
         </div>
     )
