@@ -136,12 +136,12 @@ def skill_search(request): #assume userState is the state's id
                     for thisSkill in reqSkills:
                         skill_occurrences[thisSkill] += 1
                     
-            #print(thisCounty, skill_occurrences) #test
+            #print(thisCounty, skill_occurrences)
 
             commonSkillID = max(skill_occurrences, key = skill_occurrences.get)
             numJobs = skill_occurrences[commonSkillID]
 
-            #print(thisCounty, commonSkillID) #test
+            #print(thisCounty, commonSkillID)
 
             if numJobs == 0:
                 commonSkillID = -1
@@ -235,16 +235,19 @@ def get_dashboard_data(request):
     #total_skills = list(Skill.objects.values_list("pk", flat=True))
     #print(skills)
     for skill in skills: #for each skill, count how often it occurs in the given state
-        count = 0 #reset for each skill
         job_set = list(Job.objects.filter(city__county__state=state.pk))
+        count = 0
+
+        #occurrences.append(get_max(job_set, skill, skill["skill_name"], count))
+
         for job in job_set:
             req_skills = list(job.skills.values_list("pk", flat=True))
             if req_skills:
                 if skill['id'] in req_skills:
                     count += 1
-        occurrences.append({'id': skill["id"], 'skillName': skill["skill_name"], 'occurrences': count})
+        occurrences.append({'skillName': skill["skill_name"], 'occurrences': count})
+    #get_top_10(occurrences, dashboard_data['skills'], 'occurrences')
 
-    
     for i in range (0,10): #append top ten most frequent skills to dict
         max_occ = max(occurrences, key=lambda x:x['occurrences'])
         dashboard_data['skills'].append(max_occ)
@@ -266,7 +269,8 @@ def get_dashboard_data(request):
                          'stateCode': state.state_code, 'description': job.job_desc,
                          'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
                          'education': job.education, 'yearsExperience': job.years_exp })
-        
+    
+    #get_top_10(top_scores, dashboard_data['jobs'], 'score')
     for j in range (0,10): #append top ten most frequent skills to dict
         top_score = max(top_scores, key=lambda x:x['score'])
         dashboard_data['jobs'].append(top_score)
@@ -308,8 +312,10 @@ def get_density_data(request):
 
     occurrences = []
     for county in counties:
-        count = 0
         job_set = list(Job.objects.filter(city__county=county.pk))
+        count = 0
+        #occurrences.append(get_max(job_set, skill, county.county_name, count))
+
         for job in job_set:
             req_skills = list(job.skills.values_list("pk", flat=True))
             if req_skills:
@@ -328,3 +334,18 @@ def get_density_data(request):
     
     #print(json.dumps(data, indent=4))
     return JsonResponse({'densityData': data})
+
+def get_max(job_set, skill, item_name, count): #ERROR: returns 's' as undefined. looks like that's the user's skills? why is that the case
+    for job in job_set:
+        req_skills = list(job.skills.values_list("pk", flat=True))
+        if req_skills:
+            if skill['id'] in req_skills:
+                count += 1
+    return {'item_name': item_name, 'occurrences': count}
+
+def get_top_10(dicts, section, feature): #ERROR: max_occ comes up as empty
+    #print(dicts, section, dicts[feature])
+    for i in range (0,10): #append top ten most frequent skills to dict
+        max_occ = max(dicts, key=lambda x:x[feature])
+        section.append(max_occ)
+        dicts.remove(max_occ)

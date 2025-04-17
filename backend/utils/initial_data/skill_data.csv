@@ -48,16 +48,16 @@ Google Cloud,Tools
 Azure,Tools
 AWS,Tools
 Powershell,Tools
-Scrum,Software Development
-Agile,Software Development
-Waterfall,Software Development
-Lean,Software Development
-Behavior-Driven,Software Development
-Feature-Driven,Software Development
-Extreme Programming,Software Development
-Spiral,Software Development
-Rapid Application Development,Software Development
-DevOps,Software Development
+Scrum,Methodologies
+Agile,Methodologies
+Waterfall,Methodologies
+Lean,Methodologies
+Behavior-Driven,Methodologies
+Feature-Driven,Methodologies
+Extreme Programming,Methodologies
+Spiral,Methodologies
+Rapid Application Development,Methodologies
+DevOps,Fields
 Bash,Languages
 Julia,Languages
 Elm,Languages
@@ -70,15 +70,41 @@ SAS,Languages
 HyperV,Tools
 Atlassian,Tools
 Kubernetes,Tools
-Windows,Tools
-Linux,Tools
+Windows,Operating Systems
+Linux,Operating Systems
+Android,Operating Systems
+MAC,Operating Systems
 Jenkins,Tools
-Pytest,Tools
+Pytest,Libraries
 JUnit,Tools
-Pytorch,Tools
-Sklearn,Tools
-Tensorflow,Tools
-Pandas,Tools
+Pytorch,Libraries
+Sklearn,Libraries
+Tensorflow,Libraries
+Pandas,Libraries
 Lua,Languages
 Assembly,Languages
 REST,Web Development
+Full-stack Development,Fields
+Back-end Development,Fields
+Front-end Development,Fields
+Mobile Development,Fields
+Web Development,Fields
+Game Development,Fields
+Machine Learning/Artificial Intelligence,Fields
+Data science,Fields
+Cybersecurity,Fields
+Information security,Fields
+Software Development,Fields
+Networking,Fields
+Information Security,Fields
+Systems Administration,Fields
+Systems Engineering,Fields
+Cryotography,Fields
+Cloud Computing,Fields
+Database Administration,Fields
+Data Structures,Fields
+Aglorithms,Fields
+Graphics,Fields
+Data Mining,Fields
+Object-Oriented Programming,Fields
+SQL Server,Database Management
