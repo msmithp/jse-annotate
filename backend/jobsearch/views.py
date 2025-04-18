@@ -265,10 +265,10 @@ def get_dashboard_data(request):
         reqEdu = job.education
         reqYears = int(job.years_exp)
         score = calculate_compatibility(skill_set, edu, years_exp, reqSkills, reqEdu, reqYears)
-        reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
+        reqSkillsCategories = categorize(list(job.skills.values()))
         top_scores.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name,
                          'stateCode': state.state_code, 'description': job.job_desc,
-                         'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
+                         'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsCategories,
                          'education': job.education, 'yearsExperience': job.years_exp })
     
     #get_top_10(top_scores, dashboard_data['jobs'], 'score')

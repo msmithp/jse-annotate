@@ -72,6 +72,7 @@ function Requirements({ experience, education, skills }: RequirementsProps) {
                 <div key={skill.name} 
                     className="jobSummarySkill" 
                     style={{borderColor: mapSkillToColor(skill.name)}}
+                    title={skill.name}
                 >
                     <p>{truncate(skill.name, 50)}</p>
                 </div>

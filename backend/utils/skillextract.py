@@ -15,8 +15,8 @@ education = {
         "bachelor": ["bachelor", "bachelors", "b.s.", "b.a.", "bs", "ba", 
                      "undergraduate degree", "undergraduate's degree",
                      "four year degree", "4 year degree"],
-        "master": ["master's degree", "master degree", "m.s.", "m.a.", 
-                   "master's of, mba, m.b.a"],
+        "master": ["master's", "master degree", "m.s.", "m.a.", 
+                   "masters degree", "mba", "m.b.a"],
         "doctorate": ["doctorate", "doctoral", "phd", "ph.d", "d.sc.",
                       "postgraduate degree"]
 }

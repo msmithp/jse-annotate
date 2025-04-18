@@ -88,7 +88,10 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
                 </div>
             </div>
             <div className="dashboardRight">
-                <JobList jobs={jobs}/>
+                <h2 className="dashboardRightHeader">Your Top Jobs</h2>
+                <div className="dashboardJobList">
+                    <JobList jobs={jobs}/>
+                </div>
                 <NavLink to="/job-search">
                     <button className="moreJobsButton">See more jobs</button>
                 </NavLink>
