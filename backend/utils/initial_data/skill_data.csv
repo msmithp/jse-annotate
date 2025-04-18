@@ -10,7 +10,7 @@ Ruby,Languages
 Swift,Languages
 Golang,Languages
 Perl,Languages
-TypeScript,Languages
+TypeScript,Web Development
 MATLAB,Languages
 Rust,Languages
 Pascal,Languages
@@ -47,7 +47,7 @@ Docker,Tools
 Google Cloud,Tools
 Azure,Tools
 AWS,Tools
-Shell,Tools
+Powershell,Tools
 Scrum,Methodologies
 Agile,Methodologies
 Waterfall,Methodologies
@@ -57,10 +57,9 @@ Feature-Driven,Methodologies
 Extreme Programming,Methodologies
 Spiral,Methodologies
 Rapid Application Development,Methodologies
-DevOps,Methodologies
+DevOps,Fields
 Bash,Languages
 Julia,Languages
-Objective-C,Languages
 Elm,Languages
 Delphi,Languages
 Localstack,Tools
@@ -68,3 +67,44 @@ VMWare,Tools
 SOC,Tools
 Splunk,Tools
 SAS,Languages
+HyperV,Tools
+Atlassian,Tools
+Kubernetes,Tools
+Windows,Operating Systems
+Linux,Operating Systems
+Android,Operating Systems
+MAC,Operating Systems
+Jenkins,Tools
+Pytest,Libraries
+JUnit,Tools
+Pytorch,Libraries
+Sklearn,Libraries
+Tensorflow,Libraries
+Pandas,Libraries
+Lua,Languages
+Assembly,Languages
+REST,Web Development
+Full-stack Development,Fields
+Back-end Development,Fields
+Front-end Development,Fields
+Mobile Development,Fields
+Web Development,Fields
+Game Development,Fields
+Machine Learning/Artificial Intelligence,Fields
+Data science,Fields
+Cybersecurity,Fields
+Information security,Fields
+Software Development,Fields
+Networking,Fields
+Information Security,Fields
+Systems Administration,Fields
+Systems Engineering,Fields
+Cryotography,Fields
+Cloud Computing,Fields
+Database Administration,Fields
+Data Structures,Fields
+Aglorithms,Fields
+Graphics,Fields
+Data Mining,Fields
+Object-Oriented Programming,Fields
+SQL Server,Database Management

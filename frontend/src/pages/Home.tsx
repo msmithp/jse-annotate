@@ -84,11 +84,12 @@ function Home() {
         
         setDashboardData(null);
         if (user) {
-            // axiosInstance.get("api/get-dashboard-data/", {params: {id: user.user_id}})
-            axiosInstance.get("api/get-user/", {params: {id: user.user_id}})
+            axiosInstance.get("api/get-dashboard-data/", {params: {id: user.user_id}})
+            // axiosInstance.get("api/get-user/", {params: {id: user.user_id}})
             .then(res => {
                 if (!ignore) {
-                    setDashboardData(res.data);
+                    console.log(res.data);
+                    setDashboardData(res.data.dashboardData);
                     setLoading(false);
                 }
             }).catch(err => {console.log("Error in home page: " + err); logoutUser()});
@@ -109,14 +110,14 @@ function Home() {
                 <p>Loading...</p>
             ) : (
                 // Check if user is not null (i.e., user is logged in)
-                user ? (
+                user && dashboardData ? (
                     <div>
                         <p>Welcome, {user.username}.</p>
                         <Dashboard 
-                            chartData={{category: "Skills", skills: placeholderDashboardData.skills}}
-                            jobs={placeholderDashboardData.jobs}
-                            userSkills={placeholderDashboardData.userSkills}
-                            blankMapData={placeholderDashboardData.stateData} />
+                            chartData={{category: "Skills", skills: dashboardData.skills}}
+                            jobs={dashboardData.jobs}
+                            userSkills={dashboardData.userSkills}
+                            blankMapData={dashboardData.stateData} />
                     </div>
                 ) : (
                     // User is not logged in

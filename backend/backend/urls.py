@@ -27,6 +27,8 @@ urlpatterns = [
     path('api/get-user/', views.get_user, name='get-user'),
     path('api/create-account/', views.create_account, name='create-account'),
     path('api/update-account/', views.update_account, name='update-account'),
+    path('api/get-density-data/', views.get_density_data, name='get-density-data'),
+    path('api/get-dashboard-data/', views.get_dashboard_data, name='get-dashboard-data'),
 
     path('token/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),

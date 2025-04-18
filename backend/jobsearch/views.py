@@ -137,12 +137,12 @@ def skill_search(request): #assume userState is the state's id
                     for thisSkill in reqSkills:
                         skill_occurrences[thisSkill] += 1
                     
-            #print(thisCounty, skill_occurrences) #test
+            #print(thisCounty, skill_occurrences)
 
             commonSkillID = max(skill_occurrences, key = skill_occurrences.get)
             numJobs = skill_occurrences[commonSkillID]
 
-            #print(thisCounty, commonSkillID) #test
+            #print(thisCounty, commonSkillID)
 
             if numJobs == 0:
                 commonSkillID = -1
@@ -210,12 +210,143 @@ def get_static_data(request):
     return JsonResponse({'skills': skillValues, 'states': locationValues})
 
 def get_dashboard_data(request):
-    return
+    user_id = request.GET.get("id")
+    user = User.objects.get(pk=user_id)
+
+    profile = user.profile
+    user_state = profile.state
+    state = State.objects.get(state_name = user_state)
+    edu = profile.education
+    years_exp = profile.years_exp
+    skill_set = list(profile.skill_name.all().values())
+
+    #print(skill_set)
+
+    #print(state.pk, user_state, edu, years_exp, skill_set)
+
+    dashboard_data = {'jobs': [],
+                      'skills': [],
+                      'userSkills': [],
+                      'stateData': {'stateID': state.pk, 'stateName': state.state_name, 'stateCode': state.state_code}}
+
+
+    #append skill data to dict
+    occurrences = []
+    skills = list(Skill.objects.all().values())
+    #total_skills = list(Skill.objects.values_list("pk", flat=True))
+    #print(skills)
+    for skill in skills: #for each skill, count how often it occurs in the given state
+        job_set = list(Job.objects.filter(city__county__state=state.pk))
+        count = 0
+
+        #occurrences.append(get_max(job_set, skill, skill["skill_name"], count))
+
+        for job in job_set:
+            req_skills = list(job.skills.values_list("pk", flat=True))
+            if req_skills:
+                if skill['id'] in req_skills:
+                    count += 1
+        occurrences.append({'skillName': skill["skill_name"], 'occurrences': count})
+    #get_top_10(occurrences, dashboard_data['skills'], 'occurrences')
+
+    for i in range (0,10): #append top ten most frequent skills to dict
+        max_occ = max(occurrences, key=lambda x:x['occurrences'])
+        dashboard_data['skills'].append(max_occ)
+        occurrences.remove(max_occ)
+
+    #append job data to dict - top 10 most compatible jobs
+    jobs = list(Job.objects.filter(city__county__state=state))
+    top_scores = []
+
+    #print(jobs)
+
+    for job in jobs:
+        reqSkills = list(job.skills.values_list())
+        reqEdu = job.education
+        reqYears = int(job.years_exp)
+        score = calculate_compatibility(skill_set, edu, years_exp, reqSkills, reqEdu, reqYears)
+        reqSkillsNames = list(job.skills.values_list("skill_name", flat=True))
+        top_scores.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name,
+                         'stateCode': state.state_code, 'description': job.job_desc,
+                         'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsNames,
+                         'education': job.education, 'yearsExperience': job.years_exp })
+    
+    #get_top_10(top_scores, dashboard_data['jobs'], 'score')
+    for j in range (0,10): #append top ten most frequent skills to dict
+        top_score = max(top_scores, key=lambda x:x['score'])
+        dashboard_data['jobs'].append(top_score)
+        top_scores.remove(top_score)
+
+    #append user skill data to dict
+    categories = set()
+    for skill in skill_set:
+        categories.add(skill['category'])
+
+    for cat in categories:
+        cat_data = {'category': cat, 'skills': []}
+        for skill in skill_set:
+            if skill['category'] == cat:
+                cat_data['skills'].append({'id':skill['id'], 'name': skill['skill_name']})
+        dashboard_data['userSkills'].append(cat_data)
+
+    return JsonResponse({'dashboardData': dashboard_data})
 
 def get_density_data(request):
-    user_id = request.GET.get("user_id")
-    skill_id = request.GET.get("skill_id")
+    user_id = request.GET.get("id")
+    this_skill = request.GET.get("skill")
+
+    user = User.objects.get(pk=user_id)
 
     #get user state based on ID
 
-    state = "Maryland"
+    profile = user.profile
+    user_state = profile.state
+
+    this_state = State.objects.get(state_name = user_state)
+
+    skill = Skill.objects.get(pk=this_skill)
+
+    data = {'stateData': {'stateID': this_state.pk, 'stateName': this_state.state_name, 'stateCode': this_state.state_code}, 'countyData': [],
+            'skillData': {'skillID': this_skill, 'skillName': skill.skill_name}}
+    
+    counties = list(County.objects.filter(state=this_state))
+
+    occurrences = []
+    for county in counties:
+        job_set = list(Job.objects.filter(city__county=county.pk))
+        count = 0
+        #occurrences.append(get_max(job_set, skill, county.county_name, count))
+
+        for job in job_set:
+            req_skills = list(job.skills.values_list("pk", flat=True))
+            if req_skills:
+                if skill.pk in req_skills:
+                    count += 1
+        occurrences.append({'countyName': county.county_name, 'occurrences': count})
+
+    max_occ = max(occurrences, key=lambda x:x['occurrences'])
+
+    for county in counties: 
+        for item in occurrences:
+            if item['countyName'] == county.county_name:
+                density = item['occurrences']/max_occ['occurrences']
+                data['countyData'].append({'countyID':county.pk, 'countyName': county.county_name, 'countyFips': county.fips,
+                                   'density': density, 'numJobs': item['occurrences']})
+    
+    #print(json.dumps(data, indent=4))
+    return JsonResponse({'densityData': data})
+
+def get_max(job_set, skill, item_name, count): #ERROR: returns 's' as undefined. looks like that's the user's skills? why is that the case
+    for job in job_set:
+        req_skills = list(job.skills.values_list("pk", flat=True))
+        if req_skills:
+            if skill['id'] in req_skills:
+                count += 1
+    return {'item_name': item_name, 'occurrences': count}
+
+def get_top_10(dicts, section, feature): #ERROR: max_occ comes up as empty
+    #print(dicts, section, dicts[feature])
+    for i in range (0,10): #append top ten most frequent skills to dict
+        max_occ = max(dicts, key=lambda x:x[feature])
+        section.append(max_occ)
+        dicts.remove(max_occ)

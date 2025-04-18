@@ -58,8 +58,8 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
             id: user.user_id,
             skill: id
         }}).then(res => {
-            console.log(res.data);
-            setMapData(res.data);
+            console.log(res.data.densityData);
+            setMapData(res.data.densityData);
         }).catch(err => console.log(err))
     }
 
@@ -81,7 +81,7 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
                             onChange={handleSkillChange} />
                     </label>
                     {selected !== -1 && mapData != null ? (
-                        <DashboardMap stateDensity={placeholderMapData} />
+                        <DashboardMap stateDensity={mapData} />
                     ) : (
                         <CountyMap stateData={blankMapData} />
                     )}
