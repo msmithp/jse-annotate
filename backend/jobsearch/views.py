@@ -210,6 +210,8 @@ def get_static_data(request):
     return JsonResponse({'skills': skillValues, 'states': locationValues})
 
 def get_dashboard_data(request):
+    import time
+    START_TIME = time.time()
     user_id = request.GET.get("id")
     user = User.objects.get(pk=user_id)
 
@@ -231,28 +233,39 @@ def get_dashboard_data(request):
 
 
     #append skill data to dict
-    occurrences = []
-    skills = list(Skill.objects.all().values())
     #total_skills = list(Skill.objects.values_list("pk", flat=True))
     #print(skills)
-    for skill in skills: #for each skill, count how often it occurs in the given state
-        job_set = list(Job.objects.filter(city__county__state=state.pk))
-        count = 0
+    job_set = list(Job.objects.filter(city__county__state=state.pk))
+    skills: dict[str, int] = {}
+    for job in job_set:
+        # Get all skills for this job, as a list of skill objects
+        req_skills = job.skills.all()
 
-        #occurrences.append(get_max(job_set, skill, skill["skill_name"], count))
+        # Iterate through each skill in this job
+        for skill in req_skills:
+            skill_name = skill.skill_name
+            if skill_name in skills:
+                # Increment this skill's occurrences by 1
+                skills[skill_name] += 1
+            else:
+                # Add a new skill in the dictionary with 1 occurrence
+                skills[skill_name] = 1
 
-        for job in job_set:
-            req_skills = list(job.skills.values_list("pk", flat=True))
-            if req_skills:
-                if skill['id'] in req_skills:
-                    count += 1
-        occurrences.append({'skillName': skill["skill_name"], 'occurrences': count})
-    #get_top_10(occurrences, dashboard_data['skills'], 'occurrences')
+    # Turn skills dictionary into a list of dictionaries, one for each skill
+    occurrences = [
+        {"skillName": name, "occurrences": occ} for (name, occ) in skills.items()
+    ]
+
+    print("Skill occurrences:", time.time() - START_TIME)
+    START_TIME = time.time()
 
     for i in range (0,10): #append top ten most frequent skills to dict
         max_occ = max(occurrences, key=lambda x:x['occurrences'])
         dashboard_data['skills'].append(max_occ)
         occurrences.remove(max_occ)
+
+    print("Top ten skill occurrences:", time.time() - START_TIME)
+    START_TIME = time.time()
 
     #append job data to dict - top 10 most compatible jobs
     jobs = list(Job.objects.filter(city__county__state=state))
@@ -270,12 +283,18 @@ def get_dashboard_data(request):
                          'stateCode': state.state_code, 'description': job.job_desc,
                          'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsCategories,
                          'education': job.education, 'yearsExperience': job.years_exp })
+        
+    print("Jobs:", time.time() - START_TIME)
+    START_TIME = time.time()
     
     #get_top_10(top_scores, dashboard_data['jobs'], 'score')
     for j in range (0,10): #append top ten most frequent skills to dict
         top_score = max(top_scores, key=lambda x:x['score'])
         dashboard_data['jobs'].append(top_score)
         top_scores.remove(top_score)
+
+    print("Top 10 jobs:", time.time() - START_TIME)
+    START_TIME = time.time()
 
     #append user skill data to dict
     categories = set()
@@ -288,6 +307,8 @@ def get_dashboard_data(request):
             if skill['category'] == cat:
                 cat_data['skills'].append({'id':skill['id'], 'name': skill['skill_name']})
         dashboard_data['userSkills'].append(cat_data)
+
+    print("User skills:", time.time() - START_TIME)
 
     return JsonResponse({'dashboardData': dashboard_data})
 
