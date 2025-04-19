@@ -171,13 +171,16 @@ def job_search(request): #assume userState is the state's id
 
     jobList = []
     for state in states:
-         jobs = list(Job.objects.filter(city__county__state=state))
+         jobs = list(Job.objects.filter(city__county__state=state)
+                     .select_related("city__county__state")
+                     .prefetch_related("skills"))
          for job in jobs:
-             reqSkills = list(job.skills.values_list())
+             skills = list(job.skills.values())
+             reqSkills = [s["id"] for s in skills]
              reqEdu = job.education
              reqYears = int(job.years_exp)
              score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
-             reqSkillsCategories = categorize(list(job.skills.values()))
+             reqSkillsCategories = categorize(skills)
              jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateCode': state.state_code, 'description': job.job_desc,
                              'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsCategories,
                              'education': job.education, 'yearsExperience': job.years_exp })
@@ -210,8 +213,6 @@ def get_static_data(request):
     return JsonResponse({'skills': skillValues, 'states': locationValues})
 
 def get_dashboard_data(request):
-    import time
-    START_TIME = time.time()
     user_id = request.GET.get("id")
     user = User.objects.get(pk=user_id)
 
@@ -235,7 +236,9 @@ def get_dashboard_data(request):
     #append skill data to dict
     #total_skills = list(Skill.objects.values_list("pk", flat=True))
     #print(skills)
-    job_set = list(Job.objects.filter(city__county__state=state.pk))
+    job_set = list(Job.objects.filter(city__county__state=state.pk)
+                   .select_related("city__county__state")
+                   .prefetch_related("skills"))
     skills: dict[str, int] = {}
     for job in job_set:
         # Get all skills for this job, as a list of skill objects
@@ -256,45 +259,33 @@ def get_dashboard_data(request):
         {"skillName": name, "occurrences": occ} for (name, occ) in skills.items()
     ]
 
-    print("Skill occurrences:", time.time() - START_TIME)
-    START_TIME = time.time()
-
     for i in range (0,10): #append top ten most frequent skills to dict
         max_occ = max(occurrences, key=lambda x:x['occurrences'])
         dashboard_data['skills'].append(max_occ)
         occurrences.remove(max_occ)
 
-    print("Top ten skill occurrences:", time.time() - START_TIME)
-    START_TIME = time.time()
-
     #append job data to dict - top 10 most compatible jobs
-    jobs = list(Job.objects.filter(city__county__state=state))
     top_scores = []
 
     #print(jobs)
 
-    for job in jobs:
-        reqSkills = list(job.skills.values_list())
+    for job in job_set:
+        skills = list(job.skills.values())
+        reqSkillIDs = [s["id"] for s in skills]
         reqEdu = job.education
         reqYears = int(job.years_exp)
-        score = calculate_compatibility(skill_set, edu, years_exp, reqSkills, reqEdu, reqYears)
-        reqSkillsCategories = categorize(list(job.skills.values()))
+        score = calculate_compatibility(skill_set, edu, years_exp, reqSkillIDs, reqEdu, reqYears)
+        reqSkillsCategories = categorize(skills)
         top_scores.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name,
                          'stateCode': state.state_code, 'description': job.job_desc,
                          'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsCategories,
                          'education': job.education, 'yearsExperience': job.years_exp })
-        
-    print("Jobs:", time.time() - START_TIME)
-    START_TIME = time.time()
     
     #get_top_10(top_scores, dashboard_data['jobs'], 'score')
     for j in range (0,10): #append top ten most frequent skills to dict
         top_score = max(top_scores, key=lambda x:x['score'])
         dashboard_data['jobs'].append(top_score)
         top_scores.remove(top_score)
-
-    print("Top 10 jobs:", time.time() - START_TIME)
-    START_TIME = time.time()
 
     #append user skill data to dict
     categories = set()
@@ -307,8 +298,6 @@ def get_dashboard_data(request):
             if skill['category'] == cat:
                 cat_data['skills'].append({'id':skill['id'], 'name': skill['skill_name']})
         dashboard_data['userSkills'].append(cat_data)
-
-    print("User skills:", time.time() - START_TIME)
 
     return JsonResponse({'dashboardData': dashboard_data})
 

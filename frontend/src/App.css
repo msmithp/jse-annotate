@@ -272,7 +272,7 @@ select, input {
     background-color: var(--window-color);
     border-radius: 20px;
     padding: 2vh;
-    height: 50vh;
+    height: 70vh;
     max-width: 80vw;
     margin-bottom: 1.5%;
 }
