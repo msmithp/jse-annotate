@@ -53,7 +53,7 @@ def calc_years(userYears, reqYears):
     if reqYears == 0:
         score = max(0, 1 - 0.1*userYears)
     elif reqYears > userYears:
-        score = max(userYears/reqYears, 1)
+        score = min(userYears/reqYears, 1)
     else:
         score = max(0, 1-(userYears/reqYears))
 
