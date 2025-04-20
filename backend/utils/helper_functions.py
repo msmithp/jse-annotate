@@ -1,15 +1,10 @@
-def categorize(skills: list[dict]) -> list[dict]:
-    """
-    Turn a list of Skill dictionaries into a list of category dictionaries.
+from jobsearch.models import Skill
 
-    :param skills: A list of dictionaries, each of the form:
-    ```
-    {
-        "id": int,
-        "skill_name": str,
-        "category": str
-    }
-    ```
+def categorize(skills: list[Skill]) -> list[dict]:
+    """
+    Turn a list of Skill objects into a list of category dictionaries.
+
+    :param skills: A list of Skill objects
 
     :return: A list of dictionaries, each of the form:
     ```
@@ -28,16 +23,16 @@ def categorize(skills: list[dict]) -> list[dict]:
 
     for skill in skills:
         skill_dict = {
-            "id": skill["id"],
-            "name": skill["skill_name"]
+            "id": skill.pk,
+            "name": skill.skill_name
         }
 
-        if skill["category"] not in categories_dict:
+        if skill.category not in categories_dict:
             # Make a new empty list for this category if it's not already
             # in the dictionary
-            categories_dict[skill["category"]] = []
+            categories_dict[skill.category] = []
 
-        categories_dict[skill["category"]].append(skill_dict)
+        categories_dict[skill.category].append(skill_dict)
 
     # Next, convert dictionary to list of desired format
     categories_list = []

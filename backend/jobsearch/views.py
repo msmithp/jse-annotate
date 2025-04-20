@@ -1,3 +1,4 @@
+from django.db import connection, reset_queries
 from django.http import JsonResponse, HttpResponse
 import json
 from .models import Skill, Job, City, County, State, User, Profile
@@ -101,41 +102,63 @@ def skill_search(request): #assume userState is the state's id
     userState = request.GET.getlist("states[]")
 
     skill_counts = []
-    categories = list(Skill.objects.values_list('category', flat=True).distinct())
-
+    reset_queries()
+    """categories = list(Skill.objects.values_list('category', flat=True).distinct())
     for category in categories:
         catInfo = {'category': category, 'skills': []}
         skill_counts.append(catInfo)
         skill_set = Skill.objects.filter(category=category)
         for item in skill_set:
                 num_jobs = Job.objects.filter(skills=item, city__county__state__in=userState).count()
-                catInfo['skills'].append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': num_jobs})
+                catInfo['skills'].append({'id': item.pk, 'skillName': item.skill_name, 'occurrences': num_jobs})"""
+    
+    skill_set = Skill.objects.all()
+    skill_occurrences = {skill: 0 for skill in skill_set}
+
+    job_set = Job.objects.filter(city__county__state__in=userState).prefetch_related("skills").all()
+    for job in job_set:
+        if job.skills.all():
+            for item in job.skills.all():
+                skill_occurrences[item] += 1
+    #print(skill_occurrences)
+
+    categories = set()
+    for skill in skill_set:
+        categories.add(skill.category)
+
+    for category in categories:
+        catInfo = {'category': category, 'skills': []}
+        skill_counts.append(catInfo)
+        for skill in skill_set:
+            if skill.category == category:
+                catInfo['skills'].append({'id': skill.pk, 'skillName': skill.skill_name, 'occurrences': skill_occurrences[skill]})
+
     #print(skill_counts)
+    print("Skill count query count: ", len(connection.queries))
+    reset_queries()
 
     #After midterm: Dictionary of U.S. states, where each state is a dictionary of (county, most_common_skill) pairs
     countyVals = []
     states = State.objects.filter(pk__in=userState)
 
+    reset_queries()
     for thisState in states:
         #make state info, append to countyVals
         stateInfo = {'stateData':{'stateID': thisState.pk, 'stateName': thisState.state_name, 'stateCode': thisState.state_code}, 'countyData': []}
         countyVals.append(stateInfo)
 
         #get list of counties within state, get list of all skill pks
-        counties = list(County.objects.filter(state=thisState))
+        counties = County.objects.filter(state=thisState)
         total_skills = list(Skill.objects.values_list("pk", flat=True))
 
         for thisCounty in counties: #for each county, create new skill_occurrences list
             skill_occurrences = {skill: 0 for skill in total_skills}
-
-            #get all jobs in county
-            jobList = list(Job.objects.filter(city__county=thisCounty))
+            jobList = Job.objects.filter(city__county=thisCounty).prefetch_related("skills").all()
 
             for item in jobList:
-                reqSkills = list(item.skills.values_list("pk", flat=True))
-                if reqSkills: #if job has any required skills, count which skills are found, inc associated listing in skill_occurrences
-                    for thisSkill in reqSkills:
-                        skill_occurrences[thisSkill] += 1
+                if item.skills.all(): #if job has any required skills, count which skills are found, inc associated listing in skill_occurrences
+                    for thisSkill in item.skills.all():
+                        skill_occurrences[thisSkill.pk] += 1
                     
             #print(thisCounty, skill_occurrences)
 
@@ -154,37 +177,43 @@ def skill_search(request): #assume userState is the state's id
             stateInfo['countyData'].append({'countyID':thisCounty.pk, 'countyName': thisCounty.county_name,
                                             'countyFips': thisCounty.fips, 'skillID': commonSkillID, 
                                             'skillName': commonSkillName, 'numJobs': numJobs})
-
+            
+    print("Dictionary query count: ", len(connection.queries))
+    reset_queries()
     #print(countyVals)
     return JsonResponse({'skills': skill_counts, 'counties': countyVals})
 
 @csrf_exempt
 def job_search(request): #assume userState is the state's id
     #Output: JSON dictionary consisting of a list of jobs. Each job should itself be a Python dictionary consisting of the title, location, description, salary, link to apply, and compatibility score.
-    userState = request.GET.getlist("stateID[]")
-    edu = request.GET.get("education")
-    yearsExp = request.GET.get("yearsExperience")
-    skillSet = request.GET.getlist("skills[]")
+    userState: int = request.GET.getlist("stateID[]")
+    edu: str = request.GET.get("education")
+    yearsExp: int = request.GET.get("yearsExperience")
+    skillSet: list[int] = list(map(int, request.GET.getlist("skills[]")))
 
     yearsExp = int(yearsExp)
     states = State.objects.filter(pk__in=userState)
 
     jobList = []
+    reset_queries()
     for state in states:
-         jobs = list(Job.objects.filter(city__county__state=state)
-                     .select_related("city__county__state")
-                     .prefetch_related("skills"))
-         for job in jobs:
-             skills = list(job.skills.values())
-             reqSkills = [s["id"] for s in skills]
-             reqEdu = job.education
-             reqYears = int(job.years_exp)
-             score = calculate_compatibility(skillSet, edu, yearsExp, reqSkills, reqEdu, reqYears)
-             reqSkillsCategories = categorize(skills)
-             jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateCode': state.state_code, 'description': job.job_desc,
-                             'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsCategories,
-                             'education': job.education, 'yearsExperience': job.years_exp })
+        jobs = (Job.objects.filter(city__county__state=state)
+                .prefetch_related("skills")
+                .select_related("city__county__state"))
         
+        for job in jobs:
+            reqSkills = job.skills.all()
+            skillIDs = [s.pk for s in reqSkills]
+            reqEdu = job.education
+            reqYears = int(job.years_exp)
+            score = calculate_compatibility(skillSet, edu, yearsExp, skillIDs, reqEdu, reqYears)
+            reqSkillsCategories = categorize(reqSkills)
+            jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateCode': state.state_code, 'description': job.job_desc,
+                            'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsCategories,
+                            'education': job.education, 'yearsExperience': job.years_exp })
+        
+    print("Jobsearch query count: ", len(connection.queries))
+    reset_queries()
     return JsonResponse({'jobs': jobList})
 
 def get_static_data(request):
@@ -213,6 +242,9 @@ def get_static_data(request):
     return JsonResponse({'skills': skillValues, 'states': locationValues})
 
 def get_dashboard_data(request):
+    import time
+    START_TIME = time.time()
+    START_TIME_MASTER = time.time()
     user_id = request.GET.get("id")
     user = User.objects.get(pk=user_id)
 
@@ -221,7 +253,8 @@ def get_dashboard_data(request):
     state = State.objects.get(state_name = user_state)
     edu = profile.education
     years_exp = profile.years_exp
-    skill_set = list(profile.skill_name.all().values())
+    skill_set = profile.skill_name.all()
+    skill_list = list(skill_set.values())
 
     #print(skill_set)
 
@@ -236,9 +269,10 @@ def get_dashboard_data(request):
     #append skill data to dict
     #total_skills = list(Skill.objects.values_list("pk", flat=True))
     #print(skills)
+    reset_queries()
     job_set = list(Job.objects.filter(city__county__state=state.pk)
-                   .select_related("city__county__state")
-                   .prefetch_related("skills"))
+                   .prefetch_related("skills")
+                   .select_related("city__county__state"))
     skills: dict[str, int] = {}
     for job in job_set:
         # Get all skills for this job, as a list of skill objects
@@ -259,27 +293,40 @@ def get_dashboard_data(request):
         {"skillName": name, "occurrences": occ} for (name, occ) in skills.items()
     ]
 
+    print("Skill occurrences:", time.time() - START_TIME)
+    START_TIME = time.time()
+
     for i in range (0,10): #append top ten most frequent skills to dict
         max_occ = max(occurrences, key=lambda x:x['occurrences'])
         dashboard_data['skills'].append(max_occ)
         occurrences.remove(max_occ)
+
+    print("Top ten skill occurrences:", time.time() - START_TIME)
+    START_TIME = time.time()
+
+    print("Skill dict query count: ", len(connection.queries))
 
     #append job data to dict - top 10 most compatible jobs
     top_scores = []
 
     #print(jobs)
 
+    reset_queries()
     for job in job_set:
-        skills = list(job.skills.values())
-        reqSkillIDs = [s["id"] for s in skills]
+        reqSkills = job.skills.all()
         reqEdu = job.education
         reqYears = int(job.years_exp)
-        score = calculate_compatibility(skill_set, edu, years_exp, reqSkillIDs, reqEdu, reqYears)
-        reqSkillsCategories = categorize(skills)
+        score = calculate_compatibility(skill_set, edu, years_exp, reqSkills, reqEdu, reqYears)
+        reqSkillsCategories = categorize(reqSkills)
         top_scores.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name,
                          'stateCode': state.state_code, 'description': job.job_desc,
                          'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsCategories,
                          'education': job.education, 'yearsExperience': job.years_exp })
+    print("Job dict query count: ", len(connection.queries))
+    reset_queries()
+
+    print("Jobs:", time.time() - START_TIME)
+    START_TIME = time.time()
     
     #get_top_10(top_scores, dashboard_data['jobs'], 'score')
     for j in range (0,10): #append top ten most frequent skills to dict
@@ -287,28 +334,32 @@ def get_dashboard_data(request):
         dashboard_data['jobs'].append(top_score)
         top_scores.remove(top_score)
 
+    print("Top 10 jobs:", time.time() - START_TIME)
+    START_TIME = time.time()
+
     #append user skill data to dict
     categories = set()
-    for skill in skill_set:
+    for skill in skill_list:
         categories.add(skill['category'])
 
     for cat in categories:
         cat_data = {'category': cat, 'skills': []}
-        for skill in skill_set:
+        for skill in skill_list:
             if skill['category'] == cat:
                 cat_data['skills'].append({'id':skill['id'], 'name': skill['skill_name']})
         dashboard_data['userSkills'].append(cat_data)
 
+    print("User skills:", time.time() - START_TIME)
+    print("Total time:", time.time() - START_TIME_MASTER)
+
     return JsonResponse({'dashboardData': dashboard_data})
 
 def get_density_data(request):
+    reset_queries()
     user_id = request.GET.get("id")
     this_skill = request.GET.get("skill")
 
     user = User.objects.get(pk=user_id)
-
-    #get user state based on ID
-
     profile = user.profile
     user_state = profile.state
 
@@ -322,8 +373,10 @@ def get_density_data(request):
     counties = list(County.objects.filter(state=this_state))
 
     occurrences = []
+    print("Density prep query count: ", len(connection.queries))
+    reset_queries()
     for county in counties:
-        job_set = list(Job.objects.filter(city__county=county.pk))
+        job_set = Job.objects.filter(city__county=county.pk).prefetch_related('skills')
         count = 0
         #occurrences.append(get_max(job_set, skill, county.county_name, count))
 
@@ -335,6 +388,9 @@ def get_density_data(request):
         occurrences.append({'countyName': county.county_name, 'occurrences': count})
 
     max_occ = max(occurrences, key=lambda x:x['occurrences'])
+
+    print("Density data query count: ", len(connection.queries))
+    reset_queries()
 
     for county in counties: 
         for item in occurrences:

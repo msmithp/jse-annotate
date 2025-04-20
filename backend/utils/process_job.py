@@ -97,6 +97,7 @@ def process_job(row: list[str]) -> tuple[Job, list[int]]:
     # Extract skill, education, and experience information from
     # job title and description
     skills, education, years_exp = extract(job_name + " " + job_desc)
+    years_exp = min(years_exp, 20)
 
     # Remove escape characters from job description
     job_desc = job_desc.replace("\\\\", "")

@@ -1,5 +1,5 @@
 education = {
-        " ": 0,
+        "": 0,
         "high_school": 0.2,
         "associate": 0.4,
         "bachelor": 0.6,
@@ -53,7 +53,7 @@ def calc_years(userYears, reqYears):
     if reqYears == 0:
         score = max(0, 1 - 0.1*userYears)
     elif reqYears > userYears:
-        score = max(userYears/reqYears, 1)
+        score = min(userYears/reqYears, 1)
     else:
         score = max(0, 1-(userYears/reqYears))
 
