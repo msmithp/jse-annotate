@@ -43,11 +43,15 @@ class Command(BaseCommand):
             hours_old = options["hours"]
 
         # Scrape job data
-        job_data = scrape(options["num_jobs"], 
-                          not options["nocsv"], "./utils/jobs/",
+        job_data = scrape(num_jobs=options["num_jobs"], 
+                          export=not options["nocsv"], 
+                          file_path="./utils/jobs/",
                           hours_old=hours_old)
 
         print(f"Successfully scraped {len(job_data)} jobs. Adding to database...")
+
+        # Convert NaN to empty strings
+        job_data = job_data.fillna("")
         
         # Store jobs and skills in arrays for bulk creation
         jobs: list[Job] = []
@@ -57,6 +61,8 @@ class Command(BaseCommand):
         for _, row in job_data.iterrows():
             # Convert row from Pandas series to a list
             row = row.to_list()
+
+            print(row)
 
             # Convert posting date to a string so it can be parsed by process_job()
             row[7] = row[7].strftime("%Y-%m-%d")

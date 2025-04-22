@@ -100,7 +100,7 @@ def process_job(row: list[str]) -> tuple[Job, list[int]]:
     years_exp = min(years_exp, 20)
 
     # Remove escape characters from job description
-    job_desc = job_desc.replace("\\\\", "")
+    job_desc = job_desc.replace("\\", "")
 
     # Create job object, return job and skills
     job = Job(
