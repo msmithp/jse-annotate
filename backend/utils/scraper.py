@@ -63,7 +63,8 @@ def intercalate(lst: list, delim: str) -> str:
     return result
 
 
-def scrape(num_jobs: int=10, export: bool=True, file_path: str=None):
+def scrape(num_jobs: int = 10, export: bool = True, 
+           file_path: str = None, hours_old: int = None):
     """
     Scrape jobs from Indeed.
 
@@ -84,6 +85,7 @@ def scrape(num_jobs: int=10, export: bool=True, file_path: str=None):
         offset=0,
         country_indeed="USA",
         verbose=verbose,
+        hours_old=hours_old
     )
 
     if verbose > 0:

@@ -19,18 +19,39 @@ class Command(BaseCommand):
             help="Don't export a CSV of the scraped jobs"
         )
 
+        parser.add_argument(
+            "--hours",
+            type=int,
+            help="Maximum age in hours of job postings to scrape"
+        )
+
+        parser.add_argument(
+            "--today",
+            action="store_true",
+            help="Limit scraped jobs to those posted in the last 24 hours"
+        )
+
     def handle(self, *args, **options):
         if options["num_jobs"] > 1000:
             # Anything above 1000 jobs will get you rate-limited
             raise Exception("Maximum number of jobs (1000) exceeded")
+        
+        hours_old = None
+        if options["today"]:
+            hours_old = 24
+        elif options["hours"]:
+            hours_old = options["hours"]
 
         # Scrape job data
-        job_data = scrape(options["num_jobs"], not options["nocsv"], "./utils/jobs/")
-        print("Successfully scraped jobs. Adding to database...")
+        job_data = scrape(options["num_jobs"], 
+                          not options["nocsv"], "./utils/jobs/",
+                          hours_old=hours_old)
+
+        print(f"Successfully scraped {len(job_data)} jobs. Adding to database...")
         
         # Store jobs and skills in arrays for bulk creation
-        jobs = []
-        jobs_and_skills = []
+        jobs: list[Job] = []
+        jobs_and_skills: list[tuple] = []
 
         # Iterate through rows of scraped job data
         for _, row in job_data.iterrows():
@@ -52,4 +73,4 @@ class Command(BaseCommand):
         for job, skill_list in jobs_and_skills:
             job.skills.set(skill_list)
 
-        print("Successfully created job data")
+        print(f"Successfully created job data for {len(jobs)} jobs")
