@@ -7,7 +7,8 @@ education = {
         "doctorate": 1
 }
 
-def calculate_compatibility(userSkills, userEdu, userYears, reqSkills, reqEdu, reqYears):
+def calculate_compatibility(userSkills: list[int], userEdu: str, userYears: int,
+                            reqSkills: list[int], reqEdu: str, reqYears: int):
     #calculate score for skills
     skillScore = calc_skills(userSkills,reqSkills)
     eduScore = calc_edu(userEdu, reqEdu)
@@ -17,7 +18,7 @@ def calculate_compatibility(userSkills, userEdu, userYears, reqSkills, reqEdu, r
 
     return total
 
-def calc_skills(userSkills, reqSkills):
+def calc_skills(userSkills: list, reqSkills: list):
     #calculate score for skills
     if len(reqSkills) == 0:
         return 1
@@ -30,7 +31,7 @@ def calc_skills(userSkills, reqSkills):
     score = userSkillPoints/jobSkillPoints
     return score
 
-def calc_edu(userEdu, reqEdu):
+def calc_edu(userEdu: str, reqEdu: str):
     #initialize
     userEduScore = 0
     reqEduScore = 0
@@ -49,7 +50,7 @@ def calc_edu(userEdu, reqEdu):
 
     return score
 
-def calc_years(userYears, reqYears):
+def calc_years(userYears: int, reqYears: int):
     if reqYears == 0:
         score = max(0, 1 - 0.1*userYears)
     elif reqYears > userYears:

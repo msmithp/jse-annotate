@@ -131,7 +131,11 @@ def skill_search(request): #assume userState is the state's id
         skill_counts.append(catInfo)
         for skill in skill_set:
             if skill.category == category:
-                catInfo['skills'].append({'id': skill.pk, 'skillName': skill.skill_name, 'occurrences': skill_occurrences[skill]})
+                catInfo['skills'].append({
+                    'id': skill.pk,
+                    'skillName': skill.skill_name,
+                    'occurrences': skill_occurrences[skill]
+                })
 
     #print(skill_counts)
     print("Skill count query count: ", len(connection.queries))
@@ -144,7 +148,14 @@ def skill_search(request): #assume userState is the state's id
     reset_queries()
     for thisState in states:
         #make state info, append to countyVals
-        stateInfo = {'stateData':{'stateID': thisState.pk, 'stateName': thisState.state_name, 'stateCode': thisState.state_code}, 'countyData': []}
+        stateInfo = {
+            'stateData': {
+                'stateID': thisState.pk,
+                'stateName': thisState.state_name,
+                'stateCode': thisState.state_code
+            },
+            'countyData': []
+        }
         countyVals.append(stateInfo)
 
         #get list of counties within state, get list of all skill pks
@@ -174,9 +185,14 @@ def skill_search(request): #assume userState is the state's id
                 temp = Skill.objects.get(pk=commonSkillID)
                 commonSkillName = temp.skill_name
 
-            stateInfo['countyData'].append({'countyID':thisCounty.pk, 'countyName': thisCounty.county_name,
-                                            'countyFips': thisCounty.fips, 'skillID': commonSkillID, 
-                                            'skillName': commonSkillName, 'numJobs': numJobs})
+            stateInfo['countyData'].append({
+                'countyID':thisCounty.pk,
+                'countyName': thisCounty.county_name,
+                'countyFips': thisCounty.fips,
+                'skillID': commonSkillID, 
+                'skillName': commonSkillName,
+                'numJobs': numJobs
+            })
             
     print("Dictionary query count: ", len(connection.queries))
     reset_queries()
@@ -204,13 +220,27 @@ def job_search(request): #assume userState is the state's id
         for job in jobs:
             reqSkills = job.skills.all()
             skillIDs = [s.pk for s in reqSkills]
+
             reqEdu = job.education
             reqYears = int(job.years_exp)
             score = calculate_compatibility(skillSet, edu, yearsExp, skillIDs, reqEdu, reqYears)
             reqSkillsCategories = categorize(reqSkills)
-            jobList.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name, 'stateCode': state.state_code, 'description': job.job_desc,
-                            'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsCategories,
-                            'education': job.education, 'yearsExperience': job.years_exp })
+
+            jobList.append({
+                'id': job.pk,
+                'title': job.job_name,
+                'company': job.company,
+                'cityName': job.city.city_name,
+                'stateCode': state.state_code,
+                'description': job.job_desc,
+                'minSalary': job.min_sal,
+                'maxSalary': job.max_sal,
+                'link': job.url,
+                'score': score,
+                'skills': reqSkillsCategories,
+                'education': job.education,
+                'yearsExperience': job.years_exp
+            })
         
     print("Jobsearch query count: ", len(connection.queries))
     reset_queries()
@@ -226,8 +256,12 @@ def get_static_data(request):
         catName = category['category']
         catData = {'category': catName, 'skills': []}
         skills = list(Skill.objects.filter(category=catName))
+
         for skill in skills:
-            catData['skills'].append({'id':skill.pk, 'name': skill.skill_name})
+            catData['skills'].append({
+                'id':skill.pk,
+                'name': skill.skill_name
+            })
         skillValues.append(catData)
 
     #initialize locationValues dictionary
@@ -237,34 +271,45 @@ def get_static_data(request):
     for state in states:
         locationValues.append({'id': state.pk, 'name': state.state_name})
 
-
     #output:
-    return JsonResponse({'skills': skillValues, 'states': locationValues})
+    return JsonResponse({
+        'skills': skillValues,
+        'states': locationValues
+    })
 
 def get_dashboard_data(request):
     import time
     START_TIME = time.time()
     START_TIME_MASTER = time.time()
+    # Get user and profile associated with user ID
     user_id = request.GET.get("id")
     user = User.objects.get(pk=user_id)
-
     profile = user.profile
+
+    # Get user data from profile
     user_state = profile.state
-    state = State.objects.get(state_name = user_state)
+    state = State.objects.get(state_name=user_state)
     edu = profile.education
     years_exp = profile.years_exp
-    skill_set = profile.skill_name.all()
-    skill_list = list(skill_set.values())
 
-    #print(skill_set)
+    # Get skills in two forms:
+    #  -- skill_list, which is a list of dictionaries consisting of all of the
+    #     fields for each of the user's skills
+    #  -- user_skill_ids, which is a list of the integer IDs of the user's skills
+    skill_list: list[dict] = list(profile.skill_name.all().values())
+    user_skill_ids: list[int] = [s["id"] for s in skill_list]
 
-    #print(state.pk, user_state, edu, years_exp, skill_set)
-
-    dashboard_data = {'jobs': [],
-                      'skills': [],
-                      'userSkills': [],
-                      'stateData': {'stateID': state.pk, 'stateName': state.state_name, 'stateCode': state.state_code}}
-
+    # Dictionary format for JSON response
+    dashboard_data = {
+        'jobs': [],
+        'skills': [],
+        'userSkills': [],
+        'stateData': {
+            'stateID': state.pk, 
+            'stateName': state.state_name, 
+            'stateCode': state.state_code
+        }
+    }
 
     #append skill data to dict
     #total_skills = list(Skill.objects.values_list("pk", flat=True))
@@ -290,7 +335,10 @@ def get_dashboard_data(request):
 
     # Turn skills dictionary into a list of dictionaries, one for each skill
     occurrences = [
-        {"skillName": name, "occurrences": occ} for (name, occ) in skills.items()
+        {
+            "skillName": name,
+            "occurrences": occ
+        } for (name, occ) in skills.items()
     ]
 
     print("Skill occurrences:", time.time() - START_TIME)
@@ -309,19 +357,30 @@ def get_dashboard_data(request):
     #append job data to dict - top 10 most compatible jobs
     top_scores = []
 
-    #print(jobs)
-
     reset_queries()
     for job in job_set:
-        reqSkills = job.skills.all()
-        reqEdu = job.education
-        reqYears = int(job.years_exp)
-        score = calculate_compatibility(skill_set, edu, years_exp, reqSkills, reqEdu, reqYears)
-        reqSkillsCategories = categorize(reqSkills)
-        top_scores.append({'id': job.pk, 'title': job.job_name, 'company': job.company, 'cityName': job.city.city_name,
-                         'stateCode': state.state_code, 'description': job.job_desc,
-                         'minSalary': job.min_sal, 'maxSalary': job.max_sal, 'link': job.url, 'score': score, 'skills': reqSkillsCategories,
-                         'education': job.education, 'yearsExperience': job.years_exp })
+        req_skills = job.skills.all()
+        req_skill_ids = [s.pk for s in req_skills]
+        req_edu = job.education
+        req_years = int(job.years_exp)
+        score = calculate_compatibility(user_skill_ids, edu, years_exp,
+                                        req_skill_ids, req_edu, req_years)
+        reqSkillsCategories = categorize(req_skills)
+        top_scores.append({
+            'id': job.pk,
+            'title': job.job_name,
+            'company': job.company,
+            'cityName': job.city.city_name,
+            'stateCode': state.state_code,
+            'description': job.job_desc,
+            'minSalary': job.min_sal,
+            'maxSalary': job.max_sal,
+            'link': job.url,
+            'score': score,
+            'skills': reqSkillsCategories,
+            'education': job.education,
+            'yearsExperience': job.years_exp
+        })
     print("Job dict query count: ", len(connection.queries))
     reset_queries()
 
@@ -343,10 +402,17 @@ def get_dashboard_data(request):
         categories.add(skill['category'])
 
     for cat in categories:
-        cat_data = {'category': cat, 'skills': []}
+        cat_data = {
+            'category': cat,
+            'skills': []
+        }
+
         for skill in skill_list:
             if skill['category'] == cat:
-                cat_data['skills'].append({'id':skill['id'], 'name': skill['skill_name']})
+                cat_data['skills'].append({
+                    'id':skill['id'],
+                    'name': skill['skill_name']
+                })
         dashboard_data['userSkills'].append(cat_data)
 
     print("User skills:", time.time() - START_TIME)
@@ -367,8 +433,18 @@ def get_density_data(request):
 
     skill = Skill.objects.get(pk=this_skill)
 
-    data = {'stateData': {'stateID': this_state.pk, 'stateName': this_state.state_name, 'stateCode': this_state.state_code}, 'countyData': [],
-            'skillData': {'skillID': this_skill, 'skillName': skill.skill_name}}
+    data = {
+        'stateData': {
+            'stateID': this_state.pk,
+            'stateName': this_state.state_name,
+            'stateCode': this_state.state_code
+        },
+        'countyData': [],
+        'skillData': {
+            'skillID': this_skill,
+            'skillName': skill.skill_name
+        }
+    }
     
     counties = list(County.objects.filter(state=this_state))
 
@@ -385,7 +461,10 @@ def get_density_data(request):
             if req_skills:
                 if skill.pk in req_skills:
                     count += 1
-        occurrences.append({'countyName': county.county_name, 'occurrences': count})
+        occurrences.append({
+            'countyName': county.county_name,
+            'occurrences': count
+        })
 
     max_occ = max(occurrences, key=lambda x:x['occurrences'])
 
@@ -396,8 +475,14 @@ def get_density_data(request):
         for item in occurrences:
             if item['countyName'] == county.county_name:
                 density = item['occurrences']/max_occ['occurrences']
-                data['countyData'].append({'countyID':county.pk, 'countyName': county.county_name, 'countyFips': county.fips,
-                                   'density': density, 'numJobs': item['occurrences']})
+
+                data['countyData'].append({
+                    'countyID':county.pk,
+                    'countyName': county.county_name,
+                    'countyFips': county.fips,
+                    'density': density,
+                    'numJobs': item['occurrences']
+                })
     
     #print(json.dumps(data, indent=4))
     return JsonResponse({'densityData': data})
