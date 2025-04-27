@@ -267,14 +267,17 @@ select, input {
     padding: 2vh;
 }
 
-.dashboardChart {
-    grid-area: "chart";
+.dashboardChartBox {
     background-color: var(--window-color);
-    border-radius: 20px;
     padding: 2vh;
-    height: 70vh;
+    border-radius: 20px;
     max-width: 80vw;
     margin-bottom: 1.5%;
+}
+
+.dashboardChart {
+    grid-area: "chart";
+    height: 60vh;
 }
 
 .dashboardStateSelect {
@@ -313,6 +316,11 @@ select, input {
 .dashboardRightHeader {
     text-align: center;
     margin-top: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+.dashboardLeftHeader {
+    text-align: center;
     margin-bottom: 0.8rem;
 }
 

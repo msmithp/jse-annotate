@@ -62,8 +62,6 @@ class Command(BaseCommand):
             # Convert row from Pandas series to a list
             row = row.to_list()
 
-            print(row)
-
             # Convert posting date to a string so it can be parsed by process_job()
             row[7] = row[7].strftime("%Y-%m-%d")
 

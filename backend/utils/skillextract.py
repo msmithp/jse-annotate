@@ -160,7 +160,7 @@ def experience_extract(job_desc: str) -> int:
 
         # Find all ranges in description and get their minimum value
         for i, ch in enumerate(job_desc):
-                if ch in ["-", "—"]:
+                if ch in ["-", "—", "–"]:
                         # Read in characters preceding the hyphen
                         prev = ""
                         prev_index = 0

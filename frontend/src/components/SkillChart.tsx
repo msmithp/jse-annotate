@@ -65,7 +65,7 @@ function SkillChart({ title, skillData } : SkillChartProps) {
         },
         plugins: {
             title: {
-                display: true,
+                display: title === "" ? false : true,
                 text: title,
                 font: {
                     size: 18

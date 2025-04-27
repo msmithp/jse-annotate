@@ -1,5 +1,5 @@
 import { SkillCategory, State } from "./types";
-import { polylinearGradient, linearGradient } from "./color";
+import { polylinearGradient, linearGradient, lighten } from "./color";
 
 const GRAY = "#474747"
 
@@ -37,23 +37,35 @@ export function mapSkillToColor(skill: string): string {
         return GRAY;
     }
 
-    const numColors = 5000;
+    const gradientSeed = 6969;
+    const lightenSeed = 89;
 
-    const colors = ["#F7F740", "#F04025", "#8F1DA5", "#2A84AE", "#07F562"];
-    const n = hashString(skill, numColors);
-    return polylinearGradient(colors, n/numColors);
+    const colors = ["#F7F740", "#F06424", "#DD0821", "#980F9D", 
+        "#6915B8", "#2A84AE", "#07F562"];
+    const hash = hashString(skill);
+
+    const gradientPosition = (hash % gradientSeed) / gradientSeed;
+    const lightenAmount = (hash % lightenSeed) - 35;
+
+    const col = polylinearGradient(colors, gradientPosition);
+    return lighten(col, lightenAmount);
 }
 
-/** Generate a hash value for a string `s` in modulo `n` */
-function hashString(s: string, n: number): number {
+/** Generate a (probably) unique hash value for a string */
+function hashString(s: string): number {
     let hash = 0;
-    const p = 59;  // somewhat arbitrary prime number
-
+    
     for (let i = 0; i < s.length; i++) {
-        hash += s[i].charCodeAt(0) * Math.pow(p, i);
+        let chr = s.charCodeAt(i);
+
+        // Same as (hash * 31) + chr
+        hash = ((hash << 5) - hash) + chr;
+
+        // Convert hash to 32-bit integer
+        hash |= 0;
     }
 
-    return hash % n;
+    return Math.abs(hash);
 }
 
 /** Generate a color between gray and a skill's color based on density.
@@ -125,15 +137,9 @@ export function mapSalary(minSalary: number, maxSalary: number): string {
 
 /** Map a compatibility score between 0 and 100 to a hex code color */
 export function mapScoreToColor(score: number): string {
-    if (score >= 80) {
-        return "#2a9756";
-    } else if (score >= 60) {
-        return "#ffe91f";
-    } else if (score >= 40) {
-        return "#ff801f"
-    } else {
-        return "#CA2E4B";
-    }
+    const colors = ["#CA2E4B", "#FF801F", "#FFAD14", 
+        "#FFE91F", "#98F74F", "#37E95E", "#2a9756"];
+    return polylinearGradient(colors, score/100);
 }
 
 /** If a string is longer than `n` characters, shorten it to be `n` characters
