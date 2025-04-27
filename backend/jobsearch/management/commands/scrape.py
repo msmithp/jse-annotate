@@ -28,7 +28,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--today",
             action="store_true",
-            help="Limit scraped jobs to those posted in the last 24 hours"
+            help="Limit scraped jobs to those posted on the current date"
         )
 
     def handle(self, *args, **options):
@@ -38,20 +38,18 @@ class Command(BaseCommand):
         
         hours_old = None
         if options["today"]:
+            # "today" flag takes priority over "hours"
             hours_old = 24
         elif options["hours"]:
             hours_old = options["hours"]
 
         # Scrape job data
         job_data = scrape(num_jobs=options["num_jobs"], 
-                          export=not options["nocsv"], 
-                          file_path="./utils/jobs/",
-                          hours_old=hours_old)
+                          file_path=None if options["nocsv"] else "./utils/jobs/",
+                          hours_old=hours_old,
+                          today=options["today"])
 
         print(f"Successfully scraped {len(job_data)} jobs. Adding to database...")
-
-        # Convert NaN to empty strings
-        job_data = job_data.fillna("")
         
         # Store jobs and skills in arrays for bulk creation
         jobs: list[Job] = []
