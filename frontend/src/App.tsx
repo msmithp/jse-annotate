@@ -3,8 +3,8 @@ import { Home, JobSearch, SkillSearch, Login,
   Profile, CreateAccount } from "./pages";
 import { Navbar, PrivateRoute } from "./components";
 import AuthProvider from "./context/AuthProvider";
-import './App.css';
-import "./modal.css";
+import './style/App.css';
+import "./style/modal.css";
 
 function App() {
   return (

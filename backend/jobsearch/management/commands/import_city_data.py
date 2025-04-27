@@ -28,7 +28,7 @@ class Command(BaseCommand):
         # We maintain a mapping: `state_code` -> `state_ID` (e.g., "MD" -> 5) to
         # allow quick access to database IDs when setting foreign keys
         state_map = {}
-        with open("./initialdata/usstates.csv") as f:
+        with open("./utils/initial_data/usstates.csv") as f:
             reader = csv.reader(f)
             next(reader, None)  # Skip header
 
@@ -48,7 +48,7 @@ class Command(BaseCommand):
 
         """ Add cities and counties to database """
         county_map = {}
-        with open("./initialdata/uscities.csv") as f:
+        with open("./utils/initial_data/uscities.csv") as f:
             reader = csv.reader(f)
             next(reader, None)  # Skip header
 
