@@ -53,9 +53,9 @@ def calc_edu(userEdu: str, reqEdu: str):
 def calc_years(userYears: int, reqYears: int):
     if reqYears == 0:
         score = max(0, 1 - 0.1*userYears)
-    elif reqYears > userYears:
-        score = min(userYears/reqYears, 1)
+    elif (reqYears < userYears) & (userYears >= 5):
+            score = (userYears-reqYears)/(userYears+reqYears)
     else:
-        score = max(0, 1-(userYears/reqYears))
+        score = min(userYears/reqYears,1)
 
     return score
