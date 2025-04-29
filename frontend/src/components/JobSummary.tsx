@@ -131,13 +131,7 @@ function Description({ description }: DescriptionProps) {
                         
                         <p 
                             className="showMoreButton"
-                            onClick={() => setShowMore(!showMore)}
-                            style={{backgroundColor: "transparent", 
-                                    borderColor: "transparent", 
-                                    color: "lightblue", 
-                                    cursor: "pointer",
-                                    fontWeight: 500
-                        }}>
+                            onClick={() => setShowMore(!showMore)}>
                             {showMore ? "Show less" : "Show more"}
                         </p>
                     </>

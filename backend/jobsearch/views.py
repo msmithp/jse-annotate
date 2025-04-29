@@ -1,5 +1,5 @@
 from django.db import connection, reset_queries
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpRequest
 import json
 from .models import Skill, Job, City, County, State, User, Profile
 from utils.calc_compatibility import calculate_compatibility
@@ -19,7 +19,18 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
-def update_account(request):
+def update_account(request: HttpRequest) -> HttpResponse:
+    """
+    Update the information associated with a user account, including their
+    location, education level, year of experience, and skills
+
+    :param request: An HTTP POST request containing the user's ID, updated
+                    state ID, updated education level, updated experience,
+                    and updated skill IDs.
+
+    :return: An HTTP response of either 200, if update was successful, or 400,
+             if an error occurred
+    """
     try:
         # Extract data from request body
         data = json.loads(request.body.decode("utf-8"))
@@ -47,10 +58,32 @@ def update_account(request):
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def get_user(request):
+def get_user(request: HttpRequest) -> JsonResponse:
+    """
+    Get profile data associated with a user ID (username, state ID, education
+    level, years of experience, and list of skill IDs)
+
+    :param request: An HTTP GET request consisting of only the user's ID
+    
+    :return: A JSON dictionary of the following format:
+    ```
+    {
+        "id": int,
+        "username": str,
+        "education": str,
+        "yearsExperience": int,
+        "skills": {
+            "id": int,
+            "name": str
+        }[]
+    }
+    ```
+    """
+    # Get user associated with ID from HTTP request
     id = request.GET.get("id")
     user = User.objects.get(pk=id)
 
+    # Create a list of skill dictionaries containing the ID and name of each skill
     user_skills = user.profile.skill_name.all()
     user_skills = [
         {"id": s.pk, "name": s.skill_name} for s in user_skills
@@ -68,7 +101,29 @@ def get_user(request):
     return JsonResponse(user_dict)
 
 @csrf_exempt
-def create_account(request):
+def create_account(request: HttpRequest) -> HttpResponse:
+    """
+    Create a new account, given a username, password, state ID, education level,
+    years of experience, and a list of skill IDs
+
+    :param request: An HTTP POST request, the body of which has this format:
+    ```
+    {
+        "username": str,
+        "password": str,
+        "stateID": int,
+        "education": str,
+        "yearsExperience": int,
+        "skills": list[int]
+    }
+    ```
+
+    :return: An HTTP response with a status code of:
+
+        * 200, if successful
+        * 409, if a duplicate username is selected
+        * 403, if the password fails validation (for being too short)
+    """
     data = json.loads(request.body.decode("utf-8"))
     username = data["username"]
     password = data["password"]
@@ -83,22 +138,65 @@ def create_account(request):
     if User.objects.filter(username=username).exists():
         return HttpResponse("Username already exists", status=409)
     else:
-        # Perform password checking
+        # Perform password validation - check if password is too short
         if len(password) < 8:
             return HttpResponse("Password must be at least 8 characters long",
                                 status=403)
 
+    # Create a new User object
     new_user = User.objects.create_user(username=username, password=password)
+    
+    # Create a new Profile object associated with the new User
     new_profile = Profile.objects.create(user=new_user, state=state_instance, 
                                          education=edu, years_exp=years_exp)
+    
+    # Set the skills of the new user
     new_profile.skill_name.set(skills)
 
     return HttpResponse(status=200)
 
-def skill_search(request): #assume userState is the state's id
-    #Output: JSON dictionary containing the following: List of skills, each with an associated integer representing the number of descriptions that mention that skill
-    #for each skill in db
-        #find all jobs requiring that skill within specified state
+def skill_search(request: HttpRequest) -> JsonResponse:
+    """
+    Given a list of states, compute and return the following:
+        * The most common skills (max 10) in each skill category, based on number of
+          job descriptions that mention them, in all specified states
+        * The most common skill in each county of all specified states
+
+    :param request: An HTTP GET request containing a list of IDs of states that
+                    will be searched for skills
+
+    :return: A JSON dictionary of the following format:
+    ```
+    {
+        # Top skills (max 10) in each category:
+        "skills": {
+            "category": str,
+            "skills": {
+                "id": int;
+                "skillName": str;
+                "occurrences": int;
+            }[]
+        }[],
+        
+        # Most common skill in each county in each state:
+        "counties": {
+            "stateData": {
+                "stateID": int,
+                "stateName": str,
+                "stateCode": str
+            },
+            "countyData": {
+                "countyID": int,
+                "countyName": str,
+                "countyFips": str,
+                "skillID": int,
+                "skillName": str,
+                "numJobs": int
+            }[]
+        }[]
+    }
+    ```
+    """
     userState = request.GET.getlist("states[]")
 
     skill_counts = []
@@ -200,9 +298,43 @@ def skill_search(request): #assume userState is the state's id
     return JsonResponse({'skills': skill_counts, 'counties': countyVals})
 
 @csrf_exempt
-def job_search(request): #assume userState is the state's id
+def job_search(request: HttpRequest) -> JsonResponse: #assume userState is the state's id
+    """
+    Given a user's data and their selected states, find jobs in their states,
+    calculate their compatibility for each job, and return a list of jobs
+
+    :param request: An HTTP GET request containing the user's state IDs,
+                    education level, years of experience, and skill IDs
+
+    :return: A JSON dictionary of the following format:
+    ```
+    {
+        "jobs": {
+            "id": int,
+            "title": str,
+            "company": str,
+            "cityName": str,
+            "stateCode": str,
+            "description": str,
+            "minSalary": float,
+            "maxSalary": float,
+            "link": str,
+            "score": float,
+            "skills": {
+                "category": str,
+                "skills": {
+                    "id": int,
+                    "name": str
+                }[]
+            }[],
+            "education": str,
+            "yearsExperience": int
+        }[]
+    }
+    ```
+    """
     #Output: JSON dictionary consisting of a list of jobs. Each job should itself be a Python dictionary consisting of the title, location, description, salary, link to apply, and compatibility score.
-    userState: int = request.GET.getlist("stateID[]")
+    userState: list = request.GET.getlist("stateID[]")
     edu: str = request.GET.get("education")
     yearsExp: int = request.GET.get("yearsExperience")
     skillSet: list[int] = list(map(int, request.GET.getlist("skills[]")))
@@ -246,9 +378,30 @@ def job_search(request): #assume userState is the state's id
     reset_queries()
     return JsonResponse({'jobs': jobList})
 
-def get_static_data(request):
-    #Output: JSON dictionary consisting of Dictionary consisting of skill data and List of U.S. states (string[])
-    
+def get_static_data(request: HttpRequest) -> JsonResponse:
+    """
+    Retrieve data for use in the front-end that does not change in the course
+    of a user's session (i.e., is static) for dropdown menu options
+
+    :param request: An HTTP GET request with no body
+
+    :return: A JSON dictionary of the following format:
+    ```
+    {
+        "skills": {
+            "category": str,
+            "skills": {
+                "id": int,
+                "name": str
+            }[]
+        }[],
+        "states": {
+            "id": int,
+            "name": str
+        }[]
+    }
+    ```
+    """
     #initialize skillValues dictionary
     skillValues = []
     categories = list(Skill.objects.values('category').distinct())
@@ -277,7 +430,63 @@ def get_static_data(request):
         'states': locationValues
     })
 
-def get_dashboard_data(request):
+def get_dashboard_data(request: HttpRequest) -> JsonResponse:
+    """
+    Given a user's ID, retrieve data used in their dashboard, including top 10
+    skills in their state, their top 10 most compatible jobs, a list of their
+    skills (for use in dropdown menus), and geographical information associated
+    with the user's state
+
+    :param request: An HTTP GET request containing a user's ID
+
+    :return: A JSON dictionary of the following format:
+    ```
+    {
+        "dashboardData": {
+            "skills": {
+                "id": int;
+                "skillName": str;
+                "occurrences": int;
+            }[],
+            "jobs": {
+                "id": int,
+                "title": str,
+                "company": str,
+                "cityName": str,
+                "stateCode": str,
+                "description": str,
+                "minSalary": float,
+                "maxSalary": float,
+                "link": str,
+                "score": float,
+                "skills": {
+                    "category": str,
+                    "skills": {
+                        "id": int,
+                        "name": str
+                    }[]
+                }[],
+                "education": str,
+                "yearsExperience": int
+            }[],
+
+            "userSkills": {
+                "category": str,
+                "skills": {
+                    "id": int,
+                    "name": str
+                }[]
+            }[],
+
+            "stateData": {
+                "stateID": int,
+                "stateName": str,
+                "stateCode": str
+            }
+        }
+    }
+    ```
+    """
     import time
     START_TIME = time.time()
     START_TIME_MASTER = time.time()
@@ -420,7 +629,37 @@ def get_dashboard_data(request):
 
     return JsonResponse({'dashboardData': dashboard_data})
 
-def get_density_data(request):
+def get_density_data(request: HttpRequest) -> JsonResponse:
+    """
+    Given a user's ID and a skill ID, calculate and return a floating point
+    value quantifying employer demand for the selected skill for each county
+    of the user's state
+    
+    :param request: An HTTP GET request containing the user's ID and the skill
+                    whose demand will be quantified
+
+    :return: A JSON dictionary of the following format:
+    ```
+    {
+        "stateData": {
+            "stateID": int,
+            "stateName": str,
+            "stateCode": str
+        },
+        "countyData": {
+            "countyID": int,
+            "countyName": str,
+            "countyFips": str,
+            "density": float,
+            "numJobs": int
+        }[],
+        "skillData": {
+            "skillID": int,
+            "skillName": str
+        }
+    }
+    ```
+    """
     reset_queries()
     user_id = request.GET.get("id")
     this_skill = request.GET.get("skill")

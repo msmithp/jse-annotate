@@ -648,6 +648,19 @@ select, input {
     padding: 0.7rem;
 }
 
+.showMoreButton {
+    background-color: transparent;
+    border-color: transparent;
+    color: lightblue;
+    cursor: pointer;
+    font-weight: 500;
+    width: max-content;
+}
+
+.showMoreButton:hover {
+    text-decoration: underline;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * *
  *                  SKILL SEARCH                   *
  * * * * * * * * * * * * * * * * * * * * * * * * * */

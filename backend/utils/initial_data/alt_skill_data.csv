@@ -9,15 +9,15 @@ Angular,AngularJS
 Next.js,NextJS
 Vue,Vue.js
 Vue,VueJS
-Powershell,Shell
+Powershell,shell
 Sklearn,sci-kit
 Sklearn,scikit
 Assembly,ASM
 REST,RESTful
 Game Development,Game Developer
-Machine Learning/Artificial Intelligence,Artificial intelligence
-Machine Learning/Artificial Intelligence,AI
-Machine Learning/Artificial Intelligence,Machine Learning
+AI/ML,Artificial intelligence
+AI/ML,AI
+AI/ML,Machine Learning
 Software Development,Software Engineering
 Software Development,Software Engineer
 Full-Stack Development,full-stack
@@ -34,7 +34,7 @@ Game Development,game developer
 Networking,network administration
 Networking,network administrator
 Cybersecurity,cyber security
-Systems Administration,System administration
+Systems Administration,system administration
 Systems Administration,system administrator
 Systems Administration,systems administrator
 Systems Engineering,system engineer

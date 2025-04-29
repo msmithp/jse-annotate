@@ -125,7 +125,7 @@ Next, create a `.env` file, which will allow the Django back-end to access the d
 
 2. Open the `.env` file in a text editor. Place the following contents in the file:
 
-    ```sh
+    ```
     SECRET_KEY=<secret_key>
     DEBUG=True
     DB_NAME=jobsearch

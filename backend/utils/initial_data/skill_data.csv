@@ -10,6 +10,9 @@ Ruby,Languages
 Swift,Languages
 Golang,Languages
 Perl,Languages
+JavaScript,Web Development
+HTML,Web Development
+CSS,Web Development
 TypeScript,Web Development
 MATLAB,Languages
 Rust,Languages
@@ -76,7 +79,7 @@ Android,Operating Systems
 MAC,Operating Systems
 Jenkins,Tools
 Pytest,Libraries
-JUnit,Tools
+JUnit,Libraries
 Pytorch,Libraries
 Sklearn,Libraries
 Tensorflow,Libraries
@@ -90,7 +93,7 @@ Front-End Development,Fields
 Mobile Development,Fields
 Web Development,Fields
 Game Development,Fields
-Machine Learning/Artificial Intelligence,Fields
+AI/ML,Fields
 Data Science,Fields
 Cybersecurity,Fields
 Information Security,Fields
@@ -102,8 +105,6 @@ Systems Engineering,Fields
 Cryotography,Fields
 Cloud Computing,Fields
 Database Administration,Fields
-Data Structures,Fields
-Algorithms,Fields
 Graphics,Fields
 Data Mining,Fields
 Object-Oriented Programming,Fields
