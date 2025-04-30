@@ -1,3 +1,10 @@
+/** Home.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The Home component is the home page for the React app. If the user is not
+ * logged in, only a paragraph is displayed to tell them to log in. If the user
+ * is logged in, then their dashboard is displayed.
+ */
+
+
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../context/AuthProvider";
 import { Dashboard }from "../components";
@@ -23,7 +30,6 @@ function Home() {
             // axiosInstance.get("api/get-user/", {params: {id: user.user_id}})
             .then(res => {
                 if (!ignore) {
-                    console.log(res.data);
                     setDashboardData(res.data.dashboardData);
                     setLoading(false);
                 }

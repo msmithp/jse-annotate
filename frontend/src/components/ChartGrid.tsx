@@ -1,3 +1,9 @@
+/** ChartGrid.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The ChartGrid component displays a list of charts (stylized as a grid in
+ * App.css). Each chart is a SkillChart.
+ */
+
+
 import { SkillChart } from "../components";
 import { ChartSkillData } from "../static/types";
 

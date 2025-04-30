@@ -1,3 +1,9 @@
+/**
+ * This component creates a React context which makes static data (i.e., data
+ * which does not change during the course of a user's session) available to
+ * all components. This includes education levels, years of experience, U.S.
+ * states, and skills, which populate dropdown menus across the website.
+ */
 import React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
 import { SkillCategory, State, EducationLevel, Experience } from "../static/types";

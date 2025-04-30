@@ -1,5 +1,10 @@
+/** PrivateRoute.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The PrivateRoute component wraps around children components to "protect"
+ * them from being accessed by non-authenticated users.
+ */
+
+
 import { Navigate } from "react-router-dom";
-import { useState } from "react";
 import { useAuthContext } from "src/context/AuthProvider";
 
 interface PrivateRouteProps {

@@ -1,3 +1,10 @@
+/** SkillSearchMap.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The SkillSearchMap component displays U.S. counties in one or many U.S.
+ * states, with the color of each county based on the skill assigned to that
+ * county. It is used on the SkillSearch page.
+ */
+
+
 import { MapContainer, TileLayer } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
@@ -10,9 +17,6 @@ interface SkillSearchMapProps {
 }
 
 function SkillSearchMap({ stateSkills }: SkillSearchMapProps) {
-    console.log("Re-rendering map component");
-    console.log(stateSkills);
-
     // Get list of included state codes
     const states = stateSkills.map(state =>
         state.stateData.stateCode

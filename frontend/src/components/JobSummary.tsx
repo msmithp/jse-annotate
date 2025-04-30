@@ -1,3 +1,20 @@
+/** JobSummary.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The JobSummary component is a summary of a job for use in a popup modal. It
+ * displays information at three levels.
+ * 
+ * The top level contains essential information about the job, including the
+ * title of the job, the employer, the location, and the salary. It also
+ * shows the user's compatibility score with the job.
+ * 
+ * The second level contains prerequisite skill information, including the
+ * expected years of experience and education level of candidates, as well as
+ * the skills required for the job (broken down by category).
+ * 
+ * The third level contains the job descrpiption, which is truncated by
+ * default. A "show more" button is provided to expand the description.
+ */
+
+
 import { useState } from "react";
 import { Job, SkillCategory } from "../static/types";
 import { mapSalary, mapYearsExperience, mapEducation, 
@@ -123,10 +140,10 @@ function Description({ description }: DescriptionProps) {
                     <>
                         {showMore ? (
                             // Show more is enabled, so show full description
-                            description 
+                            description
                         ) : (
                             // Show more is disabled, so show truncated description
-                            `${description.substring(0, MAX_DISPLAY_LENGTH)}...`
+                            truncate(description, MAX_DISPLAY_LENGTH)
                         )}
                         
                         <p 

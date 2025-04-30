@@ -1,13 +1,24 @@
+/** utils.ts * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Contains utility functions used through the React app
+ */
+
+
 import { SkillCategory, State } from "./types";
 import { polylinearGradient, linearGradient, lighten } from "./color";
 
 const GRAY = "#474747"
 
-/** Map a list of Skill types to conform to the type expected by DropdownList */
+/**
+ * Map a list of Skill types to conform to the type expected by dropdown
+ * components
+ * @param skills A list of SkillCategory values
+ * @returns A list of generified items for use in a Dropdown or DropdownList
+ */
 export function mapDropdownSkills(skills: SkillCategory[]) {
     return skills.map(skill => ({
         category: skill.category,
         items: skill.skills.sort((x, y) => {
+            // Sort skill names alphabetically
             if (x.name < y.name) {
                 return -1;
             } else if (x.name > y.name) {
@@ -19,7 +30,12 @@ export function mapDropdownSkills(skills: SkillCategory[]) {
     }));
 }
 
-/** Map a list of State types to conform to the type expected by DropdownList */
+/**
+ * Map a list of State types to conform to the type expected by dropdown
+ * components
+ * @param states A list of State values
+ * @returns A list of generified items for use in a Dropdown or DropdownList
+ */
 export function mapDropdownStates(states: State[]) {
     return [{
         category: "",
@@ -30,7 +46,11 @@ export function mapDropdownStates(states: State[]) {
     }];
 }
 
-/** Map a skill to a color based on its name */
+/**
+ * Map a skill to a color based on its name
+ * @param skill The name of a skill
+ * @returns A hex code of a color, with a leading pound sign (`#`) included
+ */
 export function mapSkillToColor(skill: string): string {
     if (skill === "") {
         // Return gray for no skill
@@ -44,6 +64,8 @@ export function mapSkillToColor(skill: string): string {
         "#6915B8", "#2A84AE", "#07F562"];
     const hash = hashString(skill);
 
+    // Get a color from the gradient based on the gradient seed, then lighten
+    // the color some amount based on the lighten seed
     const gradientPosition = (hash % gradientSeed) / gradientSeed;
     const lightenAmount = (hash % lightenSeed) - 35;
 
@@ -51,7 +73,11 @@ export function mapSkillToColor(skill: string): string {
     return lighten(col, lightenAmount);
 }
 
-/** Generate a (probably) unique hash value for a string */
+/**
+ * Generate a (probably) unique hash value for a string
+ * @param s String to be hashed
+ * @returns A (hopefully) unique integer value based on the contents of `s`
+ */
 function hashString(s: string): number {
     let hash = 0;
     
@@ -68,16 +94,27 @@ function hashString(s: string): number {
     return Math.abs(hash);
 }
 
-/** Generate a color between gray and a skill's color based on density.
- *  Higher density means that the resulting color will be closer to the skill's
- *  original color, while lower density means that the resulting color will be
- *  closer to gray.
+/**
+ * Generate a color between gray and a skill's color based on density.
+ * Higher density means that the resulting color will be closer to the skill's
+ * original color, while lower density means that the resulting color will be
+ * closer to gray.
+ * @param skill The name of a skill
+ * @param density A density value between 0 and 1, inclusive
+ * @returns A hex code of a color, with a pound sign (`#`) included
  */
 export function skillDensityGradient(skill: string, density: number): string {
     return linearGradient(GRAY, mapSkillToColor(skill), density);
 }
 
-/** Convert an education level to a display-ready string */
+/**
+ * Convert an education level to a display-ready string
+ * @param education An education level as a string. Options include
+ *                  `"high_school"`, `"associate"`, `"bachelor"`,
+ *                  `"master"`, and `"doctorate"`.
+ * @returns A display-ready string to be shown to the user, based on
+ *          `education`
+ */
 export function mapEducation(education: string): string {
     switch(education) {
         case "high_school":
@@ -95,8 +132,13 @@ export function mapEducation(education: string): string {
     }
 }
 
-/** Convert an array of skill names to a string delimited by commas */
-export function mapSkills(skills: string[]): string {
+/**
+ * Convert an array of skill names to a string delimited by commas
+ * @param skills Array of skill names
+ * @returns A string containing each skill name separated by commas, e.g.,
+ *          `"TypeScript, React, Django, Python"`
+ */
+export function skillsToString(skills: string[]): string {
     if (skills.length === 0) {
         return "None specified";
     }
@@ -111,7 +153,11 @@ export function mapSkills(skills: string[]): string {
     return skillString;
 }
 
-/** Convert a number of years of experience to a string */
+/**
+ * Convert a number of years of experience to a display-ready string
+ * @param years Number of years of experience
+ * @returns A display-ready string to be shown to the user, based on `years`
+ */
 export function mapYearsExperience(years: number): string {
     if (years < 1) {
         return "None specified";
@@ -124,26 +170,44 @@ export function mapYearsExperience(years: number): string {
     }
 }
 
-/** Convert a salary range (min and max) to a string containing rounded,
- *  comma-formatted numbers */
+/**
+ * Convert a salary range (min and max) to a string containing rounded,
+ *  comma-formatted numbers
+ * @param minSalary Low end of salary range
+ * @param maxSalary High end of salary range
+ * @returns A display-ready string for the salary, either `"No salary
+ *          specified"` or something resembling `"$100,000 - 130,000"`
+ */
 export function mapSalary(minSalary: number, maxSalary: number): string {
     if (minSalary < 1 && maxSalary < 1) {
         return "No salary specified";
     } else {
+        // toLocaleString automatically adds commas to numbers
         return "$" + Math.floor(minSalary).toLocaleString() 
                     + " - $" + Math.floor(maxSalary).toLocaleString();
     }
 }
 
-/** Map a compatibility score between 0 and 100 to a hex code color */
+/**
+ * Map a compatibility score between 0 and 100 to a hex code color
+ * @param score A score between 0 and 100
+ * @returns A hex code for a color, with a leading pound sign (`#`) included.
+ *          Color is on a gradient from red (low score) to green (high score).
+ */
 export function mapScoreToColor(score: number): string {
     const colors = ["#CA2E4B", "#FF801F", "#FFAD14", 
         "#FFE91F", "#98F74F", "#37E95E", "#2a9756"];
     return polylinearGradient(colors, score/100);
 }
 
-/** If a string is longer than `n` characters, shorten it to be `n` characters
- *  long with "..." appended */
+/**
+ * If a string is longer than `n` characters, shorten it to be `n` characters
+ * long with "..." appended
+ * @param str String to be potentially truncated
+ * @param n Maximum number of characters to be displayed before the ellipsis
+ * @returns If `str` is longer than `n`, then a truncated version of `str` with
+ *          an ellipsis (`...`) added. Otherwise, just `str`.
+ */
 export function truncate(str: string, n: number): string {
     return str.length > n ? `${str.substring(0, n)}...` : str;
 }

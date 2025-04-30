@@ -1,3 +1,10 @@
+/** DashboardMap.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The DashboardMap component is a Leaflet map for displaying density. It
+ * uses the DensityMap component to display density data for a given skill in
+ * a given state. It is used in the Dashboard component.
+ */
+
+
 import { MapContainer, TileLayer } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";

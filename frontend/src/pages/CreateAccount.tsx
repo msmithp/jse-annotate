@@ -1,3 +1,11 @@
+/** CreateAccount.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The CreateAccount component is a page for creating a new user account. It
+ * provides a form to enter user information and calls to the back-end on
+ * submission. It also provides native error messages when the user submits
+ * invalid data.
+ */
+
+
 import React from "react";
 import { useState } from "react";
 import { DropdownList, MessageBox } from "../components";
@@ -159,11 +167,6 @@ function CreateAccount() {
 
         // Remove empty skill dropdown boxes from consideration
         skills = skills.filter(sk => sk !== -1);
-
-        console.log("Username: " + username 
-            + " Password: " + password + " State: " + state
-            + " Education: " + education + " Experience: " + experience
-            + " Skills: " + skills);
 
         if (username === "") {
             setError("You must enter a username.");

@@ -1,3 +1,12 @@
+/** Choropleth.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The Choropleth component is a choropleth map that displays U.S. counties.
+ * The color of a county is selected based on the name of the skill associated
+ * with that county.
+ * 
+ * This component should be placed inside a Leaflet MapContainer component.
+ */
+
+
 import { useEffect, useRef } from "react";
 import { GeoJSON, useMap } from "react-leaflet";
 import Leaflet from "leaflet";
@@ -6,6 +15,10 @@ import 'leaflet/dist/leaflet.css';
 import { mapSkillToColor } from "src/static/utils";
 
 class InfoControl extends L.Control {
+    /**
+     * The InfoControl class manages the dynamic information box in the corner
+     * of the map
+     */
     private _div: HTMLDivElement | null = null;
   
     constructor(opts?: L.ControlOptions) {
@@ -55,9 +68,6 @@ interface ChoroplethProps {
 }
 
 function Choropleth({ geoData }: ChoroplethProps) {
-    console.log("Re-rendering choropleth layer");
-    console.log(geoData);
-
     const map = useMap();
     const infoControlRef = useRef<InfoControl | null>(null);
 

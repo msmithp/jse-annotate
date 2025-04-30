@@ -1,3 +1,9 @@
+/**
+ * This component creates React context which makes user authentication data
+ * available to all React components, including a user's ID, username, a
+ * function to log in a user, and a function to log out a user
+ */
+
 import { createContext, useContext, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";

@@ -1,3 +1,15 @@
+/** DropdownList.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The DropdownList component is a list of variable length of dropdown menus,
+ * each of which contains the same options. Each dropdown menu has an
+ * associated "Delete" button to remove it from the list.
+ * 
+ * It takes a list of categories (each with its own values), a list of
+ * the IDs of items currently selected, a flag for whether categories are
+ * being used, a function that is called when any change occurs, and a function
+ * that is called when any dropdown is removed from the list.
+ */
+
+
 import Dropdown from "./Dropdown"
 
 

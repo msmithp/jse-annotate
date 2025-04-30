@@ -1,3 +1,11 @@
+/** JobSearch.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The JobSearch component is a page for searching for jobs. It provides a form
+ * for users to enter their information, which calls to the back-end on
+ * submission. Below the form is a list of jobs returned by the back-end. If a
+ * user is logged in, they also have the option of importing their skills.
+ */
+
+
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { DropdownList, JobList, MessageBox } from "../components";
@@ -193,10 +201,6 @@ function JobSearch() {
         locations = locations.filter(loc => loc !== -1);
         skills = skills.filter(skill => skill !== -1);
 
-        console.log("Locations: " + locations 
-            + "\nEducation: " + education + "\nExperience: "
-            + experience + "\nSkills: " + skills);
-
         // Set resulting jobs by retrieving job data from the back-end
         setJobs([]);
 
@@ -221,6 +225,7 @@ function JobSearch() {
             "Content-Type": "application/json"
         };
 
+        // Call to back-end to get jobs with given search criteria
         axios.get("http://127.0.0.1:8000/api/job-search/", {params: params, headers: headers})
         .then((res) => {
             const jobData: Job[] = res.data.jobs;

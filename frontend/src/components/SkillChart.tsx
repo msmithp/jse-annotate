@@ -1,3 +1,11 @@
+/** SkillChart.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The SkillChart component implements a Chart.js chart given a title for the
+ * chart and skill data to be displayed. The skill data must include the ID,
+ * name, and number of occurrences for each skill. The color of each bar in the
+ * chart is decided by the name of the skill represented by that bar.
+ */
+
+
 import { Chart as ChartJS, CategoryScale, 
     LinearScale, BarElement, Title, Tooltip } from "chart.js";
 import { Bar } from "react-chartjs-2";
@@ -40,6 +48,7 @@ function SkillChart({ title, skillData } : SkillChartProps) {
     // Filter out skills with 0 occurrences
     skillData = skillData.filter(skill => skill.occurrences !== 0);
 
+    // Get lists of the number of occurrences, names, and colors for each skill
     const values = skillData.map(skill => {
         return skill.occurrences;
     });
@@ -65,6 +74,7 @@ function SkillChart({ title, skillData } : SkillChartProps) {
         },
         plugins: {
             title: {
+                // Only show title if the provided title isn't blank
                 display: title === "" ? false : true,
                 text: title,
                 font: {
@@ -75,6 +85,7 @@ function SkillChart({ title, skillData } : SkillChartProps) {
         maintainAspectRatio: false,
     };
 
+    // Set chart data
     const data = {
         labels: labels,
         datasets: [{

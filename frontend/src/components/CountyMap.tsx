@@ -1,3 +1,11 @@
+/** CountyMap.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The CountyMap component is a Leaflet map for a blank county map. It uses the
+ * DensityMap component with a null skill value to display all counties in
+ * gray. It is used in the Dashboard component when the user has not selected
+ * a skill from the dropdown.
+ */
+
+
 import { MapContainer, TileLayer } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import counties from "../geodata/counties.json";
@@ -12,6 +20,7 @@ interface CountyMapProps {
 function CountyMap({ stateData } : CountyMapProps) {
     let processedFeatures = [];
 
+    // Process GeoJSON features prior to display
     for (let i = 0; i < counties.features.length; i++) {
         const feature = counties.features[i];
         const stateCode = feature.properties.STATECODE;
@@ -33,6 +42,7 @@ function CountyMap({ stateData } : CountyMapProps) {
             DENSITY: 0
         };
 
+        // Add amended GeoJSON feature to new processedFeatures list
         processedFeatures.push({
             type: feature.type,
             properties: properties,

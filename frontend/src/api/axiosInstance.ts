@@ -1,3 +1,17 @@
+/** axiosInstance.ts * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This file exports the axiosInstance object. The axiosInstance object is
+ * used when making requests to the back-end that require the user to be
+ * authenticated. Each request is intercepted to add the user's JWT access
+ * token to the header of the request.
+ * 
+ * Each response from the back-end is also intercepted. In the case that the
+ * user's access token has expired, the back-end will respond with an error
+ * 401. If this happens, the interceptor will attempt to refresh the user's
+ * access token and re-send the original request with the newly received token.
+ * If this process fails, the user is logged out.
+ */
+
+
 import axios from "axios";
 
 const axiosInstance = axios.create({

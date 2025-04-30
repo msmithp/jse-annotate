@@ -1,3 +1,8 @@
+/** types.ts * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Contains type definitions used throughout the React app
+ */
+
+
 export interface SkillCategory {
     category: string,
     skills: {

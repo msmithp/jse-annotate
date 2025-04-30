@@ -1,3 +1,11 @@
+/** Profile.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The Profile component is a page where a user can edit their information. It
+ * is only accessible by an authenticated user. It provides a form similar to
+ * that in the CreateAccount page, but populated by the user's account
+ * information.
+ */
+
+
 import React from "react";
 import { useState, useEffect } from "react";
 import { DropdownList, MessageBox } from "../components";
@@ -160,9 +168,6 @@ function Profile() {
         // Reset message boxes
         setSuccess(false);
         setError(false);
-
-        console.log("State: " + state + " Education: " + education
-            + " Experience: " + experience + " Skills: " + skills);
 
         // Remove empty dropdown boxes from consideration
         skills = skills.filter(sk => sk !== -1);

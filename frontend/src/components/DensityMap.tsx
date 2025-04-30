@@ -1,3 +1,12 @@
+/** DensityMap.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The DensityMap component is a density map that displays U.S. counties. The
+ * color of a county is selected from a gradient between gray and the color of
+ * a provided skill based on the density value for that skill.
+ * 
+ * This component should be placed inside a Leaflet MapContainer component.
+ */
+
+
 import { useEffect, useRef } from "react";
 import { GeoJSON, useMap } from "react-leaflet";
 import Leaflet from "leaflet";

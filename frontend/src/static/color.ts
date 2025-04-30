@@ -1,20 +1,38 @@
-/** Pick a color between many different colors based on the value of `n`,
- *  which is between 0 and 1
+/** color.ts * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Contains functions that pertain to color, such as gradients, color
+ * modification, and conversion from RGB to hex
  */
-export function polylinearGradient(colors: string[], n: number): string {
+
+
+/**
+ * Pick a color from a gradient of many different colors
+ * @param colors List of hex codes of colors in the gradient (in order of their
+ *               appearance in the gradient)
+ * @param pct The percentage, between 0 and 1, between the first color and the
+ *            last color from which the color will be drawn
+ * @returns A hex code of the color selected from the gradient, with a leading
+ *          pound sign (`#`) included
+ */
+export function polylinearGradient(colors: string[], pct: number): string {
     const threshold = 1 / (colors.length - 1);
-    const startIndex = Math.min(Math.floor(n / threshold), colors.length - 2);
+    const startIndex = Math.min(Math.floor(pct / threshold), colors.length - 2);
     const endIndex = startIndex + 1;
 
     return linearGradient(
-        colors[startIndex], colors[endIndex], (n / threshold) - startIndex
+        colors[startIndex], colors[endIndex], (pct / threshold) - startIndex
     );
 }
 
-/** Pick a color between two colors `start` and `end` based on the value
- *  `n`, which is between 0 and 1
+/**
+ * Pick a color some percentage of the way between two colors
+ * @param start The starting color of the gradient, as a hex code
+ * @param end The ending color of the gradient, as a hex code
+ * @param pct The percentage, between 0 and 1, between the two colors at which
+ *            the color will be drawn
+ * @returns A hex code of the color selected from the gradient, with a leading
+ *          pound sign (`#`) included
  */
-export function linearGradient(start: string, end: string, n: number): string {
+export function linearGradient(start: string, end: string, pct: number): string {
     // Convert hex codes to RGB arrays
     const startRgb = hexToRgb(start);
     const endRgb = hexToRgb(end);
@@ -27,16 +45,21 @@ export function linearGradient(start: string, end: string, n: number): string {
     */
     const vals = addArrays(
         startRgb, 
-        scaleArray(subtractArrays(endRgb, startRgb), n)
+        scaleArray(subtractArrays(endRgb, startRgb), pct)
     );
     
     // Convert RGB back to hex code
     return rgbToHex(vals);
 }
 
-/** Convert a hex value string of the form #F369D2 to an array of
- *  RGB values of the form [243, 105, 210]
-*/
+/**
+ * Convert a hex value string (like `"#F369D2"`) to an array of
+ * RGB values (like `[243, 105, 210]`)
+ * @param hex A hex code of a color. The leading pound sign (`#`) should be
+ *            included.
+ * @returns An array of exactly 3 integers, each between 0 and 255,
+ *          representing red, green, and blue values, respectively
+ */
 export function hexToRgb(hex: string): number[] {
     return [
         parseInt(hex.substring(1, 3), 16),
@@ -45,13 +68,18 @@ export function hexToRgb(hex: string): number[] {
     ];
 }
 
-/** Convert an array of RGB values of the form [243, 105, 210] to a hex
- *  code string of the form #F369D2
-*/
+/**
+ * Convert an array of RGB values (like `[243, 105, 210]`) to a hex code (like
+ * `"#F369D2"`)
+ * @param vals An array of exactly 3 integers, each between 0 and 255,
+ *             representing red, green, and blue values, respectively
+ * @returns A hex code of a color, including a leading pound sign (`#`)
+ */
 export function rgbToHex(vals: number[]): string {
     let hex = "#";
 
     for (const val of vals) {
+        // Convert value to a hexadecimal string
         let hexVal = val.toString(16);
 
         if (hexVal.length === 1) {
@@ -65,7 +93,13 @@ export function rgbToHex(vals: number[]): string {
     return hex;
 }
 
-/** Add two numeric arrays of the same length, item-by-item */
+/**
+ * Add two numeric arrays of the same length, item-by-item
+ * @param arr1 First numeric array
+ * @param arr2 Second numeric array
+ * @returns Sum array, where each value `z_i` is equal to `x_i` + `y_i`, where
+ *          `x_i` and `y_i` come from `arr1` and `arr2` respectively
+ */
 function addArrays(arr1: number[], arr2: number[]): number[] {
     let sumArr = [];
 
@@ -77,6 +111,14 @@ function addArrays(arr1: number[], arr2: number[]): number[] {
 }
 
 /** Subtract two numeric arrays of the same length, item-by-item */
+
+/**
+ * Subtract two numeric arrays of the same length, item-by-item
+ * @param arr1 First numeric array
+ * @param arr2 Second numeric array
+ * @returns Difference array, where each `z_i` is equal to `x_i` - `y_i`, where
+ *          `x_i` and `y_i` come from `arr1` and `arr2` respectively
+ */
 function subtractArrays(arr1: number[], arr2: number[]): number[] {
     let diffArr = [];
 
@@ -87,7 +129,13 @@ function subtractArrays(arr1: number[], arr2: number[]): number[] {
     return diffArr;
 }
 
-/** Multiply every element of a numeric array by a scalar */
+/**
+ * Multiply every element of a numeric array by a scalar
+ * @param arr1 Numeric array
+ * @param scalar Scalar quantity by which every number in `arr1` will be
+ *               multiplied
+ * @returns A scaled array
+ */
 function scaleArray(arr1: number[], scalar: number): number[] {
     let scaledArr = [];
 
@@ -98,7 +146,13 @@ function scaleArray(arr1: number[], scalar: number): number[] {
     return scaledArr;
 }
 
-/** Desaturate a color of a hex string by a given percentage */
+/**
+ * Desaturate a color by a given percentage
+ * @param color A hex string, with a leading pound sign (`#`) included
+ * @param pct Percentage by which to desaturate the color, with `0` returning
+ *            the same color and `1` returning a grayscale color
+ * @returns A new hex string for the desaturated color
+ */
 export function desaturate(color: string, pct: number): string {
     const [r, g, b] = hexToRgb(color);
 
@@ -111,8 +165,11 @@ export function desaturate(color: string, pct: number): string {
     return rgbToHex([newR, newG, newB]);
 }
 
-/** Lighten the color of a hex string by a given amount. Negative amoutns will
- *  darken the color.
+/**
+ * Lighten a color by a given amount. Negative amounts will darken the color.
+ * @param color A hex string, with a leading pound sign (`#`) included
+ * @param amt Amount by which to lighten a color
+ * @returns A new hex string for the lightened color
  */
 export function lighten(color: string, amt: number): string {
     const [r, g, b] = hexToRgb(color);

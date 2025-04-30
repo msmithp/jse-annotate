@@ -1,3 +1,11 @@
+/** Login.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The Login component is a login page. It contains a form for users to enter
+ * their username and password, and provides native error messages when
+ * incorrect credentials are entered. It also has a link to the CreateAccount
+ * page.
+ */
+
+
 import React from "react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";

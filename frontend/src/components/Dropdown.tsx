@@ -1,3 +1,11 @@
+/** Dropdown.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The Dropdown component is a simple dropdown menu with options grouped into
+ * categories. It takes a list of categories (each with its own values), the
+ * currently selected item, a flag for whether categories are being used, and
+ * a function that is called when the selected item is changed.
+ */
+
+
 import React from "react";
 import { useState } from "react";
 
@@ -30,12 +38,14 @@ function Dropdown({ values, selected, categories, onChange }: DropdownProps) {
     // Create dropdown options
     let options;
     if (!categories) {
+        // Categories are disabled, so don't include them
         options = values.map(category => (
             category.items.map(item =>
                 <option key={item.id} value={item.id}>{item.name}</option>
             ))
         );
     } else {
+        // Categories are enabled, so include them
         options = values.map(category => 
             <optgroup label={category.category} key={"category-" + category.category}>
                 {/* Iterate through each item in this category: */}

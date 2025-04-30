@@ -1,3 +1,12 @@
+/** JobCard.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The JobCard component displays a short, condensed summary of a job,
+ * containing only essential information. At the top, the job's title, company,
+ * location, and salary are listed, along with the user's compatibility with
+ * the job. Below this, skill information is displayed, including required
+ * years of experience, education, and skills.
+ */
+
+
 import { SkillCategory } from "../static/types";
 import { mapEducation, mapSkillToColor, 
     mapYearsExperience, mapSalary, truncate, 

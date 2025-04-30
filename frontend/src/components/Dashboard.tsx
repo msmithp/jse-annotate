@@ -1,3 +1,15 @@
+/** Dashboard.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The Dashboard component displays a user's dashboard. If they are not logged
+ * in, then no information is displayed except for a paragraph telling them to
+ * log in. If they are logged in, then the following information is shown:
+ *      * A chart showing the top 10 skills in their state
+ *      * A dynamic map showing the density of employer demand for a
+ *        skill chosen from a dropdown menu
+ *      * A list of the user's top 10 jobs in their state, sorted by
+ *        compatibility score
+ */
+
+
 import { useState } from "react";
 import { Job, SkillCategory, ChartSkillData, 
     StateDensityData, StateData } from "../static/types";
@@ -26,8 +38,8 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
 
     function handleSkillChange(id: number): void {
         setSelected(id);
-        console.log("Changing to skill " + id);
 
+        // If user data is null or undefined for any reason, log them out
         if (!user) {
             logoutUser();
             return;
@@ -38,13 +50,13 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
             id: user.user_id,
             skill: id
         }}).then(res => {
-            console.log(res.data.densityData);
             setMapData(res.data.densityData);
         }).catch(err => console.log(err))
     }
 
     return (
         <div className="dashboard">
+            {/* Left side of dashboard */}
             <div className="dashboardLeft">
                 <div className="dashboardChartBox">
                     <h2 className="dashboardLeftHeader">Top Skills in {blankMapData.stateName}</h2>
@@ -71,6 +83,8 @@ function Dashboard({ chartData, jobs, userSkills, blankMapData }: DashboardProps
                     )}
                 </div>
             </div>
+
+            {/* Right side of dashboard */}
             <div className="dashboardRight">
                 <h2 className="dashboardRightHeader">Your Top Jobs</h2>
                 <div className="dashboardJobList">

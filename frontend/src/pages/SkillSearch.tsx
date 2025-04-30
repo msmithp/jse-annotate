@@ -1,3 +1,13 @@
+/** SkillSearch.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The SkillSearch component is a page where users can find what skills are
+ * most desired by employers. A form is provided to select one or many U.S.
+ * states. When states are added or removed, a map and charts are updated to
+ * display the most in-demand skills in those states. Charts are broken down
+ * by skill category, while the map shows the most popular skill in each
+ * county of each chosen state.
+ */
+
+
 import { useState } from "react";
 import { SkillSearchMap, ChartGrid, DropdownList } from "../components";
 import { useStaticData } from "../context/StaticDataProvider";
@@ -54,7 +64,7 @@ function SkillSearch() {
     const [stateSkills, setStateSkills] = useState<StateSkillData[]>([]);
 
     function handleSkillSearch(states: number[]) {
-        // Call back-end to retrieve skill data for this state
+        // Call back-end to retrieve skill data for these states
         // and assign it to skillData using setSkillData()
         const params = {
             // Filter out blank dropdown selections
@@ -63,7 +73,6 @@ function SkillSearch() {
 
         axios.get("http://127.0.0.1:8000/api/skill-search/", {params: params})
         .then((res) => {
-            console.log(res.data);
             setSkillData(res.data.skills);
             setStateSkills(res.data.counties);
         })

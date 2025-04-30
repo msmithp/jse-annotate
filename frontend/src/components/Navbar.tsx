@@ -1,3 +1,11 @@
+/** Navbar.tsx * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * The Navbar component is a navigation bar, with links to Home, Job Search,
+ * Skill Search, and Profile (if the user is logged in). Also inclulded are a
+ * link to the login page (if the user is logged out), or a button to log out
+ * (if the user is logged in).
+ */
+
+
 import { NavLink } from "react-router-dom";
 import { useAuthContext } from "src/context/AuthProvider";
 
