@@ -1,7 +1,9 @@
 # job-search-engine
+
 A web app for finding tech jobs and gauging employer demands
 
 ## Team Information
+
 * Chris Pappelis
     * Role: Lead Back-End Developer
     * Contact: cfp4@hood.edu
@@ -10,12 +12,31 @@ A web app for finding tech jobs and gauging employer demands
     * Contact: mps3@hood.edu
 
 ## Description
-The Job Search Engine is a web app that performs two main features: It presents users with the most in-demand skills and requirements from employers in their area, and it shows users the jobs in their area that they are most compatible with based on their skills and experience. Additionally, users can create accounts and view their dashboard to see at a glance how in-demand their skills are and what jobs they should apply for. Job data is scraped from the web and visualized using bar charts and choropleth maps (geographical heat maps). The app focuses specifically on jobs in the computer science field. The goal of the Job Search Engine is to make it easier for those in computer science and related fields to strengthen their resume and/or find employment in their area.
+
+The Job Search Engine is a web app with two main aspects: It presents users with the most in-demand skills and requirements from employers in their area, and it lets users find the jobs in their desired region that they are most compatible with based on their experience, education, and skills. Additionally, users can create accounts and view a personalized dashboard to see at a glance how in-demand their skills are, what skills they should learn, and what jobs they should apply for. Job data is scraped from the web, and information on the requirements of each job is extracted from the title and descripton of the job. This extracted information is used to curate the jobs that users are shown and generate informative bar charts and choropleth maps (geographical heat maps). The app focuses specifically on jobs in the computer science field. The goal of the Job Search Engine is to make it easier for those in computer science and related fields to strengthen their résumé and find employment in their area.
 
 ## Compatibility Calculation
-Compatibility scores are calculated by taking the skills, education, and years of experience given by the user, and the skills, education, and years of experience required for a specific job. From there, the calculation is split into three parts. First, the skill score is calculated by determining how many of the jobs required skills the user knows, and the that number is divided by the number of skills the job requires. Next, the education score is calculated by giving each education level a "weight," with no education having the lowest weight at 0 and a doctorate having the highest weight at 1. The user's education weight is divided by the job's education weight. If the number is less than 1, that number is the education score. However, if the number is 1 or higher, the education score is 1. Then, the experience score is calculated in a similar way to the education score, in that the user's years of experience is divided by the years of experience required by the job. If the number is less than 1, that number is the experience score. However, if the number is 1 or higher, the experience score is 1. Finally, all three scores are put into a final formula and given weights. Skills and education are both given weights of 0.25, and years of experience is given a weight of 0.5 The numbers are multiplied by their weights, then added together. The product of this final equation is the user's compatibility score for that job.
+
+Compatibility scores are calculated by taking the skills, education, and years of experience given by the user, and comparing them to the skills, education, and years of experience required for a specific job. The calculation is split into three parts. 
+
+### Skill Compatibility
+
+The skill compatibility score is calculated by determining how many of the job's required skills the user knows, and then that number is divided by the number of skills the job requires.
+
+### Education Compatibility
+
+The education compatibility score is calculated by giving each education level a "weight," with no education having the lowest weight at 0 and a doctorate degree having the highest weight at 1. The user's education weight is divided by the job's education weight. If the number is less than 1, that number is the education score. However, if the number is 1 or higher, the education score is 1. 
+
+### Experience Compatibility
+
+The experience compatibility score is calculated in a similar way to the education compatibility score, in that the user's years of experience is divided by the years of experience required by the job. If the number is less than 1, that number is the experience score. However, if the number is 1 or higher, the experience score is 1. 
+
+### Final Calculation
+
+Finally, all three scores are put into a final formula and given weights. Skills and education are both given weights of 0.25, and years of experience is given a weight of 0.5. The numbers are multiplied by their weights, then added together. The product of this final equation is the user's compatibility score for that job, between 0 and 1. When the score is displayed to the user, it is multiplied by 100.
 
 ## Tech Stack
+
 * **JavaScript runtime**: Node.js
 * **Front-end**: React
 * **Back-end**: Django
@@ -55,6 +76,7 @@ job-search-engine/
 ## Installation and Configuration
 
 ### Prerequisites
+
 * Node.js 22.9.0 or higher
 * npm 10.8.3 or higher
 * Python 3.12 or higher
