@@ -21,15 +21,15 @@ Compatibility scores are calculated by taking the skills, education, and years o
 
 ### Skill Compatibility
 
-The skill compatibility score is calculated by determining how many of the job's required skills the user knows, and then that number is divided by the number of skills the job requires.
+The skill compatibility score is calculated by determining how many of the job's required skills the user knows, and then that number is divided by the number of skills the job requires. If the job requires no skills, user will receive a 100% for this portion.
 
 ### Education Compatibility
 
-The education compatibility score is calculated by giving each education level a "weight," with no education having the lowest weight at 0 and a doctorate degree having the highest weight at 1. The user's education weight is divided by the job's education weight. If the number is less than 1, that number is the education score. However, if the number is 1 or higher, the education score is 1. 
+The education compatibility score is calculated by giving each education level a "weight," with no education having the lowest weight at 0 and a doctorate degree having the highest weight at 1. If the job requires no education, the user's score is determined by subtracting the weight for their given education level from 1. Otherwise, the user's education weight is divided by the job's education weight. If the number is less than 1, that number is the education score. However, if the number is higher than 1, then to account for overqualification, the number is divided by 10, subtracted by 1, and returned as the final score for this portion. 
 
 ### Experience Compatibility
 
-The experience compatibility score is calculated in a similar way to the education compatibility score, in that the user's years of experience is divided by the years of experience required by the job. If the number is less than 1, that number is the experience score. However, if the number is 1 or higher, the experience score is 1. 
+The experience compatibility score is calculated in a similar way to the education compatibility score, in that the user's years of experience is divided by the years of experience required by the job. If the job requires no years of experience, the user's years of experience are divided by 10 and subtracted from one and returned as the score, and if that results in a negative number, the given score will be 0. If the user's years of experience are lower than the years of experience required by the job, their years of experience are divided by the years of experience required by the job and returned as the score. If the user's years of experience are higher than what the job requires, but the user has five years of experience or less, the returned score will be 1. However, if the user's years of experience are higher than what the job requires and the user has more than five years of experience, then to account for overqualification, the score is determined by dividing the difference between the user's years of experience and the job's required years of experience by the sum of the two values, and that resulting number if subtracted from 1. If the resulting number is negative, the score returned for this portion will be 0.
 
 ### Final Calculation
 
