@@ -17,6 +17,7 @@
 
 import { useState } from "react";
 import { Job, SkillCategory } from "../static/types";
+import { Warning } from ".";
 import { mapSalary, mapYearsExperience, mapEducation, 
     mapScoreToColor, mapSkillToColor, truncate } from "src/static/utils";
 
@@ -169,6 +170,9 @@ function JobSummary({ jobData }: JobSummaryProps) {
         <div className="jobSummary">
             {jobData != null ? (
                 <>
+                    { false && 
+                        <Warning message="You may be overqualified for this job"/>
+                    }
                     <Header title={jobData.title}
                         company={jobData.company}
                         cityName={jobData.cityName}

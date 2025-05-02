@@ -72,13 +72,13 @@ def process_job(row: list[str]) -> tuple[Job, list[int]]:
             if len(candidate_cities) == 0:
                 # Job's city is not in database - set city to null
                 city = None
-            elif len(candidate_cities) == 0:
+            elif len(candidate_cities) == 1:
                 # Exactly one match for job's city
                 city = candidate_cities[0].pk
             else:
                 # Multiple cities with same name and state - break tie by
                 # picking city with greatest population
-                city = min(candidate_cities, key=lambda x: x.population)
+                city = max(candidate_cities, key=lambda x: x.population)
 
     """ Salary processing """
     pay_interval = row[10]  # "yearly", "hourly", or null
