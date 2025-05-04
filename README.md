@@ -45,7 +45,7 @@ Finally, all three scores are put into a final formula and given weights. Skills
 
 ## Project Structure
 
-For brevity's sake, only the most important files and directories are shown here. 
+For brevity's sake, files and directories that are unused or that are of minimal importance are omitted in the project structure tree.
 
 ```
 job-search-engine/
@@ -53,6 +53,7 @@ job-search-engine/
 │   ├── backend/            # Configuration files and back-end URLs
 │   ├── jobsearch/          
 │   │   ├── management/     # Django management commands
+│   │   ├── admin.py        # Django admin page setup
 │   │   ├── models.py       # Database schema
 │   │   ├── serializers.py  # Database serializers
 │   │   └── views.py        # Back-end functions and queries

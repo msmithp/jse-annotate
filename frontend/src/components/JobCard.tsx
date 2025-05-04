@@ -7,7 +7,7 @@
  */
 
 
-import { SkillCategory } from "../static/types";
+import { SkillCategory, Score } from "../static/types";
 import { Warning } from ".";
 import { mapEducation, mapSkillToColor, 
     mapYearsExperience, mapSalary, truncate, 
@@ -22,7 +22,7 @@ interface JobCardProps {
     minSalary: number,
     maxSalary: number,
     link: string,
-    score: number,
+    score: Score,
     skills: SkillCategory[],
     education: string,
     yearsExperience: number
@@ -49,11 +49,14 @@ function JobCard({ title, company, cityName, stateCode, minSalary,
             )}
         </div>
     ) : <p>None specified</p>
-    const scoreColor = mapScoreToColor(score);
+    const scoreColor = mapScoreToColor(score.score);
+    const isOverqualified = score.overqualifiedEdu
+                            && score.overqualifiedSkills
+                            && score.overqualifiedYears;
 
     return (
         <div className="jobCard">
-            { false && 
+            { isOverqualified && 
                 <Warning message="You may be overqualified for this job"/>
             }
             <div className="jobCardHeader">
@@ -67,7 +70,7 @@ function JobCard({ title, company, cityName, stateCode, minSalary,
                 </div>
                 <div className="jobCardHeaderRight">
                     <div className="scoreSmall" style={{borderColor: scoreColor}}>
-                        <h3>{Math.round(score)}</h3>
+                        <h3>{Math.round(score.score)}</h3>
                     </div>
                     <div>
                         <p>COMPATIBILITY</p>

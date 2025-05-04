@@ -26,6 +26,13 @@ export interface Experience {
     years: string
 }
 
+export interface Score {
+    score: number,
+    overqualifiedYears: boolean,
+    overqualifiedEdu: boolean,
+    overqualifiedSkills: boolean
+}
+
 export interface Job {
     id: number,
     title: string,
@@ -36,7 +43,7 @@ export interface Job {
     minSalary: number,
     maxSalary: number,
     link: string,
-    score: number,
+    score: Score,
     skills: SkillCategory[],
     education: string,
     yearsExperience: number

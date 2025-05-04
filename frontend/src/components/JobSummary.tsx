@@ -166,11 +166,15 @@ interface JobSummaryProps {
 }
 
 function JobSummary({ jobData }: JobSummaryProps) {
+    const isOverqualified = jobData!.score.overqualifiedEdu
+                            && jobData!.score.overqualifiedSkills
+                            && jobData!.score.overqualifiedYears;
+
     return (
         <div className="jobSummary">
             {jobData != null ? (
                 <>
-                    { false && 
+                    { isOverqualified && 
                         <Warning message="You may be overqualified for this job"/>
                     }
                     <Header title={jobData.title}
@@ -179,7 +183,7 @@ function JobSummary({ jobData }: JobSummaryProps) {
                         stateCode={jobData.stateCode}
                         minSalary={jobData.minSalary}
                         maxSalary={jobData.maxSalary}
-                        score={jobData.score} />
+                        score={jobData.score.score} />
                     <hr />
                     <Requirements experience={jobData.yearsExperience}
                         education={jobData.education}

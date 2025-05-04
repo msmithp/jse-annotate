@@ -380,10 +380,10 @@ def get_static_data(request: HttpRequest) -> JsonResponse:
     skillValues = []
     skills = Skill.objects.all()
     categories = sorted(list(skills.values_list('category', flat=True).distinct()))
+    print(categories)
     for category in categories:
-        catName = category['category']
-        catData = {'category': catName, 'skills': []}
-        cat_skills = list(skills.filter(category=catName))
+        catData = {'category': category, 'skills': []}
+        cat_skills = list(skills.filter(category=category))
 
         for skill in cat_skills: #append skill data to dict
             catData['skills'].append({
@@ -397,6 +397,8 @@ def get_static_data(request: HttpRequest) -> JsonResponse:
     states = State.objects.all()
     for state in states: #append state data for every state to dict
         locationValues.append({'id': state.pk, 'name': state.state_name})
+
+    print(skillValues, locationValues)
 
     #output:
     return JsonResponse({
@@ -553,7 +555,7 @@ def get_dashboard_data(request: HttpRequest) -> JsonResponse:
         })
     
     for j in range (0,10): #append top ten most frequent skills to dict
-        top_score = max(top_scores, key=lambda x:x['score'])
+        top_score = max(top_scores, key=lambda x:x["score"]['score'])
         dashboard_data['jobs'].append(top_score)
         top_scores.remove(top_score)
 
