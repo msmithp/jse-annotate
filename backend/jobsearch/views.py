@@ -211,20 +211,17 @@ def skill_search(request: HttpRequest) -> JsonResponse:
             for item in job.skills.all():
                 skill_occurrences[item] += 1 # for each skill found in job skills, increment that skill's occurrences in dictionary
 
-    categories = set()
-    for skill in skill_set:
-        categories.add(skill.category) #fill a set with all unique values for skills' categories
-    categories = sorted(categories) #sort categories alphabetically
+    categories = sorted(list(skill_set.values_list('category', flat=True).distinct())) #get all unique skill categories, sort alphabetically
 
     for category in categories:
         catInfo = {'category': category, 'skills': []} #for each category, create new dictionary, then append to skill_counts list
         skill_counts.append(catInfo)
-        for skill in skill_set:
-            if skill.category == category:
-                catInfo['skills'].append({ #for each skill in given category, append a dict with the following info
-                    'id': skill.pk,
-                    'skillName': skill.skill_name,
-                    'occurrences': skill_occurrences[skill]
+        cat_skills = skill_set.filter(category=category)
+        for skill in cat_skills:
+            catInfo['skills'].append({ #for each skill in given category, append a dict with the following info
+                'id': skill.pk,
+                'skillName': skill.skill_name,
+                'occurrences': skill_occurrences[skill]
                 })
 
     county_vals = []
@@ -244,7 +241,7 @@ def skill_search(request: HttpRequest) -> JsonResponse:
         county_vals.append(state_info)
 
         # get queryset of counties within state and get list of all skill pks
-        counties = County.objects.filter(state=thisState)
+        counties = County.objects.filter(state=thisState).prefetch_related()
 
         for this_county in counties: # create new dict for skill occurrences for each county
             skill_occurrences = {skill: 0 for skill in total_skills}
@@ -381,13 +378,14 @@ def get_static_data(request: HttpRequest) -> JsonResponse:
     """
     #initialize skillValues dictionary
     skillValues = []
-    categories = list(Skill.objects.values('category').distinct())
+    skills = Skill.objects.all()
+    categories = sorted(list(skills.values_list('category', flat=True).distinct()))
     for category in categories:
         catName = category['category']
         catData = {'category': catName, 'skills': []}
-        skills = list(Skill.objects.filter(category=catName))
+        cat_skills = list(skills.filter(category=catName))
 
-        for skill in skills: #append skill data to dict
+        for skill in cat_skills: #append skill data to dict
             catData['skills'].append({
                 'id':skill.pk,
                 'name': skill.skill_name
