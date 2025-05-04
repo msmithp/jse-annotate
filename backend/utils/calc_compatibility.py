@@ -6,7 +6,8 @@ def calculate_compatibility(userSkills: list[int], userEdu: str, userYears: int,
     eduScore = calc_edu(userEdu, reqEdu)
     yearScore = calc_years(userYears, reqYears)
 
-    #give each segment a weigjt - skill and edu take 25% of the score each, years takes 50% of the score - add together
+    #give each segment a weight - skill and edu take 25% of the score each, years takes 50% of the score
+    #multiply each segment by its respective weight and add together
     total = ((skillScore[0]*0.25) + (eduScore[0]*0.25) + (yearScore[0]*0.5)) * 100
 
     return {'score': total,
@@ -17,11 +18,9 @@ def calculate_compatibility(userSkills: list[int], userEdu: str, userYears: int,
 def calc_skills(userSkills: list, reqSkills: list): #calculate skill compatibility - add overqualification flag
     overqualified = False
     userSkillPoints = 0
-    if len(reqSkills) == 0:
-        if len(userSkills) == 0:
-            score = 1 #if job has no skills, user gets 100% for skills, so return 1
-        elif len(userSkills) != 0:
-            score = 1
+    if len(reqSkills) == 0: #if job has no skills, score is 1
+        score = 1
+        if len(userSkills) != 0: #if user has skills when job doesn't require any, mark as overqualified
             overqualified = True
     else:
         #else, get how many skills job requires, and if user has a skill that the job requires, add a point to their score
@@ -31,7 +30,7 @@ def calc_skills(userSkills: list, reqSkills: list): #calculate skill compatibili
             if skill in userSkills:
                 userSkillPoints += 1
         score = userSkillPoints/jobSkillPoints #score is determined by dividing user's points by job's total points
-        if (score == 1) & (len(userSkills) > len(reqSkills)): #if user's score is 1 and they have more skills, mark as overqualified
+        if (score == 1) & (len(userSkills) > len(reqSkills)): #if user has all required skills and then some, mark as overqualified
             overqualified = True
     return score, overqualified
 
@@ -51,15 +50,13 @@ def calc_edu(userEdu: str, reqEdu: str): #calculate education compatibility
     if reqEdu in education:
         reqEduScore = education[reqEdu]
         
-    if reqEduScore == 0:
-        if userEduScore == 0:
-            score = 1
-        if userEduScore != 0: #if job requires no education, just subtract the user's education level from 1
-            score = 1
+    if reqEduScore == 0: #if job requires no education, score is 1
+        score = 1
+        if userEduScore != 0: #if user has level of edu above 0, mark overqualified
             overqualified = True
     else:
         score = userEduScore/reqEduScore #score is determined by dividing user's education by required education
-        if score > 1:
+        if score > 1: #if score is over 1, reset to 1 and mark overqualified
             score = 1
             overqualified = True
 
@@ -68,16 +65,14 @@ def calc_edu(userEdu: str, reqEdu: str): #calculate education compatibility
 def calc_years(userYears: int, reqYears: int): #calculate years of experience compatibility
     overqualified = False
 
-    if reqYears == 0:
-        if userYears != 0:
-            score = 1 #if job requires no experience and user has experience, return 1 and mark as overqualified
+    if reqYears == 0: #if job requires no years of experience, score is 1
+        score = 1
+        if userYears != 0: #if user has experience when job doesn't require any, mark overqualified
             overqualified = True
-        if userYears == 0: #however, if job has no experience AND user has no experience, just return 1
-            score = 1
     else:
         score = userYears/reqYears #else, return either users years divided by req years
-        if score > 1:
+        if score > 1: #if score is over 1, reset to 1 and mark overqualified
             score = 1
-            overqualified = True #if score is over 1, set to 1 and mark as overqualified
+            overqualified = True
 
     return score, overqualified
