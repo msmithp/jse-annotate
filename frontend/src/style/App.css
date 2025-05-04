@@ -15,6 +15,7 @@
     --success-color: #2a9756;
     --success-color-lighter: #32b365;
     --warning-color: #FFBA1F;
+    --strong-warning-color: #ff791f;
     --fg-color: #eeeeee;
 
     background-color: var(--bg-color);
@@ -479,6 +480,36 @@ select, input {
 
 .jobCardCategoryName p, .jobCardSkill p {
     transform: translateY(-35%);
+}
+
+.warning {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.warning p {
+    color: var(--strong-warning-color);
+}
+
+.warningExclamation {
+    padding: 0.5rem;
+    aspect-ratio: 1 / 1;
+    background-color: var(--strong-warning-color);
+    width: 0.6rem;
+    height: 0.6rem;
+    display: flex;
+    width: fit-content;
+    align-items: center;  
+    justify-content: center;
+    border-radius: 50% !important;
+    box-sizing: unset;
+}
+
+.warningExclamation p {
+    color: var(--fg-color);
+    font-family: "Geologica", sans-serif;
+    font-weight: 800;
 }
 
 

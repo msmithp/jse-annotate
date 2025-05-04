@@ -8,6 +8,7 @@
 
 
 import { SkillCategory } from "../static/types";
+import { Warning } from ".";
 import { mapEducation, mapSkillToColor, 
     mapYearsExperience, mapSalary, truncate, 
     mapScoreToColor} from "../static/utils";
@@ -52,6 +53,9 @@ function JobCard({ title, company, cityName, stateCode, minSalary,
 
     return (
         <div className="jobCard">
+            { false && 
+                <Warning message="You may be overqualified for this job"/>
+            }
             <div className="jobCardHeader">
                 <div className="jobCardHeaderLeft">
                     <h2>{title}</h2>
