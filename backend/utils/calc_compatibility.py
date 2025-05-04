@@ -1,6 +1,6 @@
 #dont penalize for overqualification, instead send flag to user that they may be overqualified
 def calculate_compatibility(userSkills: list[int], userEdu: str, userYears: int,
-                            reqSkills: list[int], reqEdu: str, reqYears: int):
+                            reqSkills: list[int], reqEdu: str, reqYears: int) -> dict:
     #calculate individual scores for skills, edu, and years
     skillScore = calc_skills(userSkills,reqSkills)
     eduScore = calc_edu(userEdu, reqEdu)

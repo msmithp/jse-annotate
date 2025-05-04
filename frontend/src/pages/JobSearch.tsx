@@ -19,9 +19,9 @@ import { useAuthContext } from "../context/AuthProvider";
 
 function orderJobs(job1: Job, job2: Job): number {
     // Higher compatibility scores first
-    if (job1.score > job2.score) {
+    if (job1.score.score > job2.score.score) {
         return -1;
-    } else if (job1.score < job2.score) {
+    } else if (job1.score.score < job2.score.score) {
         return 1;
     }
 
@@ -46,7 +46,8 @@ function orderJobs(job1: Job, job2: Job): number {
 interface JobSearchFormProps {
     onSubmit: (
         location: number[], education: string,
-        experience: number, skills: number[]
+        experience: number, skills: number[],
+        showOverqualified: boolean
     ) => void,
     userID?: number
 };
@@ -64,11 +65,12 @@ function JobSearchForm({ onSubmit, userID }: JobSearchFormProps) {
     const [education, setEducation] = useState("none");
     const [experience, setExperience] = useState(0);
     const [skills, setSkills] = useState([-1]);
+    const [showOverqualified, setShowOverqualified] = useState(false);
 
     // Event handlers
     function handleSubmit(event: React.FormEvent): void {
         event.preventDefault();
-        onSubmit(locations, education, experience, skills);
+        onSubmit(locations, education, experience, skills, showOverqualified);
     }
 
     function handleImport(event: React.FormEvent): void {
@@ -117,7 +119,9 @@ function JobSearchForm({ onSubmit, userID }: JobSearchFormProps) {
     );
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}
+            style={{display: "flex", flexDirection: "column"}}
+        >
             <label>
                 <p>States:</p>
                     <DropdownList 
@@ -166,6 +170,17 @@ function JobSearchForm({ onSubmit, userID }: JobSearchFormProps) {
                     onChange={handleSkillDropdownChange}
                     onRemove={handleRemoveSkillDropdown}/>
             </label>
+
+            <div className="overqualificationCheck">
+                <input
+                    type="checkbox"
+                    id="showOverqualified"
+                    name="showOverqualified"
+                    checked={showOverqualified}
+                    onChange={_ => setShowOverqualified(!showOverqualified)}/>
+                <label htmlFor="showOverqualified">Show jobs you may be overqualified for</label>
+            </div>
+            
             <div className="formButtons">
                 {userID && 
                     <button type="button" onClick={e => handleImport(e)}>
@@ -193,7 +208,7 @@ function JobSearch() {
     }, [])
 
     function handleJobSearch(locations: number[], education: string,
-        experience: number, skills: number[]): void {
+        experience: number, skills: number[], showOverqualified: boolean): void {
         // Reset error message box
         setError("");
 
@@ -228,9 +243,20 @@ function JobSearch() {
         // Call to back-end to get jobs with given search criteria
         axios.get("http://127.0.0.1:8000/api/job-search/", {params: params, headers: headers})
         .then((res) => {
-            const jobData: Job[] = res.data.jobs;
+            let jobData: Job[] = res.data.jobs;
+
+            // If the user has unchecked the option to show overqualified jobs,
+            // then filter them out of the job list
+            if(!showOverqualified) {
+                jobData = jobData.filter(job => 
+                    !(job.score.overqualifiedYears 
+                        && job.score.overqualifiedEdu
+                        && job.score.overqualifiedSkills))
+            }
+
             // Sort job data in decreasing order by compatibility score
             jobData.sort(orderJobs);
+
             setJobs(jobData);
         })
         .catch((err) => console.log(err));

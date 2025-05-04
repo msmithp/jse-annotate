@@ -295,7 +295,12 @@ def job_search(request: HttpRequest) -> JsonResponse: #assume userState is the s
             "minSalary": float,
             "maxSalary": float,
             "link": str,
-            "score": float,
+            "score": {
+                "score": float,
+                "overqualifiedYears": bool,
+                "overqualifiedEdu": bool,
+                "overqualifiedSkills": bool
+            }
             "skills": {
                 "category": str,
                 "skills": {
@@ -434,7 +439,12 @@ def get_dashboard_data(request: HttpRequest) -> JsonResponse:
                 "minSalary": float,
                 "maxSalary": float,
                 "link": str,
-                "score": float,
+                "score": {
+                    "score": float,
+                    "overqualifiedYears": bool,
+                    "overqualifiedEdu": bool,
+                    "overqualifiedSkills": bool
+                }
                 "skills": {
                     "category": str,
                     "skills": {
@@ -553,7 +563,15 @@ def get_dashboard_data(request: HttpRequest) -> JsonResponse:
             'education': job.education,
             'yearsExperience': job.years_exp
         })
-    
+
+    # For top 10 jobs in dashboard, filter out any jobs for which the
+    # user is overqualified
+    top_scores = [
+        j for j in top_scores if not (j["score"]["overqualifiedYears"] 
+                                      and j["score"]["overqualifiedEdu"] 
+                                      and j["score"]["overqualifiedSkills"])
+    ]
+
     for j in range (0,10): #append top ten most frequent skills to dict
         top_score = max(top_scores, key=lambda x:x["score"]['score'])
         dashboard_data['jobs'].append(top_score)
@@ -577,6 +595,11 @@ def get_dashboard_data(request: HttpRequest) -> JsonResponse:
                     'name': skill['skill_name']
                 })
         dashboard_data['userSkills'].append(cat_data)
+
+    # Sort user skill categories alphabetically
+    dashboard_data["userSkills"] = sorted(
+        dashboard_data["userSkills"], key=lambda x:x["category"]
+    )
 
     return JsonResponse({'dashboardData': dashboard_data})
 
