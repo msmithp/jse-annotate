@@ -684,6 +684,12 @@ select, input {
 
 .modalFooter button {
     padding: 0.7rem;
+    transition: 0.1s;
+}
+
+.modalFooter button[type=button]:hover {
+    background-color: var(--window-color-lighter);
+    transition: 0.1s;
 }
 
 .showMoreButton {

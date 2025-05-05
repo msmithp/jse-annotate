@@ -25,7 +25,7 @@ education = {
 
 # When searching for skills, we check if they are surrounded by
 # any two characters from this expression
-ignore = " !\"\'\\`()\n\t,:;=<>?./’"
+ignore = " !\"\'\\`()\n\t,:;=<>?./’*"
 
 # Create a skill cache so the database is hit only once when extracting
 # skills from jobs in bulk

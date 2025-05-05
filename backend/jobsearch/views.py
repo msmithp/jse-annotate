@@ -385,7 +385,7 @@ def get_static_data(request: HttpRequest) -> JsonResponse:
     skillValues = []
     skills = Skill.objects.all()
     categories = sorted(list(skills.values_list('category', flat=True).distinct()))
-    print(categories)
+    
     for category in categories:
         catData = {'category': category, 'skills': []}
         cat_skills = list(skills.filter(category=category))
@@ -402,8 +402,6 @@ def get_static_data(request: HttpRequest) -> JsonResponse:
     states = State.objects.all()
     for state in states: #append state data for every state to dict
         locationValues.append({'id': state.pk, 'name': state.state_name})
-
-    print(skillValues, locationValues)
 
     #output:
     return JsonResponse({

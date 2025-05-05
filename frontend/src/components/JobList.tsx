@@ -67,7 +67,7 @@ function JobList({ jobs }: JobListProps) {
                 <JobSummary jobData={currentJob} />
                 
                 <div className="modalFooter">
-                    <button onClick={handleCloseModal}>Cancel</button>
+                    <button type="button" onClick={handleCloseModal}>Cancel</button>
                     {currentJob && currentJob.link && 
                         <a href={currentJob!.link} target="_blank">
                             <button type="submit">Apply</button>
