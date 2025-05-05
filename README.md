@@ -2,6 +2,10 @@
 
 A web app for finding tech jobs and gauging employer demands
 
+## GitHub Repository
+
+The GitHub repository for this project may be found [here](https://github.com/msmithp/job-search-engine).
+
 ## Team Information
 
 * Chris Pappelis
@@ -17,23 +21,50 @@ The Job Search Engine is a web app with two main aspects: It presents users with
 
 ## Compatibility Calculation
 
-Compatibility scores are calculated by taking the skills, education, and years of experience given by the user, and comparing them to the skills, education, and years of experience required for a specific job. The calculation is split into three parts. 
+Compatibility scores are calculated by taking the skills, education, and years of experience given by the user, and comparing them to the skills, education, and years of experience required for a specific job. The calculation is split into three components. 
 
 ### Skill Compatibility
 
-The skill compatibility score is calculated by determining how many of the job's required skills the user knows, and then that number is divided by the number of skills the job requires. If the job requires no skills, user will receive a 100% for this portion. If the user has skills when the job doesn't require any, or the user has all required skills and then some, this segment gains an "overqualified" flag.
+The skill compatibility score is calculated by determining how many of the job's required skills the user knows, then dividing that number by the number of skills the job requires. Mathematically, this is expressed as
+
+$$\text{SkillScore} = \frac{s_{user}}{s_{job}},$$
+
+where $s_{user}$ refers to the number of required skills that the user has, and $s_{job}$ refers to the number skills the job requires. If the job requires no skills, then the user will always receive a score of 1 for this portion. If the user has any skills when the job doesn't require any, or if the user has all required skills and additional skills beyond those required, then this segment gains an "overqualified" flag.
 
 ### Education Compatibility
 
-The education compatibility score is calculated by giving each education level a "weight," with no education having the lowest weight at 0 and a doctorate degree having the highest weight at 1. If the job requires no education, the score is returned as 1. If the user has an education level higher than 1, this segment gains an "overqualified" flag. Otherwise, the user's education weight is divided by the job's education weight. If the number is less than 1, that number is the education score. However, if the number is higher than 1, then the score is reset to 1 and this segment gains an "overqualified" flag.
+The education compatibility score is calculated by first giving each education level a numerical "weight," with no education having the lowest weight at 0 and a doctorate degree having the highest weight at 1. The weights are displayed in the following table:
+
+|Education level           |Weight|
+|--------------------------|------|
+|No education              |0     |
+|High school               |0.2   |
+|Associate's degree        |0.4   |
+|Bachelor's degree         |0.6   |
+|Master's degree           |0.8   |
+|Doctorate degree or higher|1     |
+
+If the job requires no education, then the user will always receive a score of 1 for this portion. If, in this case, the user has a high school education or higher, then this segment gains an "overqualified" flag. Otherwise, the education score is calculated by dividing the user's education weight by the job's education weight. Mathematically, this is expressed as
+
+$$\text{EducationScore} = \frac{w_{user}}{w_{job}},$$
+
+where $w_{user}$ is the weight of the user's education level and $w_{job}$ is the weight of the job's required education level. If the resulting score is higher than 1, then the score is reset to 1 and this segment gains an "overqualified" flag.
 
 ### Experience Compatibility
 
-The experience compatibility score is calculated in a similar way to the education compatibility score, in that the user's years of experience is divided by the years of experience required by the job. If the job requires no years of experience, the score is returned as 1. If the user has years of experience when the job doesn't require anyway, this segment also gains an overqualified flag. Otherwise, the score is determined by dividing the user's years of experience by the years of experience required by the job. If that resulting score is higher than 1, the score is reset to 1 and this segment gains an "overqualified" flag.
+The experience compatibility score is calculated in a similar way to the education compatibility score, in that the user's years of experience is divided by the years of experience required by the job. Mathematically, this is expressed as
+
+$$\text{ExperienceScore} = \frac{y_{user}}{y_{job}}$$
+
+where $y_{user}$ is the number of years of experience that the user has, and $y_{job}$ is the number of years of experience that the job requires. If the job requires no experience, then the user will always receive a score of 1 for this portion. If the user has 1 or more years of experience when the job doesn't require any, this segment also gains an "overqualified" flag. If the resulting score is higher than 1, then the score is reset to 1 and this segment gains an "overqualified" flag.
 
 ### Final Calculation
 
-Finally, all three scores are put into a final formula and given weights. Skills and education are both given weights of 0.25, and years of experience is given a weight of 0.5. The numbers are multiplied by their weights, then added together. The product of this final equation is the user's compatibility score for that job, between 0 and 1. When the score is displayed to the user, it is multiplied by 100.
+Finally, all three scores are aggregated in a formula and given weights. The skill and education scores are both given weights of 0.25, and the experience score is given a weight of 0.5. The numbers are multiplied by their weights, then added together. Mathematically, this is expressed as 
+
+$$\text{CompatibilityScore} = (0.25\cdot\text{SkillScore}) + (0.25\cdot\text{EducationScore}) + (0.5\cdot\text{ExperienceScore}).$$
+
+The result of this equation is the user's compatibility score for that job, between 0 and 1. When the score is displayed to the user, it is multiplied by 100. If the user has an "overqualified" flag for all three components of the score, then they are considered overqualified for the job.
 
 ## Tech Stack
 
@@ -258,7 +289,7 @@ This section discusses how to scrape new job data.
     * `--hours <num_hours>` - Specifies the maximum number of hours old a scraped job may be. Note that the age of a job posting as specified here is the age of the posting on Indeed, not the age of the posting on the employer's website.
     * `--today` - Flag that limits scraped jobs to just those uploaded on the current date. If both `--hours` and `--today` are specified, then `--today` will take precedence. **The `--today` flag is stricter than the `--hours` flag**: The `--today` flag will only return jobs whose posting date **on the employer's website** is today. In other words, it will only return jobs whose original posting has occurred **today** (i.e., between midnight and the current time).
 
-    There is a limit of 1,000 jobs imposed on the `scrape` command, since anything higher than this is likely to get you rate-limited.
+    There is a limit of 1,000 jobs imposed on the `scrape` command, since anything higher than this may get you rate-limited.
 
 To clear all jobs from the database, use the following command:
 
