@@ -53,3 +53,22 @@ def categorize(skills: list[Skill]) -> list[dict]:
 
     # Return sorted list
     return categories_list_sorted
+
+
+def any_from_list_in(wds: list[str], target: str) -> bool:
+    """
+    Return `True` if any words from a list are in a target string,
+    otherwise return `False`
+
+    :param wds: A list of strings
+    :param target: A target string
+
+    :return: `True` if any of the words from `wds` are in `target`,
+             and `False` otherwise
+    """
+    for wd in wds:
+        # Check if word is contained within target string
+        if wd in target:
+            # Word found
+            return True
+    return False

@@ -1,10 +1,12 @@
 import re
 from jobsearch.models import Skill
+from utils.helper_functions import any_from_list_in
 
 # String versions of numbers (for years of experience parsing)
 numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven",
             "eight", "nine", "ten", "eleven", "twelve", "thirteen",
-            "fourteen", "fifteen", "sixteen", "seventeen", "eighteen"]
+            "fourteen", "fifteen", "sixteen", "seventeen", "eighteen",
+            "nineteen", "twenty"]
 
 # Education levels and their common associated terms/phrases
 education = {
@@ -16,7 +18,7 @@ education = {
                      "undergraduate degree", "undergraduate's degree",
                      "four year degree", "4 year degree"],
         "master": ["master's", "master degree", "m.s.", "m.a.", 
-                   "masters degree", "mba", "m.b.a"],
+                   "masters degree", "mba", "m.b.a", "graduate degree"],
         "doctorate": ["doctorate", "doctoral", "phd", "ph.d", "d.sc.",
                       "postgraduate degree"]
 }
@@ -234,10 +236,11 @@ def experience_extract(job_desc: str) -> int:
                         continue
 
         # Search for years of experience by finding mentions of the word
-        # "year", then find if the word "experience" is also mentioned
-        # within a certain range (search_range). If it is, check the words
+        # "year". Then, find if any words from `exp_keywords` are also mentioned
+        # within a certain range (search_range). If they are, check the words
         # before the word "year" up to a certain limit (number_threshold) to
         # see if there is a number
+        exp_keywords = ["experience", "skill", "require"]
         years_of_exp = -1
         search_range = 7
         number_threshold = 7
@@ -247,16 +250,16 @@ def experience_extract(job_desc: str) -> int:
                         high = min(len(desc_list), i+search_range)
                         experience_found = False
 
-                        # Look backwards for "experience" or "skill"
+                        # Look backwards for experience keywords
                         for j in range(i, low, -1):
-                                if "experience" in desc_list[j] or "skill" in desc_list[j]:
+                                if any_from_list_in(exp_keywords, desc_list[j]):
                                         experience_found = True
                                         break
 
-                        # Look forwards for "experience"
+                        # Look forwards for experience keywords
                         if not experience_found:
                                 for j in range(i, high, 1):
-                                        if "experience" in desc_list[j] or "skill" in desc_list[j]:
+                                        if any_from_list_in(exp_keywords, desc_list[j]):
                                                 experience_found = True
                                                 break
                         

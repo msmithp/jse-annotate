@@ -104,7 +104,19 @@ function hashString(s: string): number {
  * @returns A hex code of a color, with a pound sign (`#`) included
  */
 export function skillDensityGradient(skill: string, density: number): string {
-    return linearGradient(GRAY, mapSkillToColor(skill), density);
+    /* The mathematical function used below gives a "boost" to counties that
+       have low densities to make them more visible. It works like a linear
+       function that has been "warped" above the y=x line. It looks like this:
+                                        cx
+                                    ------------
+                                    (c - 1)x + 1
+       where x is the density, between 0 and 1, of a county, and c is a tuning
+       parameter, higher values of which make the function curve higher above 
+       the y=x line.
+    */
+    const C = 2.5;
+    const pct = (C * density) / (((C - 1) * density) + 1)
+    return linearGradient(GRAY, mapSkillToColor(skill), pct);
 }
 
 /**
