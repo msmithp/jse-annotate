@@ -682,17 +682,28 @@ def get_density_data(request: HttpRequest) -> JsonResponse:
     max_occ = max(occurrences, key=lambda x:x['occurrences'])
 
     #get density from occurrences for given skill for every county, append to dict
-    for county in counties: 
-        for item in occurrences:
-            if item['countyName'] == county.county_name:
-                density = item['occurrences']/max_occ['occurrences']
+    if max_occ['occurrences'] > 0:
+        for county in counties: 
+            for item in occurrences:
+                if item['countyName'] == county.county_name:
+                    density = item['occurrences']/max_occ['occurrences']
 
-                data['countyData'].append({
-                    'countyID':county.pk,
-                    'countyName': county.county_name,
-                    'countyFips': county.fips,
-                    'density': density,
-                    'numJobs': item['occurrences']
-                })
+                    data['countyData'].append({
+                        'countyID': county.pk,
+                        'countyName': county.county_name,
+                        'countyFips': county.fips,
+                        'density': density,
+                        'numJobs': item['occurrences']
+                    })
+    else:
+        # No jobs with this skill, so return 0 for all densities
+        for county in counties:
+            data['countyData'].append({
+                'countyID': county.pk,
+                'countyName': county.county_name,
+                'countyFips': county.fips,
+                'density': 0,
+                'numJobs': 0
+            })
     
     return JsonResponse({'densityData': data})
