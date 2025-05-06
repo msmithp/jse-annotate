@@ -74,7 +74,7 @@ def process_job(row: list[str]) -> tuple[Job, list[int]]:
                 city = None
             elif len(candidate_cities) == 1:
                 # Exactly one match for job's city
-                city = candidate_cities[0].pk
+                city = candidate_cities[0]
             else:
                 # Multiple cities with same name and state - break tie by
                 # picking city with greatest population
