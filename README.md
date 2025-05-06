@@ -171,6 +171,8 @@ Next, create a PostgreSQL database which will store the data used by the applica
     ALTER DATABASE jobsearch OWNER TO jobsearch_user;
     ```
 
+5. Exit out of the PostgreSQL command line tool by typing `\q` or by pressing `Ctrl+C`.
+
 ### Setting Environment Variables
 
 Next, create a `.env` file, which will allow the Django back-end to access the database and perform CRUD operations.
@@ -212,26 +214,33 @@ Next, create a `.env` file, which will allow the Django back-end to access the d
 
 Next, add the required initial data to the database, including geographical and skill data.
 
-1. Enter the pipenv shell:
+1. Navigate to the `job-search-engine` directory and enter the pipenv shell:
 
     ```
     pipenv shell
     ```
 
-2. Navigate to the `job-search-engine/backend/` folder, and then import skill data:
+2. Navigate to the `job-search-engine/backend/` folder, and make database migrations:
+
+   ```
+   cd backend
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+
+3. Import skill data to the database:
 
     ```
-    cd backend
     python manage.py import_skills
     ```
 
-3. Import location data:
+4. Import location data:
 
     ```
     python manage.py import_city_data
     ```
 
-4. (Optional) Import initial job data from the provided `.csv` files:
+5. (Optional) Import initial job data from the provided `.csv` files:
 
     ```
     python manage.py bulk_import_jobs utils/jobs
