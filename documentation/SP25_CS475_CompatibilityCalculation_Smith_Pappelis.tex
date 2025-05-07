@@ -1,0 +1,86 @@
+\documentclass{article}
+\usepackage{amsmath}
+
+\title{Job Search Engine: Compatibility Calculation}
+\author{
+    Chris Pappelis\\
+    cfp4@hood.edu
+    \and
+    Matthew Smith\\
+    mps3@hood.edu
+}
+\date{Spring 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Compatibility Calculation}
+
+Compatibility scores are calculated by taking the skills, education, and years of experience given by the user, and comparing them to the skills, education, and years of experience required for a specific job. The calculation is split into three components.
+
+\subsection{Skill Compatibility}
+
+The skill compatibility score is calculated by determining how many of the job's required skills the user knows, then dividing that number by the number of skills the job requires. This is expressed mathematically in Equation \ref{eq:skill}.
+
+\begin{equation}
+    \text{SkillScore} = \frac{s_{user}}{s_{job}}
+    \label{eq:skill}
+\end{equation}
+Here, $s_{user}$ refers to the number of required skills that the user has, and $s_{job}$ refers to the number skills the job requires. If the job requires no skills, then the user will always receive a score of 1 for this portion. If the user has any skills when the job doesn't require any, or if the user has all required skills and additional skills beyond those required, then this segment gains an ``overqualified'' flag.
+
+\subsection{Education Compatibility}
+
+The education compatibility score is calculated by first giving each education level a numerical ``weight,'' with no education having the lowest weight at 0 and a doctorate degree having the highest weight at 1. The weights are displayed in Table \ref{tab:weights}.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Education level & Weight \\
+        \hline
+        No education & 0 \\
+        High school & 0.2 \\
+        Associate's degree & 0.4 \\
+        Bachelor's degree & 0.6 \\
+        Master's degree & 0.8 \\
+        Doctorate degree or higher & 1 \\
+        \hline
+    \end{tabular}
+    \caption{Weight values for education compatibility calculation}
+    \label{tab:weights}
+\end{table}
+
+If the job requires no education, then the user will always receive a score of 1 for this portion. If, in this case, the user has a high school education or higher, then this segment gains an ``overqualified'' flag. Otherwise, the education score is calculated by dividing the user's education weight by the job's education weight. This is expressed mathematically in Equation \ref{eq:edu}.
+
+\begin{equation}
+    \text{EducationScore} = \frac{w_{user}}{w_{job}}
+    \label{eq:edu}
+\end{equation}
+Here, $w_{user}$ is the weight of the user's education level and $w_{job}$ is the weight of the job's required education level. If the resulting score is higher than 1, then the score is reset to 1 and this segment gains an ``overqualified'' flag.
+
+\subsection{Experience Compatibility}
+
+The experience compatibility score is calculated in a similar way to the education compatibility score, in that the user's years of experience is divided by the years of experience required by the job. This is expressed mathematically in Equation \ref{eq:exp}.
+
+\begin{equation}
+    \text{ExperienceScore} = \frac{y_{user}}{y_{job}}
+    \label{eq:exp}
+\end{equation}
+Here, $y_{user}$ is the number of years of experience that the user has, and $y_{job}$ is the number of years of experience that the job requires. If the job requires no experience, then the user will always receive a score of 1 for this portion. If the user has 1 or more years of experience when the job doesn't require any, this segment also gains an ``overqualified'' flag. If the resulting score is higher than 1, then the score is reset to 1 and this segment gains an ``overqualified'' flag.
+
+\subsection{Final Calculation}
+
+Finally, all three scores are aggregated in a formula and given weights. The skill and education scores are both given weights of 0.25, and the experience score is given a weight of 0.5. The scores are multiplied by their weights, then summed. This is expressed mathematically in Equation \ref{eq:final}.
+
+\begin{equation}
+\begin{split}
+    \text{CompatibilityScore} &= (0.25\cdot\text{SkillScore}) \\
+    &+ (0.25\cdot\text{EducationScore}) \\
+    &+ (0.5\cdot\text{ExperienceScore})
+    \label{eq:final}
+\end{split}
+\end{equation}
+The result of this equation is the user's compatibility score for that job, between 0 and 1. When the score is displayed to the user, it is multiplied by 100. If the user has an ``overqualified'' flag for all three components of the score, then they are considered overqualified for the job.
+
+\end{document}
