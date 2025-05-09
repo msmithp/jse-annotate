@@ -570,7 +570,9 @@ def get_dashboard_data(request: HttpRequest) -> JsonResponse:
                                       and j["score"]["overqualifiedSkills"])
     ]
 
-    for j in range (0,10): #append top ten most frequent skills to dict
+    # Get top 10 jobs, or less if there are less than 10 jobs total
+    num_jobs = min(len(top_scores), 10)
+    for j in range (0, num_jobs): #append top ten most frequent skills to dict
         top_score = max(top_scores, key=lambda x:x["score"]['score'])
         dashboard_data['jobs'].append(top_score)
         top_scores.remove(top_score)
