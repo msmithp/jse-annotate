@@ -1,13 +1,10 @@
 # dependencies
-/frontend/node_modules
+/node_modules
 /.pnp
 .pnp.js
 
-# testing
-frontend/coverage
-
-# production
-frontend/build
+# distribution
+dist
 
 # misc
 .DS_Store
@@ -22,7 +19,3 @@ yarn-error.log*
 
 *.env
 .env
-*.sqlite3
-
-__pycache__/
-.vscode

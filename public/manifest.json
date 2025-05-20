@@ -1,0 +1,16 @@
+{
+    "manifest_version": 3,
+    "name": "jse",
+    "version": "1.0.0",
+    "action": {},
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.indeed.com/jobs?*",
+                "https://www.indeed.com/viewjob*"
+            ],
+            "js": ["background.js"]
+        }
+    ],
+    "permissions": ["scripting", "activeTab"]
+}
