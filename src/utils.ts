@@ -30,7 +30,8 @@ export function isInteger(s: string): boolean {
 
 export function anyFromListIn(list: string[], item: string): boolean {
     for (const s of list) {
-        if (list.includes(item)) {
+        // Check if `s` is contained within `item`
+        if (item.includes(s)) {
             return true;
         }
     }

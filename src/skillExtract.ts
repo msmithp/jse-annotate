@@ -61,7 +61,7 @@ export function search(query: string, jobDesc: string): boolean {
                   + "[" + ignore + "]";
 
     // Return true if query term was found (i.e., it has an index not equal to -1)
-    return jobDesc.search(pattern) != -1;
+    return jobDesc.search(pattern) !== -1;
 }
 
 export function extract(jobDesc: string): JobRequirements {
@@ -129,13 +129,13 @@ function skillExtract(jobDesc: string): SkillDict {
 export function educationExtract(jobDesc: string): string {
     // Iterate through education levels. The level with the first
     // "hit" will count as the education level for that job.
-    Object.keys(education).forEach(level => {
-        for (const term of education[level]) {
+    for (const [level, terms] of Object.entries(education)) {
+        for (const term of terms) {
             if (search(term, jobDesc)) {
                 return level;
             }
         }
-    });
+    }
     
     // No education level found - return blank string
     return "";
@@ -271,7 +271,7 @@ export function experienceExtract(jobDesc: string): number {
     // before the word "year" up to a certain limit (numberThreshold) to
     // see if there is a number
     const yearKeywords = ["year", "yr"];
-    const expKeywords = ["experience", "skill", "require"];
+    const expKeywords = ["exp", "skill", "require"];
     const searchRange = 7;
     const numberThreshold = 7;
     let yearsExperience = -1;
