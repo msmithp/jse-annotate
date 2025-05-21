@@ -1,0 +1,89 @@
+:root {
+    /* Color variables */
+    --fg-color: #181a1b;
+    --bg-color: #ffffff;
+    --window-color: #f5f5f5;
+    --window-color-darker: #eeeeee;
+    --window-color-darker2: #e0e0e0;
+    --cancel-color: #CA2E4B;
+    --submit-color: #387cdb;
+    --submit-color-lighter: #5b9bf3;
+    --success-color: #2a9756;
+    --success-color-lighter: #32b365;
+    --warning-color: #FFBA1F;
+    --strong-warning-color: #ff791f;
+}
+
+.jobCardSection {
+    padding: 1rem;
+    background-color: var(--window-color-darker);
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    hyphens: auto;
+}
+
+.jobCardExperienceEducation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3%;
+    margin-bottom: 1.3%;
+}
+
+.jobCardSection h3 {
+    line-height: 1rem;
+    margin-bottom: -0.7rem;
+    margin-top: 0.5rem;
+}
+
+.jobCardSection p {
+    margin-top: 0.8rem;
+    margin-bottom: 0;
+}
+
+.jobCardSection h3 {
+    margin-bottom: 0.5rem;
+}
+
+.jobCardSkillCategory {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem;
+    margin-bottom: 0.3rem;
+}
+
+.jobCardSkillCategory:last-child {
+    margin-bottom: 0;
+}
+
+.jobCardSkillCategory p {
+    padding: 0.4rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 11pt;
+    line-height: 0;
+}
+
+.jobCardCategoryName {
+    background-color: var(--window-color-darker2);
+    font-weight: 500;
+}
+
+.jobCardSkill {
+    border-style: solid;
+    border-color: var(--fg-color);
+    border-width: 0.18rem;
+}
+
+.jobCardCategoryName, .jobCardSkill {
+    padding-bottom: 4px;
+    border-radius: 2rem;
+}
+
+.jobCardCategoryName p, .jobCardSkill p {
+    transform: translateY(-35%);
+}

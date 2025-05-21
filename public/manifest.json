@@ -9,7 +9,8 @@
                 "*://www.indeed.com/jobs?*",
                 "*://www.indeed.com/viewjob*"
             ],
-            "js": ["background.js"]
+            "js": ["background.js"],
+            "css": ["style.css"]
         }
     ],
     "permissions": ["scripting", "activeTab"]

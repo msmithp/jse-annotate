@@ -1,5 +1,6 @@
 import { removeHtmlTags } from "./utils";
 import { extract } from "./skillExtract";
+import { formatRequirements } from "./formatting";
 
 let currentJobDescription: string | null = null;
 
@@ -26,8 +27,8 @@ function getJobDescription(): string | null {
  */
 function injectJobSearch(): void {
     // Get the HTML div located directly above the job description
-    const idPrefix = "mosaic-aboveFullJobDescription";
-    const elem = document.querySelector(`div[id^='${idPrefix}']`);
+    const ID_PREFIX = "mosaic-aboveFullJobDescription";
+    const elem = document.querySelector(`div[id^='${ID_PREFIX}']`);
 
     // Get job description
     const jobDesc = getJobDescription();
@@ -45,7 +46,7 @@ function injectJobSearch(): void {
     let div = document.createElement("div");
     div.className = "jobsearch-injectedRequirements";
     // div.innerHTML = "<h2>Requirements</h2><p>Some stuff</p><hr>";
-    div.innerText = `${requirements.education}\n${requirements.experience}\n${requirements.skills}`;
+    div.innerHTML = formatRequirements(requirements);
 
     // If a div with this class name already exists, then the div was
     // already injected
