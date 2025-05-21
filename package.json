@@ -13,14 +13,13 @@
     "homepage": "",
     "repository": {
         "type": "git",
-        "url": ""
+        "url": "git+https://github.com/msmithp/avelum.git"
     },
     "bugs": "",
     "keywords": [],
     "author": {
-        "name": "",
-        "email": "",
-        "url": ""
+        "name": "Matthew Smith",
+        "email": "matthewsmith2003@yahoo.com"
     },
     "contributors": [],
     "scripts": {
