@@ -6,8 +6,8 @@
     "content_scripts": [
         {
             "matches": [
-                "https://www.indeed.com/jobs?*",
-                "https://www.indeed.com/viewjob*"
+                "*://www.indeed.com/jobs?*",
+                "*://www.indeed.com/viewjob*"
             ],
             "js": ["background.js"]
         }

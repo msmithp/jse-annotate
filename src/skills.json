@@ -1,0 +1,460 @@
+{
+    "Languages": [
+        {
+            "name": "Ada",
+            "aliases": []
+        },
+        {
+            "name": "Assembly",
+            "aliases": ["ASM"]
+        },
+        {
+            "name": "Bash",
+            "aliases": []
+        },
+        {
+            "name": "C",
+            "aliases": []
+        },
+        {
+            "name": "C#",
+            "aliases": []
+        },
+        {
+            "name": "C++",
+            "aliases": []
+        },
+        {
+            "name": "COBOL",
+            "aliases": []
+        },
+        {
+            "name": "Delphi",
+            "aliases": []
+        },
+        {
+            "name": "Elm",
+            "aliases": []
+        },
+        {
+            "name": "Fortran",
+            "aliases": []
+        },
+        {
+            "name": "Golang",
+            "aliases": []
+        },
+        {
+            "name": "Haskell",
+            "aliases": []
+        },
+        {
+            "name": "Java",
+            "aliases": []
+        },
+        {
+            "name": "Julia",
+            "aliases": []
+        },
+        {
+            "name": "Kotlin",
+            "aliases": []
+        },
+        {
+            "name": "Lisp",
+            "aliases": []
+        },
+        {
+            "name": "Lua",
+            "aliases": []
+        },
+        {
+            "name": "MATLAB",
+            "aliases": []
+        },
+        {
+            "name": "PHP",
+            "aliases": []
+        },
+        {
+            "name": "Pascal",
+            "aliases": []
+        },
+        {
+            "name": "Perl",
+            "aliases": []
+        },
+        {
+            "name": "Prolog",
+            "aliases": []
+        },
+        {
+            "name": "Python",
+            "aliases": []
+        },
+        {
+            "name": "R",
+            "aliases": []
+        },
+        {
+            "name": "Ruby",
+            "aliases": []
+        },
+        {
+            "name": "Rust",
+            "aliases": []
+        },
+        {
+            "name": "SAS",
+            "aliases": []
+        },
+        {
+            "name": "Swift",
+            "aliases": []
+        },
+        {
+            "name": "Visual Basic",
+            "aliases": []
+        }
+    ],
+    "Web Development": [
+        {
+            "name": "CSS",
+            "aliases": []
+        },
+        {
+            "name": "HTML",
+            "aliases": []
+        },
+        {
+            "name": "JavaScript",
+            "aliases": []
+        },
+        {
+            "name": "REST",
+            "aliases": ["RESTful"]
+        },
+        {
+            "name": "TypeScript",
+            "aliases": []
+        }
+    ],
+    "Frameworks": [
+        {
+            "name": "Angular",
+            "aliases": ["Angular.js", "AngularJS"]
+        },
+        {
+            "name": "Django",
+            "aliases": []
+        },
+        {
+            "name": "Express.js",
+            "aliases": ["ExpressJS", "Express"]
+        },
+        {
+            "name": "Flask",
+            "aliases": []
+        },
+        {
+            "name": "Laravel",
+            "aliases": []
+        },
+        {
+            "name": "Next.js",
+            "aliases": ["NextJS"]
+        },
+        {
+            "name": "Node.js",
+            "aliases": ["NodeJS"]
+        },
+        {
+            "name": "Rails",
+            "aliases": []
+        },
+        {
+            "name": "React",
+            "aliases": []
+        },
+        {
+            "name": "Svelte",
+            "aliases": []
+        },
+        {
+            "name": "Vue",
+            "aliases": ["Vue.js", "VueJS"]
+        }
+    ],
+    "Database Management": [
+        {
+            "name": "MariaDB",
+            "aliases": []
+        },
+        {
+            "name": "MongoDB",
+            "aliases": []
+        },
+        {
+            "name": "MySQL",
+            "aliases": []
+        },
+        {
+            "name": "NoSQL",
+            "aliases": []
+        },
+        {
+            "name": "Oracle",
+            "aliases": []
+        },
+        {
+            "name": "PostgreSQL",
+            "aliases": []
+        },
+        {
+            "name": "Redis",
+            "aliases": []
+        },
+        {
+            "name": "SQL",
+            "aliases": []
+        },
+        {
+            "name": "SQL Server",
+            "aliases": []
+        },
+        {
+            "name": "SQLite",
+            "aliases": []
+        }
+    ],
+    "Tools": [
+        {
+            "name": "AWS",
+            "aliases": ["Amazon Web Services"]
+        },
+        {
+            "name": "Atlassian",
+            "aliases": []
+        },
+        {
+            "name": "Azure",
+            "aliases": []
+        },
+        {
+            "name": "Docker",
+            "aliases": []
+        },
+        {
+            "name": "Git",
+            "aliases": ["GitHub"]
+        },
+        {
+            "name": "Google Cloud",
+            "aliases": ["GCP"]
+        },
+        {
+            "name": "HyperV",
+            "aliases": []
+        },
+        {
+            "name": "Jenkins",
+            "aliases": []
+        },
+        {
+            "name": "Kubernetes",
+            "aliases": []
+        },
+        {
+            "name": "Localstack",
+            "aliases": []
+        },
+        {
+            "name": "Powershell",
+            "aliases": ["Shell"]
+        },
+        {
+            "name": "SOC",
+            "aliases": []
+        },
+        {
+            "name": "Splunk",
+            "aliases": []
+        },
+        {
+            "name": "VMWare",
+            "aliases": []
+        }
+    ],
+    "Methodologies": [
+        {
+            "name": "Agile",
+            "aliases": []
+        },
+        {
+            "name": "Behavior-Driven",
+            "aliases": []
+        },
+        {
+            "name": "Extreme Programming",
+            "aliases": []
+        },
+        {
+            "name": "Feature-Driven",
+            "aliases": []
+        },
+        {
+            "name": "Lean",
+            "aliases": []
+        },
+        {
+            "name": "Rapid Application Development",
+            "aliases": []
+        },
+        {
+            "name": "Scrum",
+            "aliases": []
+        },
+        {
+            "name": "Spiral",
+            "aliases": []
+        },
+        {
+            "name": "Waterfall",
+            "aliases": []
+        }
+    ],
+    "Fields": [
+        {
+            "name": "AI/ML",
+            "aliases": ["Artificial Intelligence", "AI", "Machine Learning"]
+        },
+        {
+            "name": "Back-End Development",
+            "aliases": ["backend", "back-end", "back end"]
+        },
+        {
+            "name": "Cloud Computing",
+            "aliases": []
+        },
+        {
+            "name": "Cryptography",
+            "aliases": []
+        },
+        {
+            "name": "Cybersecurity",
+            "aliases": ["Cyber security"]
+        },
+        {
+            "name": "Data Mining",
+            "aliases": []
+        },
+        {
+            "name": "Data Science",
+            "aliases": []
+        },
+        {
+            "name": "Database Administration",
+            "aliases": ["Database Administrator"]
+        },
+        {
+            "name": "DevOps",
+            "aliases": []
+        },
+        {
+            "name": "Front-End Development",
+            "aliases": ["frontend", "front-end", "front end"]
+        },
+        {
+            "name": "Full-Stack Development",
+            "aliases": ["full-stack", "full stack"]
+        },
+        {
+            "name": "Game Development",
+            "aliases": ["Game Developer"]
+        },
+        {
+            "name": "Graphics",
+            "aliases": []
+        },
+        {
+            "name": "Information Security",
+            "aliases": []
+        },
+        {
+            "name": "Information Security",
+            "aliases": []
+        },
+        {
+            "name": "Mobile Development",
+            "aliases": []
+        },
+        {
+            "name": "Networking",
+            "aliases": ["Network Administration", "Network Administration", "Network Engineer", "Network Engineering"]
+        },
+        {
+            "name": "Object-Oriented Programming",
+            "aliases": ["Object-Oriented", "Object Oriented", "Object Oriented Programming"]
+        },
+        {
+            "name": "Software Development",
+            "aliases": ["Software Engineering", "Software Engineer", "Software Developer"]
+        },
+        {
+            "name": "Systems Administration",
+            "aliases": ["System Administration", "System Administrator", "Systems Administrator"]
+        },
+        {
+            "name": "Systems Engineering",
+            "aliases": ["System Engineering", "System Engineer", "Systems Engineer"]
+        },
+        {
+            "name": "Web Development",
+            "aliases": ["Web Design", "Web Developer"]
+        }
+    ],
+    "Operating Systems": [
+        {
+            "name": "Android",
+            "aliases": []
+        },
+        {
+            "name": "Linux",
+            "aliases": []
+        },
+        {
+            "name": "Windows",
+            "aliases": []
+        },
+        {
+            "name": "macOS",
+            "aliases": []
+        }
+    ],
+    "Libraries": [
+        {
+            "name": "JUnit",
+            "aliases": []
+        },
+        {
+            "name": "Pandas",
+            "aliases": []
+        },
+        {
+            "name": "Pytest",
+            "aliases": []
+        },
+        {
+            "name": "Pytorch",
+            "aliases": []
+        },
+        {
+            "name": "Sklearn",
+            "aliases": ["sci-kit", "scikit"]
+        },
+        {
+            "name": "Tensorflow",
+            "aliases": []
+        }
+    ]
+}
