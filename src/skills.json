@@ -120,11 +120,11 @@
     "Web Development": [
         {
             "name": "CSS",
-            "aliases": []
+            "aliases": ["CSS3"]
         },
         {
             "name": "HTML",
-            "aliases": []
+            "aliases": ["HTML5"]
         },
         {
             "name": "JavaScript",

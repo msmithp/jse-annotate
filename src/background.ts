@@ -13,19 +13,19 @@ function getJobDescription(): string | null {
     const JOB_DESCRIPTION_ID = "jobDescriptionText";
     const elem = document.querySelector(`div[id='${JOB_DESCRIPTION_ID}']`);
 
-    if (elem == null) {
+    if (elem === null) {
         // If job description can't be found, return null
         return null;
     } else {
         // Otherwise, return the HTML with all tags removed
-        return removeHtmlTags(elem!.outerHTML);
+        return removeHtmlTags(elem.outerHTML);
     }
 }
 
 /**
  * Inject job requirements into the job pane on Indeed
  */
-function injectJobSearch(): void {
+function injectJobSearch(force?: boolean): void {
     // Get the HTML div located directly above the job description
     const ID_PREFIX = "mosaic-aboveFullJobDescription";
     const elem = document.querySelector(`div[id^='${ID_PREFIX}']`);
@@ -33,9 +33,15 @@ function injectJobSearch(): void {
     // Get job description
     const jobDesc = getJobDescription();
 
-    // Ignore update if job description cannot be found or if job description
-    // has not changed since last update
-    if (jobDesc === null || jobDesc === currentJobDescription) {
+    // Ignore update if job description cannot be found, if job description
+    // has not changed since last update, or if elem is null
+    if (force === undefined || force === false) {
+        if (jobDesc === currentJobDescription) {
+            return;
+        }
+    }
+    
+    if (jobDesc === null || elem === null) {
         return;
     }
 
@@ -45,7 +51,6 @@ function injectJobSearch(): void {
     // Create div to be injected
     let div = document.createElement("div");
     div.className = "jobsearch-injectedRequirements";
-    // div.innerHTML = "<h2>Requirements</h2><p>Some stuff</p><hr>";
     div.innerHTML = formatRequirements(requirements);
 
     // If a div with this class name already exists, then the div was
@@ -56,7 +61,7 @@ function injectJobSearch(): void {
 
     // Inject div if it hasn't already been injected
     if (!alreadyInjected) {
-        inject(div, elem!);
+        inject(div, elem);
     }
 }
 
@@ -78,8 +83,12 @@ function inject(elem: Element, inside: Element): void {
 function callback(mutationList: MutationRecord[], _: MutationObserver): void {
     for (const mutation of mutationList) {
         if (mutation.type === "childList") {
-            // If child node was added or removed, inject requirements data
-            injectJobSearch();
+            // If child node was added or removed, inject requirements data.
+            // If a child node was added, then FORCE inject requirements.
+            // This is a workaround to force requirements to show up after a
+            // page refresh.
+            const wereNodesAdded = mutation.addedNodes.length !== 0;
+            injectJobSearch(wereNodesAdded);
         }
     }
 }
