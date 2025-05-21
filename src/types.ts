@@ -16,3 +16,9 @@ export interface SkillJson {
 export interface EducationLevels {
     [key: string]: string[]
 }
+
+export interface JobRequirements {
+    skills: SkillDict,
+    education: string,
+    experience: number
+}

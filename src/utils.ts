@@ -37,3 +37,11 @@ export function anyFromListIn(list: string[], item: string): boolean {
 
     return false;
 }
+
+export function removeHtmlTags(html: string) {
+    return html.replace(/<[^>]*>/g, '');
+}
+
+export function escapeRegExp(s: string) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}

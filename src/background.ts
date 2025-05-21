@@ -1,3 +1,26 @@
+import { removeHtmlTags } from "./utils";
+import { extract } from "./skillExtract";
+
+let currentJobDescription: string | null = null;
+
+/**
+ * Get the job description of a job on the job search page of Indeed
+ * @returns Job description, or `null` if one cannot be found
+ */
+function getJobDescription(): string | null {
+    // Get HTML div containing job description
+    const JOB_DESCRIPTION_ID = "jobDescriptionText";
+    const elem = document.querySelector(`div[id='${JOB_DESCRIPTION_ID}']`);
+
+    if (elem == null) {
+        // If job description can't be found, return null
+        return null;
+    } else {
+        // Otherwise, return the HTML with all tags removed
+        return removeHtmlTags(elem!.outerHTML);
+    }
+}
+
 /**
  * Inject job requirements into the job pane on Indeed
  */
@@ -6,10 +29,23 @@ function injectJobSearch(): void {
     const idPrefix = "mosaic-aboveFullJobDescription";
     const elem = document.querySelector(`div[id^='${idPrefix}']`);
 
-    // Create div which will be injected
+    // Get job description
+    const jobDesc = getJobDescription();
+
+    // Ignore update if job description cannot be found or if job description
+    // has not changed since last update
+    if (jobDesc === null || jobDesc === currentJobDescription) {
+        return;
+    }
+
+    currentJobDescription = jobDesc;
+    const requirements = extract(jobDesc);
+
+    // Create div to be injected
     let div = document.createElement("div");
     div.className = "jobsearch-injectedRequirements";
-    div.innerHTML = "<h2>Requirements</h2><p>Some stuff</p><hr>";
+    // div.innerHTML = "<h2>Requirements</h2><p>Some stuff</p><hr>";
+    div.innerText = `${requirements.education}\n${requirements.experience}\n${requirements.skills}`;
 
     // If a div with this class name already exists, then the div was
     // already injected
@@ -47,16 +83,23 @@ function callback(mutationList: MutationRecord[], _: MutationObserver): void {
     }
 }
 
-// Get right pane of Indeed job search page
-const pane = document.querySelector("div[class^='jobsearch-RightPane']");
+/**
+ * Observe HTML DOM for changes, and update injected HTML when it changes
+ */
+function observeDOM(): void {
+    // Get right pane of Indeed job search page
+    const pane = document.querySelector("div[class^='jobsearch-RightPane']");
 
-// Observe DOM for changes
-const observer = new MutationObserver(callback);
+    // Observe DOM for changes
+    const observer = new MutationObserver(callback);
 
-const config = {
-    attributes: true,
-    childList: true,
-    subtree: true
-};
+    const config = {
+        attributes: true,
+        childList: true,
+        subtree: true
+    };
 
-observer.observe(pane!, config);
+    observer.observe(pane!, config);
+}
+
+observeDOM();

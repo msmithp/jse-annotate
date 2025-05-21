@@ -1,6 +1,7 @@
 import data from "./skills.json";
-import { mapReplace, isInteger, anyFromListIn } from "./utils";
-import { SkillDict, SkillJson, EducationLevels, StringMap } from "./types";
+import { mapReplace, isInteger, anyFromListIn, escapeRegExp } from "./utils";
+import { SkillDict, SkillJson, EducationLevels,
+    StringMap, JobRequirements } from "./types";
 
 // String versions of numbers (for years of experience parsing)
 const numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -25,7 +26,7 @@ const education: EducationLevels = {
 
 // When searching for skills, we check if they are surrounded by
 // any two characters from this expression
-const ignore = " !\"\'\\`()\n\t,:;=<>?./’*";
+const ignore = " !\"\'\\`()\n\t,:;=<>?\./’\*";
 
 // Assert that skill data has the right format
 const skills: SkillJson = data;
@@ -36,7 +37,7 @@ const skills: SkillJson = data;
  * @param jobDesc Original job description to be processed
  * @returns Processed job description
  */
-function preprocess(jobDesc: string): string {
+export function preprocess(jobDesc: string): string {
     // Turn job description to lowercase and pad it with spaces
     // for regex search
     const newDesc = " " + jobDesc.toLowerCase() + " ";
@@ -52,13 +53,28 @@ function preprocess(jobDesc: string): string {
  * @param jobDesc Job description to be searched
  * @returns `true` if the term was found, `false` otherwise
  */
-function search(query: string, jobDesc: string): boolean {
+export function search(query: string, jobDesc: string): boolean {
     // We want to find the query term with one of the ignore characters on
     // both sides
-    const pattern = "[" + ignore + "]" + query.toLowerCase() + "[" + ignore + "]";
+    const pattern = "[" + ignore + "]" 
+                  + escapeRegExp(query.toLowerCase()) 
+                  + "[" + ignore + "]";
 
     // Return true if query term was found (i.e., it has an index not equal to -1)
-    return jobDesc.search(pattern) != -1
+    return jobDesc.search(pattern) != -1;
+}
+
+export function extract(jobDesc: string): JobRequirements {
+    jobDesc = preprocess(jobDesc);
+    const skills = skillExtract(jobDesc);
+    const education = educationExtract(jobDesc);
+    const experience = experienceExtract(jobDesc);
+
+    return {
+        skills: skills,
+        education: education,
+        experience: experience
+    }
 }
 
 /**
@@ -110,7 +126,7 @@ function skillExtract(jobDesc: string): SkillDict {
  * @param jobDesc Preprocessed job description
  * @returns Lowest education level mentioned in description, as a string
  */
-function educationExtract(jobDesc: string): string {
+export function educationExtract(jobDesc: string): string {
     // Iterate through education levels. The level with the first
     // "hit" will count as the education level for that job.
     Object.keys(education).forEach(level => {
@@ -133,7 +149,7 @@ function educationExtract(jobDesc: string): string {
  * @param jobDesc Preprocessed job description
  * @returns Required years of experience listed in job description
  */
-function experienceExtract(jobDesc: string): number {
+export function experienceExtract(jobDesc: string): number {
     // Maintain a mapping of ranges to their respective minima
     let toReplace: StringMap = {};
 
@@ -186,7 +202,7 @@ function experienceExtract(jobDesc: string): number {
 
             // Read in numbers, if any
             while (j < jobDesc.length && isInteger(jobDesc[j])) {
-                next += jobDesc[j]
+                next += jobDesc[j];
                 j++;
             }
 
