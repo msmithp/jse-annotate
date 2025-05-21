@@ -24,6 +24,8 @@ function getJobDescription(): string | null {
 
 /**
  * Inject job requirements into the job pane on Indeed
+ * @param force Force inject job requirements even if description has not
+ *              changed since last injection
  */
 function injectJobSearch(force?: boolean): void {
     // Get the HTML div located directly above the job description

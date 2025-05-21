@@ -1,14 +1,28 @@
 import { GRAY, lighten, linearGradient, polylinearGradient } from "./color";
 import { StringMap } from "./types";
 
+/**
+ * Given a string `s`, replace all instances of each key in `map` with its
+ * corresponding value.
+ * @param s String in which replacement will occur
+ * @param map A one-to-one mapping of strings to other strings. Each instance
+ *            in `s` of a key in `map` will be replaced by the value in `map`
+ *            corresponding to the key.
+ * @returns String with replacements made
+ */
 export function mapReplace(s: string, map: StringMap): string {
     let newString = ""
+    
+    // Iterate through characters of `s`
     for (const c of s) {
         const replacement = map[c];
 
         if (replacement == undefined) {
+            // If no replacement exists in the map, then append the original
+            // character to the new string
             newString += c;
         } else {
+            // Append the replacement character to the new string
             newString += replacement;
         }
     }
@@ -16,6 +30,12 @@ export function mapReplace(s: string, map: StringMap): string {
     return newString;
 }
 
+/**
+ * Test if a string is an integer value
+ * @param s String to be tested
+ * @returns `true` if all characters in the string are numeric (i.e., `0`-`9`),
+ *          `false` otherwise
+ */
 export function isInteger(s: string): boolean {
     for (const ch of s) {
         const ascii = ch.charCodeAt(0);
@@ -29,10 +49,17 @@ export function isInteger(s: string): boolean {
     return true;
 }
 
-export function anyFromListIn(list: string[], item: string): boolean {
-    for (const s of list) {
-        // Check if `s` is contained within `item`
-        if (item.includes(s)) {
+/**
+ * Test if any words from a list are contained within a target string
+ * @param list List of words
+ * @param target Target string
+ * @returns `true` if any word in `list` is a substring of `target`, `false`
+ *          otherwise
+ */
+export function anyFromListIn(list: string[], target: string): boolean {
+    for (const wd of list) {
+        // Check if `s` is contained within `target`
+        if (target.includes(wd)) {
             return true;
         }
     }
@@ -40,11 +67,24 @@ export function anyFromListIn(list: string[], item: string): boolean {
     return false;
 }
 
-export function removeHtmlTags(html: string) {
+/**
+ * Remove all HTML tags from a string of HTML
+ * @param html String of HTML
+ * @returns String of HTML with all tags removed
+ */
+export function removeHtmlTags(html: string): string {
     return html.replace(/<[^>]*>/g, '');
 }
 
-export function escapeRegExp(s: string) {
+/**
+ * Escape any regex special characters in a string with a backslash (`\`)
+ * @param s String to be escaped
+ * @returns Regex-escaped string
+ */
+export function escapeRegExp(s: string): string {
+    // This regex replaces any instance of a special character and replaces it
+    // with an escaped version of that character (i.e., escaped with a
+    // backslash)
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
