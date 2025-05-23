@@ -1,5 +1,5 @@
 {
-    "name": "jse",
+    "name": "jse-annotate",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -13,7 +13,7 @@
     "homepage": "",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/msmithp/avelum.git"
+        "url": "git+https://github.com/msmithp/jse-annotate.git"
     },
     "bugs": "",
     "keywords": [],

@@ -1,13 +1,14 @@
 {
     "manifest_version": 3,
-    "name": "Avelum",
+    "name": "jse-annotate",
     "version": "1.0.0",
     "action": {},
     "content_scripts": [
         {
             "matches": [
                 "*://www.indeed.com/jobs?*",
-                "*://www.indeed.com/viewjob*"
+                "*://www.indeed.com/viewjob*",
+                "*://www.indeed.com/q*"
             ],
             "js": ["background.js"],
             "css": ["style.css"]
