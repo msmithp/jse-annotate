@@ -23,6 +23,10 @@ export interface JobRequirements {
     experience: number
 }
 
-export type Site = "indeedSearch"
-                 | "indeedView"
-                 | "ziprecruiter";
+export interface Site {
+    name: string
+    urls: string[],
+    injectionSite: string,
+    descriptionDivName: string,
+    elementToWatch: string
+}

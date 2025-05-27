@@ -1,9 +1,8 @@
 import { extract } from "./skillExtract";
 import { formatRequirements } from "./formatting";
 import { Site } from "./types";
-import { getElementNameToWatch, getInjectionSite, 
-    getJobDescription, 
-    getSiteFromURL} from "./siteUtils";
+import { getJobDescription, getSiteFromURL} from "./siteUtils";
+import sites from "./sites";
 
 let currentJobDescription: string | null = null;
 let site: Site | null = null;
@@ -15,7 +14,7 @@ let site: Site | null = null;
  */
 function injectJobSearch(site: Site, force?: boolean): void {
     // Get the HTML div located directly above the job description
-    const injectionSite = getInjectionSite(site);
+    const injectionSite = site.injectionSite;
     const elem = document.querySelector(injectionSite);
 
     // Get job description
@@ -86,7 +85,7 @@ function callback(mutationList: MutationRecord[], _: MutationObserver): void {
  */
 function observeDOM(site: Site): void {
     // Get element to watch
-    const nameToWatch = getElementNameToWatch(site);
+    const nameToWatch = site.elementToWatch;
     const toWatch = document.querySelector(nameToWatch);
 
     // Observe DOM for changes
@@ -104,9 +103,7 @@ function observeDOM(site: Site): void {
 site = getSiteFromURL(document.URL);
 if (site === null) {
     // Default to indeedSearch if no site was found
-    site = "indeedSearch"
+    site = sites[0];
 }
-
-console.log(site);
 
 observeDOM(site);
