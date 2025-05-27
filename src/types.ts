@@ -22,3 +22,7 @@ export interface JobRequirements {
     education: string,
     experience: number
 }
+
+export type Site = "indeedSearch"
+                 | "indeedView"
+                 | "ziprecruiter";
